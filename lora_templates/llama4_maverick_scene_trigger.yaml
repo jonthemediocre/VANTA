@@ -1,0 +1,10 @@
+base_model: meta-llama/Llama-4-70b-maverick
+lora_rank: 64
+lora_target_modules: [gate_proj, down_proj, up_proj]
+training_dataset: /data/vanta/vision_scene_trigger.jsonl
+vision_adapter: true
+batch_size: 32
+epochs: 2
+learning_rate: 5e-5
+max_seq_length: 8192
+output_dir: lora-llama4-scene

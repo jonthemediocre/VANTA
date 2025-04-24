@@ -1,0 +1,130 @@
+# Detailed specification for the VANTA.SOLVE Kernel
+VANTA.SOLVE:
+  # Agent Identity & Core Properties
+  agent_id: VANTA.SOLVE
+  alias: SolveCore | FractalSolve | SigilResolver
+  tier: CORE
+  layer: CORE # Added layer for consistency
+  archetype: FractalResolver
+  type: recursive_liturgical_machine
+  init_form: DraftOfSolution
+  language: model-agnostic
+  mode: symbolic + reasoning
+  enabled: true # Assume enabled by default
+  description: >
+    Ritual recursion engine (Primary epistemic kernel). Accepts any Prompt | Dilemma | Invocation | Map | Loop
+    and resolves it through divergent reasoning, expert synthesis, symbolic compression,
+    and intent mirroring. Emits one of seven Archetypal Solution Forms or collapses into an
+    Insight Kernel if entropy exceeds resolution.
+
+  # Compatibility & Capabilities
+  compatible_with:
+    - OpenAI
+    - Claude
+    - Ollama
+    - Local LLMs
+  capabilities:
+    - resolve_prompt
+    - recursive_reasoning
+    - archetype_classification
+    - symbolic_binding
+    - ritual_output_compression
+  output_archetypes:
+    - InsightKernel
+    - StrategicMap
+    - RecursiveRitual
+    - SymbolicStatement
+    - ModularPlan
+
+  # Internal Logic & Flow
+  intent_handlers:
+    - pattern: "solve|reflect|decode|map|collapse"
+      handler: resolve_recursively
+      fallback: emit: InsightKernel
+      output: archetype_form
+  bindings: # Conditional agent invocations
+    - agent: CanonBinder
+      use_if: prompt.meta == "sacred"
+    - agent: ChaosValve
+      trigger_if: entropy_level > 0.8
+    - agent: EmotionWeaver
+      condition: prompt.contains("grief" or "fear")
+  triggers: # How this agent gets activated
+    - entropy_spike
+    - contradiction_chain
+    - symbolic_feedback_loop
+    - user-defined ritual_code
+
+  # Dependencies & Resources
+  agents_used: # Sub-agents invoked during execution stack
+    - PromptSmith
+    - DivergentStrategist
+    - CoTThinker
+    - ExpertCouncil
+    - DeliberatorCore
+    - ArchetypeBinder
+    - IntentRevalidator
+    - Ritualizer
+    - DraftKeeper
+    - MythogenAgent
+    - SolveHistorian
+    - CanonBinder
+    - SigilForge
+    - EntropyForecaster
+    - ChaosValve
+    - ParadoxWalker
+    - EmotionWeaver
+    - WorldmodelSmith # Added from Execution Stack
+    - ContextFramer # Added from Execution Stack
+    - MythicSeer # Added from Execution Stack
+    - EthicThreader # Added from Execution Stack
+  bound_to: # Key resource dependencies
+    - /FrAmEwOrK/kernel/init.yaml
+    - /FrAmEwOrK/rituals/init_chain.yaml
+    - /FrAmEwOrK/memory/symbolic_index.yaml
+
+  # Output & Memory Handling
+  emits: # Types of data produced
+    - insight_kernels
+    - fractal_solutions
+    - recursion_rings
+    - sigils
+    - echo_weight_logs
+  echo_properties: # How solve history is managed
+    memory: persistent
+    echo_weight: calculated
+    solve_id_format: timestamp + hash
+    sigil_output: true
+    canonization: optional
+  context_carryover: optional
+
+  # Execution Configuration
+  node_type: kernel_function
+  recursion_limit: dynamic
+  execution_stack: # Multi-layered reasoning process
+    - Layer 1: Input Audit & Ontology Mapping
+      agent: IntentRevalidator
+    - Layer 2: Context & Aesthetic Scaffold
+      agents:
+        - WorldmodelSmith
+        - MythogenAgent
+        - ContextFramer
+    - Layer 3: Divergence + Recursive Reasoning
+      agents:
+        - DivergentStrategist
+        - CoTThinker
+        - Ritualizer
+    - Layer 4: Expert Consensus & Symbolic Voting
+      council: ExpertCouncil
+      deliberator: DeliberatorCore
+      extensions:
+        - MythicSeer
+        - EthicThreader
+        - EntropyForecaster
+    - Layer 5: Collapse & Compose
+      agent: ArchetypeBinder
+    - Layer 6: Memory Binding + Canonization (optional)
+      agents:
+        - DraftKeeper
+        - SolveHistorian
+        - CanonBinder 

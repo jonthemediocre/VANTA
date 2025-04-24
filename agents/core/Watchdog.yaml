@@ -1,0 +1,14 @@
+name: Watchdog
+description: Agent reliability and uptime monitor
+role: Prevents infinite loops, agent decay, output stalling
+functions:
+  - detect_stall(): Monitors agent loop time and entropy
+  - escalate(): Sends issues to System2_Disruption
+  - quarantine(): Disables and isolates malfunctioning agent
+triggers:
+  - Loop or silence threshold breach
+  - Feedback anomalies
+outputs:
+  - Recovery rituals
+  - Debug reports
+  - Trace logs with failure state

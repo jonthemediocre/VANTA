@@ -1,0 +1,29 @@
+---
+description: Page structure
+globs: app/*.tsx, app/*/*.tsx, pages/*.tsx
+type: autoAttached
+---
+
+# RULE TYPE: Auto Attached
+# FILE PATTERNS: app/*.tsx, app/*/*.tsx, pages/*.tsx
+
+# Page Structure Guidelines
+
+## Next.js App Router Page Structure
+- Use `page.tsx` files for route components
+- Implement metadata in each page for SEO optimization
+- Use layout components for shared UI elements
+- Handle loading states with Loading components
+- Implement error handling with Error components
+
+## Page Components
+- Keep page components focused on data fetching and layout
+- Extract complex UI into separate components
+- Use server components when possible for performance
+- Implement client components only when needed for interactivity
+
+- Create new pages at: `apps/web/app/(app)/PAGE_NAME/page.tsx`
+- Components for the page are either put in `page.tsx`, or in the `apps/web/app/(app)/PAGE_NAME` folder
+- Pages are Server components so you can load data into them directly
+- If we're in a deeply nested component we will use `swr` to fetch via API
+- If you need to use `onClick` in a component, that component is a client component and file must start with `use client` 

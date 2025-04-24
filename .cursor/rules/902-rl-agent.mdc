@@ -1,0 +1,232 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+---
+description: Reinforcement Learning Agent configuration and implementation guidelines
+globs:
+  - src/**/*.{ts,tsx}
+  - .cursor/rules/**/*.mdc
+---
+
+# Reinforcement Learning Agent Guidelines
+
+## State Space Definition
+- Code context (file types, dependencies, patterns)
+- User context (energy level, focus state, preferences)
+- Task context (complexity, priority, dependencies)
+- Environment context (time of day, system resources)
+
+## Action Space Definition
+- Rule application decisions
+- Code modification suggestions
+- Task breakdown recommendations
+- Focus mode adaptations
+- UI/UX adjustments
+
+## Reward Function
+- Code quality metrics (linting scores, test coverage)
+- Task completion rates
+- User productivity metrics
+- Focus session effectiveness
+- Energy state alignment
+
+## Learning Algorithm
+- Q-learning for rule selection
+- Policy gradient for action sequences
+- Multi-armed bandit for exploration
+- Experience replay for pattern learning
+- A2C (Advantage Actor-Critic) for policy optimization
+
+## State Tracking
+- Track state transitions in memory bank
+- Record action outcomes and rewards
+- Maintain experience replay buffer
+- Log policy updates and improvements
+- Monitor convergence metrics
+
+## Exploration Strategy
+- Epsilon-greedy exploration of rules
+- Thompson sampling for action selection
+- UCB (Upper Confidence Bound) for rule priority
+- Contextual bandits for personalization
+- Progressive exploration reduction
+
+## Integration Points
+- MDC rules system for action space
+- Energy tracking for state space
+- Task system for reward signals
+- Focus timer for session metrics
+- Coach system for feedback loop
+
+## Memory Management
+- Experience replay buffer size: 10000
+- State history window: 100 sessions
+- Reward history retention: 30 days
+- Policy update frequency: Daily
+- Model checkpoint frequency: Weekly
+
+## Hyperparameters
+```yaml
+learning:
+  alpha: 0.01  # Learning rate
+  gamma: 0.99  # Discount factor
+  epsilon: 0.1  # Exploration rate
+  lambda: 0.95  # GAE parameter
+  batch_size: 64  # Training batch size
+
+memory:
+  buffer_size: 10000
+  min_experiences: 1000
+  update_frequency: 100
+
+policy:
+  entropy_beta: 0.01
+  clip_ratio: 0.2
+  value_coef: 0.5
+  max_grad_norm: 0.5
+
+optimization:
+  optimizer: "adam"
+  learning_rate_schedule: "linear"
+  warmup_steps: 1000
+  decay_rate: 0.1
+```
+
+## Implementation Guidelines
+
+### State Representation
+```typescript
+interface RLState {
+  codeContext: {
+    fileType: string;
+    complexity: number;
+    dependencies: string[];
+    patterns: Pattern[];
+  };
+  userContext: {
+    energyLevel: number;
+    focusState: FocusState;
+    preferences: UserPreferences;
+  };
+  taskContext: {
+    complexity: number;
+    priority: number;
+    dependencies: string[];
+  };
+  environmentContext: {
+    timeOfDay: number;
+    systemResources: SystemMetrics;
+  };
+}
+```
+
+### Action Representation
+```typescript
+interface RLAction {
+  type: ActionType;
+  target: string;
+  parameters: Record<string, any>;
+  confidence: number;
+  expectedReward: number;
+}
+```
+
+### Reward Calculation
+```typescript
+function calculateReward(
+  state: RLState,
+  action: RLAction,
+  outcome: ActionOutcome
+): number {
+  return (
+    outcome.codeQualityImprovement * 0.3 +
+    outcome.taskCompletionRate * 0.3 +
+    outcome.userProductivity * 0.2 +
+    outcome.focusEffectiveness * 0.1 +
+    outcome.energyAlignment * 0.1
+  );
+}
+```
+
+## Monitoring and Evaluation
+
+### Metrics to Track
+- Average reward per episode
+- Policy loss and value loss
+- Exploration rate over time
+- State-action value estimates
+- Model convergence metrics
+
+### Performance Indicators
+- Code quality improvement rate
+- Task completion velocity
+- User satisfaction scores
+- Focus session duration
+- Energy state optimization
+
+### Adaptation Signals
+- User feedback and corrections
+- Task completion patterns
+- Energy level transitions
+- Focus session outcomes
+- Rule effectiveness metrics
+
+## Safety Guidelines
+
+### Exploration Constraints
+- Maximum exploration rate: 20%
+- Minimum confidence threshold: 0.7
+- Action validation required
+- Rollback capability for actions
+- User override always available
+
+### Policy Updates
+- Gradual policy changes only
+- A/B testing for major changes
+- User feedback validation
+- Performance regression checks
+- Automatic rollback triggers
+
+## Integration Example
+
+```typescript
+class RLAgent {
+  private state: RLState;
+  private policy: Policy;
+  private memory: ExperienceBuffer;
+  private metrics: MetricsTracker;
+
+  async selectAction(state: RLState): Promise<RLAction> {
+    if (this.shouldExplore()) {
+      return this.exploreAction(state);
+    }
+    return this.policy.getBestAction(state);
+  }
+
+  async update(
+    state: RLState,
+    action: RLAction,
+    reward: number,
+    nextState: RLState
+  ): Promise<void> {
+    // Store experience
+    this.memory.add({state, action, reward, nextState});
+    
+    // Update policy if enough experiences
+    if (this.memory.size >= this.config.minExperiences) {
+      await this.updatePolicy();
+    }
+    
+    // Track metrics
+    this.metrics.track(state, action, reward);
+  }
+
+  private async updatePolicy(): Promise<void> {
+    const batch = this.memory.sample(this.config.batchSize);
+    const loss = await this.policy.update(batch);
+    this.metrics.trackPolicyUpdate(loss);
+  }
+}
+``` 

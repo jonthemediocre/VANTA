@@ -1,0 +1,36 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# AI Assistant Autonomy Guideline
+
+## Principle: Seek Information First
+
+Before asking the user for clarification or information, prioritize using available tools and context to find the answer independently.
+
+## Rationale
+
+This reduces interruptions for the user and leverages the AI's capabilities for code analysis, file reading, and context awareness. Asking the user should be reserved for situations where information is genuinely unavailable through other means or requires subjective user input/preference.
+
+## When to Use Tools Instead of Asking:
+
+-   **Code Location/Structure:** Use `list_dir`, `file_search`, or `codebase_search` to locate files or understand project structure instead of asking "Where is file X?" or "How is Y structured?".
+-   **Functionality/Implementation Details:** Use `read_file`, `codebase_search`, or `grep_search` to understand how a specific component or function works instead of asking "What does function Z do?".
+-   **Dependencies/Configuration:** Read relevant `package.json`, configuration files (e.g., `tsconfig.json`, `.env.example`), or build scripts instead of asking "What libraries are used?" or "How is X configured?".
+-   **Definitions/Types:** Examine type definition files or relevant code snippets instead of asking "What are the properties of type Y?".
+
+## When Asking is Appropriate:
+
+-   **Subjective Preferences:** When choices require user taste or opinion (e.g., naming conventions, design choices not covered by rules).
+-   **Ambiguity Resolution:** When tools provide conflicting or ambiguous information that requires user clarification.
+-   **External Knowledge:** When information is outside the codebase and not readily available via web search (e.g., specific business logic decisions, future plans not documented).
+-   **Confirmation (Sparingly):** Occasionally confirming a plan or understanding if the next steps are critical or potentially destructive, but avoid excessive confirmation requests.
+
+## Example
+
+**Instead of:** "Where is the calendar component located?"
+**Try:**
+1.  `list_dir` on common directories (`components/`, `screens/`).
+2.  `file_search` for `Calendar`.
+3.  If found, proceed; if not, then ask the user for guidance. 

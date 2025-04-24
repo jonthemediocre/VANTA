@@ -1,0 +1,51 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# RULE TYPE: Manual
+# FILE PATTERNS: package.json, package-lock.json
+
+# Monorepo Dependency Troubleshooting
+
+## Trigger
+
+This rule applies when facing persistent `npm install` failures (e.g., `ERESOLVE`, `EUNSUPPORTEDPROTOCOL workspace:`) or inconsistent build errors related to module resolution in a workspace setup.
+
+## Priority
+
+Critical - Foundational dependency issues block all other development.
+
+## Steps
+
+1.  **Clean Slate:**
+    *   Delete the root `node_modules` directory (`rm -rf node_modules` or `Remove-Item -Recurse -Force node_modules` on Windows).
+    *   Delete the root `package-lock.json` (or `yarn.lock` / `pnpm-lock.yaml`).
+    *   Optionally, clear the package manager cache (`npm cache clean --force`, `yarn cache clean`).
+
+2.  **Validate Root `package.json`:**
+    *   Ensure the `workspaces` field correctly lists all package/app directories (e.g., `"apps/*", "packages/*"`).
+    *   Minimize direct dependencies here; prefer dependencies within specific workspaces unless truly shared.
+    *   Verify syntax of `workspace:` references in other `package.json` files (should be `workspace:*` or `workspace:^version`).
+
+3.  **Attempt Fresh Install:**
+    *   Run `npm install` (or `yarn install` / `pnpm install`) from the root directory without flags.
+
+4.  **Prune PNPM Store (If Using PNPM):**
+    *   If using `pnpm` and the fresh install fails (especially with resolution errors), run `pnpm store prune` to remove unreferenced or potentially corrupt packages from pnpm's global content-addressable store. This is a more thorough cleaning than `npm cache clean`.
+    *   Attempt `pnpm install` again after pruning.
+
+5.  **Use Install Flags (If Necessary):**
+    *   If `ERESOLVE` errors persist due to peer dependency conflicts, try installing with `--legacy-peer-deps` (npm) or accept peer dependency resolutions offered by yarn/pnpm.
+    *   Use `--force` only as a last resort, as it can lead to broken installs.
+
+6.  **Consider Alternative Package Manager:**
+    *   If `npm` continues to fail, especially with workspace protocol errors, consider switching to `pnpm` or `yarn` which often have more robust workspace handling.
+
+7.  **Normalize Tooling Configuration (If Applicable):**
+    *   Ensure consistent TypeScript (`tsconfig.json`), Babel (`babel.config.js`), and other build tool configurations across workspaces, especially between React Native and Web setups.
+    *   For Next.js + RN/shared packages: Configure `next.config.js` with `transpilePackages` and `react-native-web` alias.
+
+## Outcome
+
+A stable dependency graph where `npm install` (or equivalent) succeeds reliably, and modules between workspaces resolve correctly during builds.

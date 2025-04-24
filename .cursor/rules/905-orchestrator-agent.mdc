@@ -1,0 +1,297 @@
+---
+description: "Orchestrator Agent: Dynamically routes tasks to specialized agents based on context, file types, and user state"
+globs: ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx", "**/*.md"]
+alwaysApply: true
+---
+
+import { AgentType, TaskType, EnergyLevel, FocusState } from "../lib/ai/agents/orchestrator";
+
+/**
+ * Orchestrator Agent MDC Rule
+ * 
+ * Core responsibilities:
+ * - Monitor user context and task requests
+ * - Analyze file types and content for task classification
+ * - Select the most appropriate specialized agent based on context
+ * - Handle transitions between agents while preserving context
+ * - Collect performance metrics for reinforcement learning
+ * 
+ * This rule is a critical part of the reinforcement learning framework,
+ * enabling dynamic agent routing and stateful transitions.
+ */
+
+export const OrchestratorRule = {
+  priority: 'critical',
+  
+  onFileChange: function(context) {
+    // Extract file extension and user state from context
+    const fileExtension = context.currentFile?.path.split('.').pop();
+    const userState = getUserStateFromContext(context);
+    
+    // Infer task type from the current file and context
+    const inferredTaskType = inferTaskTypeFromContext(context);
+    
+    // Check if there are hints of a task transition
+    if (shouldSuggestAgentTransition(context, inferredTaskType)) {
+      const suggestedAgent = selectAgentForTaskType(inferredTaskType, fileExtension, userState);
+      
+      return {
+        suggestion: `This appears to be a ${inferredTaskType} task. Would you like me to route this to the ${suggestedAgent} agent?`,
+        actions: [
+          {
+            label: `Use ${suggestedAgent}`,
+            command: "mcp_orchestrator.transition",
+            args: {
+              fromAgent: context.activeAgent || "code_assistant",
+              toAgent: suggestedAgent,
+              reason: `Switched based on ${inferredTaskType} task detection`,
+              context: {
+                files: [context.currentFile?.path],
+                energyLevel: userState.energyLevel
+              }
+            }
+          }
+        ]
+      };
+    }
+    
+    return null;
+  },
+  
+  onUserQuery: function(context) {
+    const query = context.query;
+    
+    // Check if user is explicitly requesting an agent transition
+    const transitionRequest = checkForAgentTransitionRequest(query);
+    if (transitionRequest) {
+      return {
+        suggestion: `Transitioning to ${transitionRequest.toAgent} agent`,
+        actions: [
+          {
+            label: `Confirm transition to ${transitionRequest.toAgent}`,
+            command: "mcp_orchestrator.transition",
+            args: {
+              fromAgent: context.activeAgent || "code_assistant",
+              toAgent: transitionRequest.toAgent,
+              reason: transitionRequest.reason || `User requested transition to ${transitionRequest.toAgent}`,
+              context: {
+                files: context.recentFiles || [],
+                energyLevel: getUserStateFromContext(context).energyLevel
+              }
+            }
+          }
+        ]
+      };
+    }
+    
+    // Infer task type from user query
+    const inferredTaskType = inferTaskTypeFromQuery(query);
+    const confidence = getTaskTypeConfidence(query, inferredTaskType);
+    
+    // If we're highly confident this is a specific task type, suggest routing
+    if (confidence > 0.75) {
+      const fileExtension = context.currentFile?.path.split('.').pop();
+      const userState = getUserStateFromContext(context);
+      const suggestedAgent = selectAgentForTaskType(inferredTaskType, fileExtension, userState);
+      
+      return {
+        suggestion: `This appears to be a ${inferredTaskType} task. Would you like me to handle this as the ${suggestedAgent} agent?`,
+        actions: [
+          {
+            label: `Use ${suggestedAgent}`,
+            command: "mcp_orchestrator.route",
+            args: {
+              task: query,
+              files: [context.currentFile?.path],
+              energyLevel: userState.energyLevel,
+              focusState: userState.focusState
+            }
+          }
+        ]
+      };
+    }
+    
+    return null;
+  }
+};
+
+/**
+ * Helper function to infer task type from file context
+ */
+function inferTaskTypeFromContext(ctx) {
+  const filePath = ctx.currentFile?.path || '';
+  const fileName = filePath.split('/').pop().toLowerCase();
+  const fileExt = filePath.split('.').pop().toLowerCase();
+  
+  // Check file extension patterns
+  if (fileExt === 'md' || fileExt === 'mdx') return 'documentation';
+  if (fileExt === 'test.ts' || fileExt === 'spec.ts' || fileName.includes('test')) return 'testing';
+  if (fileExt === 'css' || fileExt === 'scss' || fileName.includes('component')) return 'ui_design';
+  if (fileExt === 'yml' || fileExt === 'yaml' || fileName.includes('docker') || fileName.includes('workflow')) return 'deployment';
+  
+  // Default to code implementation
+  return 'code_implementation';
+}
+
+/**
+ * Helper function to infer task type from user query
+ */
+function inferTaskTypeFromQuery(query) {
+  query = query.toLowerCase();
+  
+  // Check for documentation keywords
+  if (query.includes('document') || query.includes('readme') || query.includes('guide')) {
+    return 'documentation';
+  }
+  
+  // Check for testing keywords
+  if (query.includes('test') || query.includes('spec') || query.includes('validate')) {
+    return 'testing';
+  }
+  
+  // Check for UI keywords
+  if (query.includes('design') || query.includes('ui') || query.includes('interface') || query.includes('component')) {
+    return 'ui_design';
+  }
+  
+  // Check for deployment keywords
+  if (query.includes('deploy') || query.includes('pipeline') || query.includes('ci/cd') || query.includes('publish')) {
+    return 'deployment';
+  }
+  
+  // Check for learning keywords
+  if (query.includes('learn') || query.includes('improve') || query.includes('train') || query.includes('feedback')) {
+    return 'learning';
+  }
+  
+  // Default to code implementation
+  return 'code_implementation';
+}
+
+/**
+ * Calculate confidence in the task type inference
+ */
+function getTaskTypeConfidence(query, taskType) {
+  const keywords = {
+    'documentation': ['document', 'readme', 'guide', 'docs', 'tutorial', 'explain'],
+    'testing': ['test', 'spec', 'validate', 'verification', 'assert', 'coverage'],
+    'ui_design': ['design', 'ui', 'interface', 'component', 'layout', 'style', 'css'],
+    'deployment': ['deploy', 'pipeline', 'ci/cd', 'publish', 'release', 'build'],
+    'learning': ['learn', 'improve', 'train', 'feedback', 'reinforce'],
+    'code_implementation': ['implement', 'code', 'function', 'class', 'method', 'feature']
+  };
+  
+  const relevantKeywords = keywords[taskType] || [];
+  const matches = relevantKeywords.filter(kw => query.toLowerCase().includes(kw)).length;
+  
+  return Math.min(1.0, matches / Math.max(2, relevantKeywords.length * 0.5));
+}
+
+/**
+ * Select appropriate agent based on task type and context
+ */
+function selectAgentForTaskType(taskType, fileExtension, userState) {
+  // Default mappings
+  const agentMap = {
+    'code_implementation': 'code_assistant',
+    'ui_design': 'ux_expert',
+    'documentation': 'documentation_agent',
+    'testing': 'test_engineer',
+    'deployment': 'devops_agent',
+    'learning': 'rl_trainer'
+  };
+  
+  // Adjust based on energy level
+  if (userState.energyLevel === 'low') {
+    if (taskType === 'code_implementation') {
+      return 'documentation_agent'; // Lower cognitive load for low energy
+    }
+  }
+  
+  return agentMap[taskType] || 'code_assistant';
+}
+
+/**
+ * Extract user state from context
+ */
+function getUserStateFromContext(context) {
+  return {
+    energyLevel: context.userState?.energyLevel || 'medium',
+    focusState: context.userState?.focusState || 'normal',
+    intent: context.userState?.intent || ''
+  };
+}
+
+/**
+ * Check if we should suggest an agent transition
+ */
+function shouldSuggestAgentTransition(context, inferredTaskType) {
+  // Don't suggest transition if this is the first file change
+  if (!context.previousFile) return false;
+  
+  const previousFileType = inferTaskTypeFromFilePath(context.previousFile.path);
+  
+  // Only suggest transition if the task type has changed
+  return previousFileType !== inferredTaskType;
+}
+
+/**
+ * Infer task type from a file path
+ */
+function inferTaskTypeFromFilePath(filePath) {
+  const fileName = filePath.split('/').pop().toLowerCase();
+  const fileExt = filePath.split('.').pop().toLowerCase();
+  
+  if (fileExt === 'md' || fileExt === 'mdx') return 'documentation';
+  if (fileExt === 'test.ts' || fileExt === 'spec.ts' || fileName.includes('test')) return 'testing';
+  if (fileExt === 'css' || fileExt === 'scss' || fileName.includes('component')) return 'ui_design';
+  if (fileExt === 'yml' || fileExt === 'yaml' || fileName.includes('docker')) return 'deployment';
+  
+  return 'code_implementation';
+}
+
+/**
+ * Check if user is requesting an agent transition
+ */
+function checkForAgentTransitionRequest(query) {
+  const transitionPatterns = [
+    { regex: /use (the )?(\w+) agent/i, agentIndex: 2 },
+    { regex: /switch to (the )?(\w+) agent/i, agentIndex: 2 },
+    { regex: /change to (the )?(\w+) agent/i, agentIndex: 2 }
+  ];
+  
+  for (const pattern of transitionPatterns) {
+    const match = query.match(pattern.regex);
+    if (match) {
+      const requestedAgent = match[pattern.agentIndex].toLowerCase();
+      const agentMapping = {
+        'code': 'code_assistant',
+        'documentation': 'documentation_agent',
+        'doc': 'documentation_agent',
+        'test': 'test_engineer',
+        'ui': 'ux_expert',
+        'ux': 'ux_expert',
+        'design': 'ux_expert',
+        'deployment': 'devops_agent',
+        'devops': 'devops_agent',
+        'learning': 'rl_trainer',
+        'reinforcement': 'rl_trainer'
+      };
+      
+      const targetAgent = agentMapping[requestedAgent] || requestedAgent;
+      
+      // Validate that this is a known agent type
+      const knownAgents = Object.values(agentMapping);
+      if (knownAgents.includes(targetAgent)) {
+        return {
+          toAgent: targetAgent,
+          reason: `User requested transition to ${targetAgent}`
+        };
+      }
+    }
+  }
+  
+  return null;
+}
+
+export default OrchestratorRule; 

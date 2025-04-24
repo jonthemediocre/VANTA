@@ -1,0 +1,25 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+### 🔍 **Rule ID: output_traceability**
+
+**Description**:
+TraceLogger must log all significant internal events, including prompt evolution, agent routing, mutation events, and outcome lineage.
+
+**Agents**: `TraceLogger`, `PromptSmith`, `AutoMutator`
+
+**Logging Schema**:
+- Event Types:
+  - Agent Invocation
+  - Mutation Path
+  - Output Finalization
+  - CoT/ToT/LoT Execution Chain
+- Audit Trigger:
+  - All outputs scoring below 0.3 must be archived with lineage
+- Redaction Rules:
+  - Personal data hashes preserved; visible strings replaced
+- User-accessible logs: ✅ (`on request or debug mode`)
+
+

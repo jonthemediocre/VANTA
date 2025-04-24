@@ -1,0 +1,56 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+---
+description: Base RZN Application Rules
+globs: **/*
+alwaysApply: true
+---
+
+# RZN App Core Principles
+
+## Architectural Patterns
+- Use Server and Client Components appropriately in Next.js
+- Client Components must include "use client" directive at the top
+- Centralize shared resources in dedicated files (icons, themes, etc.)
+- Implement proper error boundaries around components
+- Follow Test-Driven Development practices
+
+## UI Components
+- Use the centralized Icons object from `src/components/ui/icons.tsx`
+- Never use direct Lucide icon imports in components
+- Error boundaries should provide user-friendly fallback UI
+- Implement progressive disclosure for complex UIs
+- Support keyboard navigation for all interactive elements
+
+## Database Access
+- Handle database connection failures gracefully
+- Support development mode without database connection
+- Use mock data for development and testing
+- Apply proper connection pooling
+
+## Error Handling
+- Specific error handling for database connection issues
+- Use ErrorBoundary components for component-level errors
+- Log errors appropriately before displaying to users
+- Provide actionable steps for users when errors occur
+
+## ADHD-Optimized Patterns
+- Use visual differentiation for UI elements
+- Implement single-focus interfaces where possible
+- Reduce decision paralysis through clear UI patterns
+- Use color-coding and icons for quick recognition
+
+## AI Learning Process
+- Document learnings in `/dev/ai-learnings.md` with consistent formatting
+- Use emoji categories to organize learnings by type
+- Apply insights from AI learnings to evolve coding standards
+- Reference AI learnings when implementing similar patterns
+
+## Cursor MDC Rules
+- Project-specific MDC rules are in `.cursor/rules/`
+- Open source reference MDC rules are in `.cursor/rules/opensource/`
+- See `.cursor/rules/700-opensource-mdc.mdc` for external rule index
+- Update open source MDC rules using `.cursor/scripts/update-mdc-rules.sh` 

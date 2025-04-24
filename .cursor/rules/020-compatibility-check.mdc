@@ -1,0 +1,50 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+\
+---
+description: Mandates pre-flight checks for core technology stack compatibility, especially shared dependencies like React, during project initialization.
+globs: ["THEPLAN.md", "ARCHITECTURE.md"]
+type: strategy
+---
+
+# RULE TYPE: Strategy
+# FILE PATTERNS: THEPLAN.md, ARCHITECTURE.md
+
+# Pre-flight Technology Stack Compatibility Check
+
+## Principle
+
+Before significant development begins (Phase 1+), verify and document the compatible versions of core frameworks and libraries, paying special attention to shared foundational dependencies like the UI framework (e.g., React).
+
+## Rationale
+
+Assumed compatibility between the latest versions of different major frameworks (e.g., Next.js and Expo/React Native) is a common source of complex dependency conflicts, leading to significant delays and rework. Explicitly verifying and documenting compatible versions upfront prevents these issues.
+
+## Application
+
+1.  **Identify Core Stack & Shared Dependencies:** List the primary frameworks defined in `THEPLAN.md` (e.g., Next.js, Expo, Prisma, tRPC).
+2.  **Identify Critical Shared Dependencies:** Determine the core underlying libraries required by multiple major frameworks (e.g., `react`, `react-dom`).
+3.  **Research Compatibility:**
+    *   Consult the official documentation for *each* core framework regarding its required version for the critical shared dependencies (e.g., Check Next.js docs for its required React version, check Expo/React Native docs for its required React version).
+    *   Look for official compatibility tables or release notes.
+    *   Prioritize stable versions unless `THEPLAN.md` explicitly requires experimental/beta features.
+4.  **Select Compatible Set:** Choose a set of versions for the core frameworks where the required versions of shared dependencies align (e.g., Select a Next.js version compatible with the React version required by the chosen Expo SDK).
+5.  **Document Verified Versions:** Add a dedicated section to `THEPLAN.md` or `ARCHITECTURE.md` explicitly listing the *verified compatible versions* of the core stack components that will be used for the project (e.g., "Verified Stack: Next.js v14.x.x, Expo SDK v51.x.x, React v18.2.0, React Native v0.74.x").
+6.  **Enforce During Setup:** Ensure initial project setup and dependency installation uses these verified versions.
+
+## Example Scenario (InnerCircle Project)
+
+-   **Initial Plan:** Next.js 15+, Expo
+-   **Shared Dependency:** React
+-   **Research:**
+    -   Next.js 15 requires React 18.3+/19RC.
+    -   Stable Expo SDK 51 requires React Native 0.74, which strictly requires React 18.2.0.
+-   **Conflict Identified:** Direct incompatibility in required React versions.
+-   **Resolution:** Choose a compatible set -> Next.js 14 (compatible with React 18.2.0) + Expo SDK 51 (requires React 18.2.0).
+-   **Documentation:** Update `THEPLAN.md` to specify "Verified Stack: Next.js v14, Expo SDK v51, React v18.2.0...".
+
+---
+*This check prevents significant integration problems early in the development lifecycle.*

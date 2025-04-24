@@ -1,0 +1,129 @@
+---
+description: Guidelines for implementing LLM (Language Model) functionality in the application
+globs: lib/llm/*.ts, lib/ai/*.ts, utils/llm/*.ts, hooks/use*Llm*.ts
+type: autoAttached
+---
+
+# RULE TYPE: Auto Attached
+# FILE PATTERNS: lib/llm/*.ts, lib/ai/*.ts, utils/llm/*.ts, hooks/use*Llm*.ts
+
+# LLM Implementation Guidelines
+
+## Client Setup
+- Use the LLM client from `lib/llm/client.ts`
+- Configure models in the environment variables
+- Handle rate limiting and retries
+- Implement proper error handling
+
+## Prompt Engineering
+- Store prompts in separate files
+- Use template strings for dynamic prompts
+- Include clear instructions in prompts
+- Structure prompts for consistent outputs
+
+## Response Handling
+- Validate and sanitize LLM responses
+- Parse structured data with defined schemas
+- Handle edge cases and unexpected outputs
+- Implement fallbacks for failed requests
+
+## Streaming Responses
+- Use streaming for better user experience
+- Implement proper UI feedback during streaming
+- Handle early termination of streams
+- Buffer and process partial responses
+
+## Best Practices
+- Keep sensitive data out of prompts
+- Implement content moderation
+- Cache responses when appropriate
+- Monitor and log usage for optimization
+- Test LLM integrations with automated tests
+- For testing guidelines, see **@llm-test.mdc**
+
+## Reinforcement Learning Integration
+- Use the RL framework for feedback collection
+- Implement policy-based completions
+- Track user interactions for learning
+- For RL framework details, see **@902-rl-agent.mdc**
+
+## Related MDC Rules
+- **@llm-test.mdc**: For testing LLM functionality
+- **@902-rl-agent.mdc**: For reinforcement learning integration
+- **@api-routes.mdc**: For LLM-powered API endpoints
+- **@300-error-handling.mdc**: For error handling patterns
+- **@logging.mdc**: For proper logging in LLM components
+- **@data-fetching.mdc**: For fetching data to use with LLMs
+
+## Directory Structure
+
+LLM-related code is organized in specific directories:
+
+- `apps/web/utils/ai/` - Main LLM implementations
+- `apps/web/utils/llms/` - Core LLM utilities and configurations
+- `apps/web/__tests__/` - LLM-specific tests
+
+
+## Key Files
+- `utils/llms/index.ts` - Core LLM functionality
+- `utils/llms/model.ts` - Model definitions and configurations
+- `utils/usage.ts` - Usage tracking and monitoring
+
+## Implementation Guidelines
+
+1. Use type-safe LLM responses with `chatCompletionObject` or `chatCompletionTools`:
+
+```typescript
+const aiResponse = await chatCompletionObject({
+  userAi: user,
+  messages: [
+    { role: "system", content: systemPrompt },
+    { role: "user", content: userPrompt },
+  ],
+  schema: z.object({
+    // Define expected response shape
+    field: z.string(),
+  }),
+  userEmail: user.email,
+  usageLabel: "Operation Name",
+});
+```
+
+2. Always implement logging:
+
+```typescript
+import { createScopedLogger } from "@/utils/logger";
+const logger = createScopedLogger("scope-name");
+
+logger.trace("Input", { system, prompt });
+logger.warn("Warning message");
+```
+
+3. Structure AI functions with clear types:
+
+```typescript
+type Options = {
+  input: InputType;
+  user: UserEmailWithAI;
+};
+
+export async function aiFunction(options: Options) {
+  const { input, user } = options;
+  // Implementation
+}
+```
+
+## Error Handling
+
+1. Use proper error types and logging
+2. Implement fallbacks for AI failures
+3. Return structured error responses
+4. Add retry logic for transient failures
+5. For detailed error handling, see **@300-error-handling.mdc**
+
+## Testing
+
+1. Place AI-specific tests in `apps/web/__tests__/`
+2. Test both success and failure cases
+3. Use mock data for development testing
+4. For comprehensive testing guidelines, see **@llm-test.mdc**

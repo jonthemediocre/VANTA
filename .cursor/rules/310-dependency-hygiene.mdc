@@ -1,0 +1,56 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# RULE TYPE: Manual
+
+# Dependency Hygiene and Vulnerability Management
+
+## Principle
+Maintain project security and stability by regularly reviewing and addressing vulnerabilities in third-party dependencies.
+
+## Process
+
+1.  **Frequency**:
+    *   Run `npm audit` (or equivalent for yarn/pnpm) at least **weekly**.
+    *   Run `npm audit` **before creating a release branch or deploying** to production.
+    *   Integrate an audit check into the CI/CD pipeline (see CI Integration below).
+
+2.  **Execution**:
+    *   Navigate to the project root directory (or relevant workspace).
+    *   Run `npm audit`.
+
+3.  **Initial Remediation**:
+    *   Attempt automatic fixing: `npm audit fix`.
+    *   If dependency conflicts occur (especially in workspaces), try `npm audit fix --legacy-peer-deps` (use cautiously and align with project's install strategy, see `package.json` scripts).
+
+4.  **Manual Triage (If `fix` is incomplete or requires `--force`)**:
+    *   Review the remaining vulnerabilities reported by `npm audit`.
+    *   **Categorize:** Note the severity (Low, Moderate, High, Critical).
+    *   **Assess Impact:** Evaluate if the vulnerability is exploitable within the context of how the dependency is used in *this* project. Check for known exploits.
+    *   **Prioritize:**
+        *   **Critical/High:** Address immediately. Investigate manual package updates or use `npm audit fix --force` (with thorough testing). If a direct fix isn't possible (e.g., requires breaking changes incompatible with current needs, or no patched version available), document the vulnerability, the assessment, and the mitigation plan (e.g., input sanitization, alternative package, waiting for upstream fix).
+        *   **Moderate:** Address before the next release or within the current sprint/cycle.
+        *   **Low:** Address periodically (e.g., quarterly) or when updating the relevant package for other reasons.
+    *   **Investigate Manual Updates:** Check `npm outdated` or the package's repository for newer versions that resolve the vulnerability. Update manually if `npm audit fix` fails.
+    *   **Documentation:** Log decisions for deferred fixes or forced updates (including rationale and testing results) in `THEPLAN.md` under a dedicated "Security Debt" section or in `600-ai-learnings.mdc` under a "Vulnerability Management" category.
+
+5.  **Responsibility**:
+    *   The developer introducing or significantly modifying dependencies in a feature branch should run `npm audit` before merging.
+    *   The release manager or lead developer is responsible for the pre-release audit check.
+    *   Regular weekly checks can be assigned to a rotating role or a specific team member.
+
+6.  **CI Integration**:
+    *   Add a step in the CI pipeline (e.g., GitHub Actions workflow) to run `npm audit --audit-level=moderate` (or `--audit-level=high`).
+    *   Configure the CI step to **fail the build** if vulnerabilities at or above the specified level are found. This prevents merging or deploying code with known significant vulnerabilities.
+
+## Tools
+- `npm audit`
+- `npm outdated`
+- (Optional) Tools like Snyk, Dependabot for automated scanning.
+
+## Related Rules
+- @cleaner.mdc: General code maintenance.
+- @600-ai-learnings.mdc: Documenting vulnerability decisions.
+- @THEPLAN.md: Tracking security debt if fixes are deferred.

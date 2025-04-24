@@ -1,0 +1,153 @@
+---
+description: MDC Rules Monitoring Agent ai learning reinforcemnt learning
+globs: 
+alwaysApply: false
+---
+---
+description: Configuration for the MDC Rules Monitoring Agent
+---
+
+# RULE TYPE: Agent Requested
+# FILE PATTERNS: Not applicable for Agent Requested rules
+
+# MDC Rules Monitoring Agent
+
+## Agent Purpose
+- Monitor and analyze MDC rule usage
+- Detect patterns in code changes
+- Propose rule updates
+- Track rule effectiveness
+- Generate insights for improvement
+
+## Pattern Detection
+
+### Code Change Analysis
+- Monitor commit diffs for pattern detection
+- Analyze test results for success patterns
+- Track error patterns and solutions
+- Identify common code structures
+
+### Usage Analysis
+- Track which rules are most frequently applied
+- Monitor rule violation patterns
+- Analyze developer feedback
+- Track rule effectiveness metrics
+
+## Learning Process
+
+### Pattern Documentation
+```yaml
+pattern:
+  type: string  # 'success' | 'error' | 'improvement'
+  category: string  # UX, Component, Pattern, etc.
+  context: string  # Where the pattern was observed
+  description: string  # What the pattern does
+  impact: string  # How it affects the codebase
+  frequency: number  # How often it occurs
+  confidence: number  # How confident we are in the pattern
+```
+
+### Rule Evolution
+```yaml
+ruleUpdate:
+  rule: string  # Rule file name
+  type: string  # 'new' | 'update' | 'deprecate'
+  changes:
+    - type: string  # What kind of change
+      reason: string  # Why the change is needed
+      impact: string  # Expected impact
+      validation: string[]  # How to validate the change
+```
+
+## Integration Points
+
+### With GitHub Actions
+- Monitor workflow runs
+- Track test results
+- Analyze code coverage
+- Process PR feedback
+
+### With Test Framework
+- Analyze test patterns
+- Track test coverage
+- Monitor performance metrics
+- Detect flaky tests
+
+### With Code Analysis
+- Track code quality metrics
+- Monitor complexity trends
+- Analyze dependency usage
+- Track technical debt
+
+## Reporting
+
+### Daily Reports
+- Rule usage statistics
+- Pattern detection summary
+- Proposed rule updates
+- Action items
+
+### Weekly Analysis
+- Trend analysis
+- Pattern validation
+- Rule effectiveness
+- Improvement suggestions
+
+### Monthly Review
+- Comprehensive analysis
+- Rule update proposals
+- Documentation updates
+- Strategy adjustments
+
+## Configuration
+
+```yaml
+agent:
+  name: mdc-monitor
+  version: 1.0.0
+  
+monitoring:
+  patterns:
+    minConfidence: 0.8
+    minFrequency: 3
+    categories:
+      - UX
+      - Component
+      - Pattern
+      - Error
+      - Performance
+      
+  rules:
+    updateThreshold: 0.7
+    deprecationThreshold: 0.3
+    minValidationPeriod: 7  # days
+    
+  reporting:
+    daily: true
+    weekly: true
+    monthly: true
+    
+  integration:
+    github: true
+    tests: true
+    codeAnalysis: true
+    
+  learning:
+    autoUpdate: true
+    requireApproval: true
+    notifyChanges: true
+```
+
+## Usage
+
+1. The agent automatically monitors the codebase and generates reports
+2. Developers can request pattern analysis using comments
+3. The agent proposes rule updates through PRs
+4. Monthly reviews include agent insights
+
+## Maintenance
+
+1. Regular calibration of detection thresholds
+2. Validation of pattern detection accuracy
+3. Review of rule update proposals
+4. Adjustment of monitoring parameters 

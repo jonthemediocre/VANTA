@@ -1,0 +1,13 @@
+{
+  "demo_goal_02e422": {
+    "created": "2025-04-22",
+    "milestones": [
+      {
+        "id": "m1",
+        "title": "First milestone",
+        "due": "2025-04-22",
+        "status": "todo"
+      }
+    ]
+  }
+}

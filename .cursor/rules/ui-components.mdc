@@ -1,0 +1,142 @@
+---
+description: UI component and styling guidelines using Shadcn UI, Radix UI, and Tailwind
+globs: components/.tsx, .css, .scss, ui/.tsx
+type: autoAttached
+---
+
+# RULE TYPE: Auto Attached
+# FILE PATTERNS: components/.tsx, .css, .scss, ui/.tsx
+
+# UI Component Guidelines
+
+## Component Library
+- Use Shadcn UI components when available
+- Follow Radix UI accessibility practices
+- Customize components using the Tailwind config
+- Create reusable components for repeated UI patterns
+
+## Styling Principles
+- Use Tailwind CSS for styling
+- Follow the project's color scheme in `tailwind.config.js`
+- Use CSS variables for theme values
+- Maintain dark mode compatibility
+- Follow responsive design principles
+
+## Component Structure
+- Keep components focused and single-purpose
+- Use proper typing for component props
+- Extract complex logic to custom hooks
+- Implement proper loading and error states
+- Follow responsive design principles
+
+## Accessibility
+- Ensure proper ARIA attributes
+- Maintain keyboard navigation
+- Support screen readers
+- Use sufficient color contrast
+- Test with assistive technologies
+
+## Shadcn UI Usage
+- Import components from `@/components/ui`
+- Customize using Tailwind classes
+- Follow the component documentation
+- Update the components using the Shadcn CLI
+- Maintain the component registry
+
+## Icons
+- Use the centralized Icons component
+- Maintain consistent icon sizing
+- Provide appropriate accessibility attributes
+- Follow the icon guidelines in `icon-guidelines.md`
+
+## Forms
+- Use the Form components from Shadcn UI
+- Implement proper validation using Zod
+- Show clear error messages
+- Maintain form state properly
+- Provide appropriate feedback on submission
+- For detailed form guidelines, see: **@form-handling.mdc**
+
+## Best Practices
+- Use semantic HTML elements
+- Maintain consistent spacing using Tailwind's spacing scale
+- Follow a mobile-first approach
+- Implement proper focus management
+- Use CSS Grid and Flexbox appropriately
+
+## Data Fetching Integration
+- Use SWR for data fetching in components
+- Implement proper loading states
+- Handle errors gracefully
+- For detailed data fetching guidelines, see: **@data-fetching.mdc**
+
+## Related MDC Rules
+- **@form-handling.mdc**: For form validation and submission
+- **@data-fetching.mdc**: For data fetching in UI components
+- **@page-structure.mdc**: For page layout and composition
+- **@testing.mdc**: For component testing guidelines
+- **@400-adhd-patterns.mdc**: For ADHD-friendly UI patterns
+
+## UI Framework
+- Use Shadcn UI and Tailwind for components and styling
+- Implement responsive design with Tailwind CSS using a mobile-first approach
+- Use `next/image` package for images 
+
+## Install new Shadcn components
+
+```sh
+pnpm dlx shadcn@latest add COMPONENT
+```
+
+Example:
+
+```sh
+pnpm dlx shadcn@latest add progress
+```
+
+## Data Fetching with SWR
+For API get requests to server use the `swr` package:
+
+```typescript
+const searchParams = useSearchParams();
+const page = searchParams.get("page") || "1";
+const { data, isLoading, error } = useSWR<PlanHistoryResponse>(
+  `/api/user/planned/history?page=${page}`
+);
+```
+
+## Loading Components
+Use the `LoadingContent` component to handle loading states:
+
+```tsx
+<Card>
+  <LoadingContent loading={isLoading} error={error}>
+    {data && <MyComponent data={data} />}
+  </LoadingContent>
+</Card>
+```
+
+## Form Components
+### Text Inputs
+```tsx
+<Input
+  type="email"
+  name="email"
+  label="Email"
+  registerProps={register("email", { required: true })}
+  error={errors.email}
+/>
+```
+
+### Text Area
+```tsx
+<Input
+  type="text"
+  autosizeTextarea
+  rows={3}
+  name="message"
+  placeholder="Paste in email content"
+  registerProps={register("message", { required: true })}
+  error={errors.message}
+/>
+``` 

@@ -1,0 +1,51 @@
+---
+description: How to do backend logging
+globs: lib/logger/.ts, utils/logger/.ts, api/*.ts
+type: autoAttached
+---
+
+# RULE TYPE: Auto Attached
+# FILE PATTERNS: lib/logger/.ts, utils/logger/.ts, api/*.ts
+
+# Logging Guidelines
+
+## Logger Setup
+- Import the logger from `lib/logger.ts`
+- Use the appropriate log level based on severity
+- Include relevant context data with each log
+- Use structured logging format for better parsing
+
+## Log Levels
+- `logger.error()` - For errors and exceptions
+- `logger.warn()` - For warnings and potential issues
+- `logger.info()` - For general information and events
+- `logger.debug()` - For detailed debugging information
+
+## Best Practices
+- Log all API requests and responses
+- Include request IDs for tracing requests
+- Log errors with stack traces
+- Avoid logging sensitive information
+- Use consistent log formats
+
+We use `createScopedLogger` to do logging:
+
+```typescript
+import { createScopedLogger } from "@/utils/logger";
+
+const logger = createScopedLogger("action/rules");
+
+logger.log("Created rule", { userId });
+```
+
+Typically this will be added at the top of a file.
+If we have a large function that reuses multiple variables we can do this within a function:
+
+```typescript
+const logger = createScopedLogger("action/rules").with({ userId: user.id });
+
+// Can now call without passing userId:
+logger.log("Created rule");
+```
+
+Don't use `.with()` for a global logger. Only use within a specific function.

@@ -1,0 +1,80 @@
+---
+description: Fetching data from the API using SWR
+globs: hooks/use*.ts, lib/api/*.ts, components/*Data*.tsx
+type: autoAttached
+---
+
+# RULE TYPE: Auto Attached
+# FILE PATTERNS: hooks/use*.ts, lib/api/*.ts, components/*Data*.tsx
+
+# Data Fetching Guidelines
+
+## SWR Setup
+- Use SWR for client-side data fetching
+- Create custom hooks for reusable data fetching
+- Implement proper loading and error states
+- Use appropriate cache configurations
+
+## API Structure
+- Create typed API functions in `lib/api/`
+- Use consistent error handling patterns
+- Implement proper request validation
+- Return well-structured response objects
+
+## Error Handling
+- Handle fetch errors gracefully
+- Provide fallback UI for error states
+- Implement retry mechanisms where appropriate
+- Log errors for debugging
+- For comprehensive error handling, see **@300-error-handling.mdc**
+
+## Loading States
+- Show appropriate loading indicators
+- Implement skeleton loaders for better UX
+- Use optimistic UI updates when possible
+- For UI component guidelines, see **@ui-components.mdc**
+
+## Related MDC Rules
+- **@api-routes.mdc**: For creating API routes to fetch from
+- **@ui-components.mdc**: For UI components that display fetched data
+- **@300-error-handling.mdc**: For error handling patterns
+- **@logging.mdc**: For logging data fetching operations
+- **@testing.mdc**: For testing data fetching hooks
+
+## Best Practices
+- Fetch data at the highest necessary component level
+- Implement proper loading UI components
+- Add error handling with fallbacks
+- Use optimistic updates for mutations
+
+## Example Implementation
+```typescript
+// Data fetching hook with SWR
+import useSWR from 'swr';
+import { fetchUser } from '@/lib/api/user';
+
+export function useUser(id: string) {
+  const { data, error, isLoading, mutate } = useSWR(
+    id ? `/api/users/${id}` : null,
+    () => fetchUser(id),
+    {
+      revalidateOnFocus: false,
+      dedupingInterval: 60000, // 1 minute
+    }
+  );
+
+  return {
+    user: data,
+    isLoading,
+    isError: error,
+    mutate,
+  };
+}
+```
+
+## Server Components
+When using Next.js Server Components, consider these alternatives:
+- Fetch data directly in Server Components
+- Pass data down to Client Components
+- Use React Cache for server-side data fetching
+- For page structure guidelines, see **@page-structure.mdc** 

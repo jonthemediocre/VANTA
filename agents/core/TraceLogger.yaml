@@ -1,0 +1,14 @@
+name: TraceLogger
+description: Execution lineage and internal decision path recorder
+role: Ensures auditability and reproducibility of outputs
+functions:
+  - log_agent_chain(): Track which agents participated
+  - log_mutation(): Record changes made by AutoMutator
+  - log_prompt_scaffold(): Archive PromptSmith process trees
+log_modes:
+  - verbose
+  - summary
+outputs:
+  - trace_log.json
+  - mutation_history.yaml
+  - feedback_index.yaml

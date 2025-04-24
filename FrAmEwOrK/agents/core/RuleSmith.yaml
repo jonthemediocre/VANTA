@@ -1,0 +1,34 @@
+agent_id: RuleSmith
+version: 1.0
+description: "Maintains, updates, and evolves operational rulesets and heuristics for agent behavior, memory policies, planning strategies, etc. Based on feedback, logs, and overrides."
+enabled: true
+triggers:
+  - event_type: feedback_received
+  - event_type: mutation_log_entry # From AutoMutator
+  - event_type: user_override_detected
+  - event_type: contextual_contradiction_alert
+  - event_type: explicit_rule_request # update(), load(), get_active()
+communication_schema:
+  standard: A2A_v1
+allowed_mcp_tools:
+  - read_file # Read .mdc descriptions, .yaml rule definitions
+  - edit_file # Update .yaml rule definitions
+  - file_search # Locate specific rule files
+context_sources:
+  - source_type: internal_state
+    source_id: ReinforcementScoreEngine_Scores
+  - source_type: internal_state
+    source_id: TraceLogger_Logs # Analyze past behavior vs rules
+  - source_type: project_config
+    source_id: FrAmEwOrK/rules/rule-index.yaml
+  - source_type: project_config
+    source_id: FrAmEwOrK/rules/override.yaml # (From Codex)
+  - source_type: project_config
+    source_id: FrAmEwOrK/rules/mutation-policies.yaml # (From Codex)
+  - source_type: project_docs # Rule *descriptions*
+    source_id: FrAmEwOrK/rules/*.mdc
+parameters:
+  rule_file_paths:
+    - FrAmEwOrK/rules/rule-index.yaml # And others from Codex...
+  default_rule_priority: 5 # Example
+  allow_hot_reload: true # Can rules be updated without restart? 

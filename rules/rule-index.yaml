@@ -1,0 +1,13 @@
+# Rule Index for VANTA Modular Agentic FrAmEwOrK v2.3+
+- id: memory_retention
+  description: Controls memory storage, mutation, and garbage collection
+  agents: [MemoryWeaver, MemoryGC]
+- id: strategic_planning
+  description: Guides task evolution through long-term foresight
+  agents: [RoadmapPlanner]
+- id: agent_health
+  description: Ensures agent continuity and resets malfunctioning components
+  agents: [Watchdog]
+- id: output_traceability
+  description: Logs all outputs, decisions, and agent contributions
+  agents: [TraceLogger]

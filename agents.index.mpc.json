@@ -1,0 +1,150 @@
+{
+  "description": "Central registry for all agents within the VANTA framework.",
+  "version": "1.0",
+  "agents": [
+    {
+      "id": "agent_orchestrator",
+      "name": "AgentOrchestrator",
+      "type": "core/orchestration",
+      "implementation": {
+        "language": "python",
+        "file": "orchestrator.py",
+        "class": "AgentOrchestrator"
+      },
+      "config_path": "FrAmEwOrK/agents/core/AgentOrchestrator.yaml",
+      "status": "active",
+      "description": "Manages main execution loop, task routing, agent lifecycle.",
+      "dependencies": [
+        "agenda_scout",
+        "sunset_policy",
+        "moe_router",
+        "fact_verifier",
+        "self_tuner",
+        "outcome_logger",
+        "sandbox_vm",
+        "cross_modal_memory",
+        "rule_smith",
+        "memory_weaver"
+      ],
+      "tags": ["core", "orchestration", "lifecycle"]
+    },
+    {
+      "id": "rule_smith",
+      "name": "RuleSmith",
+      "type": "core/governance",
+      "implementation": {
+        "language": "python",
+        "file": "rules.py",
+        "class": "RuleSmith"
+      },
+      "config_path": "FrAmEwOrK/agents/core/RuleSmith.yaml",
+      "status": "conceptual",
+      "description": "Manages and enforces VANTA internal runtime rules.",
+      "dependencies": [],
+      "tags": ["core", "rules", "governance"]
+    },
+    {
+      "id": "memory_weaver",
+      "name": "MemoryWeaver",
+      "type": "core/memory",
+      "implementation": {
+        "language": "python",
+        "file": "memory.py",
+        "class": "MemoryWeaver"
+      },
+      "config_path": "FrAmEwOrK/agents/core/MemoryWeaver.yaml",
+      "status": "conceptual",
+      "description": "Manages layered memory interactions (VectorDB, Filesystem).",
+      "dependencies": ["cross_modal_memory"],
+      "tags": ["core", "memory", "storage", "vector"]
+    },
+    {
+      "id": "agenda_scout",
+      "name": "AgendaScout",
+      "type": "infrastructure/planning",
+      "implementation": { "language": "python", "file": "vanta_nextgen.py", "class": "AgendaScout" },
+      "config_path": null,
+      "status": "stub",
+      "description": "Selects next task from roadmap based on season value.",
+      "dependencies": ["roadmap_planner_component"],
+      "tags": ["stub", "planning", "task"]
+    },
+    {
+      "id": "moe_router",
+      "name": "MoERouter",
+      "type": "infrastructure/llm",
+      "implementation": { "language": "python", "file": "vanta_nextgen.py", "class": "MoERouter" },
+      "config_path": null,
+      "status": "stub",
+      "description": "Routes prompts to local/cloud LLMs based on token count.",
+      "dependencies": [],
+      "tags": ["stub", "llm", "routing", "moe"]
+    },
+    {
+      "id": "sandbox_vm",
+      "name": "SandboxVM",
+      "type": "infrastructure/execution",
+      "implementation": { "language": "python", "file": "vanta_nextgen.py", "class": "SandboxVM" },
+      "config_path": null,
+      "status": "stub",
+      "description": "Intended to run commands with a timeout.",
+      "dependencies": [],
+      "tags": ["stub", "execution", "sandbox"]
+    },
+    {
+      "id": "cross_modal_memory",
+      "name": "CrossModalMemory",
+      "type": "infrastructure/memory",
+      "implementation": { "language": "python", "file": "vanta_nextgen.py", "class": "CrossModalMemory" },
+      "config_path": null,
+      "status": "stub",
+      "description": "Intended for storing/searching text and images.",
+      "dependencies": [],
+      "tags": ["stub", "memory", "multimodal", "vector"]
+    },
+    {
+      "id": "outcome_logger",
+      "name": "OutcomeLogger",
+      "type": "infrastructure/logging",
+      "implementation": { "language": "python", "file": "vanta_nextgen.py", "class": "OutcomeLogger" },
+      "config_path": null,
+      "status": "stub",
+      "description": "Records rewards/outcomes for tasks/runs.",
+      "dependencies": [],
+      "tags": ["stub", "logging", "feedback", "rl"]
+    },
+     {
+      "id": "sunset_policy",
+      "name": "SunsetPolicy",
+      "type": "infrastructure/planning",
+      "implementation": { "language": "python", "file": "vanta_nextgen.py", "class": "SunsetPolicy" },
+      "config_path": null,
+      "status": "stub",
+      "description": "Intended to archive stale roadmap items.",
+      "dependencies": ["roadmap_planner_component"],
+      "tags": ["stub", "planning", "archive"]
+    },
+    {
+      "id": "fact_verifier",
+      "name": "FactVerifier",
+      "type": "infrastructure/verification",
+      "implementation": { "language": "python", "file": "vanta_nextgen.py", "class": "FactVerifier" },
+      "config_path": null,
+      "status": "stub",
+      "description": "Intended for answer verification (e.g., via Wolfram Alpha).",
+      "dependencies": [],
+      "tags": ["stub", "verification", "external"]
+    },
+    {
+      "id": "self_tuner",
+      "name": "SelfTuner",
+      "type": "infrastructure/learning",
+      "implementation": { "language": "python", "file": "vanta_nextgen.py", "class": "SelfTuner" },
+      "config_path": null,
+      "status": "stub",
+      "description": "Intended for periodic LoRA adapter training.",
+      "dependencies": ["outcome_logger"],
+      "tags": ["stub", "rl", "fine-tuning", "lora"]
+    }
+  ]
+} 

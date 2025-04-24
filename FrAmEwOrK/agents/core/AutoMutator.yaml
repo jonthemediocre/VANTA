@@ -1,0 +1,37 @@
+agent_id: AutoMutator
+version: 1.0
+description: "Recursively mutates agent behavior, task architecture, output strategies based on performance metrics (RL scores) and environmental cues (stalling, friction, transitions)."
+enabled: true # Controlled by dev_flags in blueprint.yaml
+triggers:
+  - event_type: feedback_loop_stalled
+  - event_type: low_reinforcement_score
+  - event_type: seasonal_transition
+  - event_type: user_friction_detected
+  - event_type: explicit_mutation_request
+communication_schema:
+  standard: A2A_v1
+allowed_mcp_tools:
+  - read_file # To read agent configs, rules, task templates
+  - edit_file # To propose changes to configs/templates
+  - codebase_search # To find patterns to mutate
+context_sources:
+  - source_type: internal_state
+    source_id: ReinforcementScoreEngine_Scores
+  - source_type: agent_configs
+    source_id: FrAmEwOrK/agents/core/*.yaml # Needs ability to read peer configs
+  - source_type: task_templates # Assuming tasks are template-driven
+    source_id: FrAmEwOrK/tasks/*
+  - source_type: rule_engine
+    source_id: RuleSmith_ActiveRules # Including mutation-policies.yaml (from Codex)
+parameters:
+  mutation_strategies:
+    - type: parameter_tweak # e.g., change PromptSmith default persona
+      weight: 0.4
+    - type: rule_suggestion # Propose change to RuleSmith
+      weight: 0.3
+    - type: task_scaffold_reorder # Change LoT steps
+      weight: 0.2
+    - type: agent_swap_suggestion # Suggest different agent via Orchestrator
+      weight: 0.1
+  mutation_rate_factor: 0.05 # Base probability of triggering a mutation check
+  max_concurrent_mutations: 1 

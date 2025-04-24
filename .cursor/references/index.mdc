@@ -1,0 +1,237 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+---
+description: Reference index for Cursor AI requests
+globs: "**/*"
+type: always
+---
+
+# AppCrafter Reference Index
+
+## Core MDC Rules
+- **000-base.mdc**: [ESSENTIAL] Base application principles - always include
+- **100-next-components.mdc**: Next.js component standards
+- **300-error-handling.mdc**: Error handling patterns
+- **400-adhd-patterns.mdc**: ADHD-friendly design patterns
+- **500-prisma.mdc**: Prisma database patterns
+- **600-ai-learnings.mdc**: AI learning documentation
+- **700-opensource-mdc.mdc**: Open source MDC rules index
+- **900-agent-config.mdc**: AI agent configuration
+- **901-mdc-agent.mdc**: Configuration for MDC monitoring agent
+- **902-rl-agent.mdc**: Reinforcement learning agent guidelines
+- **903-rl-suggestion.mdc**: RL suggestion system usage
+- **904-core-documentation.mdc**: Core documentation requirements
+
+## Implementation-Specific Rules
+- **api-routes.mdc**: Guidelines for Next.js API routes
+- **cleaner.mdc**: Code cleanup and maintenance
+- **cursor-rules.mdc**: Creating and managing Cursor MDC rules
+- **data-fetching.mdc**: SWR and API data fetching patterns
+- **environment-variables.mdc**: Environment variable configuration
+- **form-handling.mdc**: Form validation and submission
+- **llm.mdc**: LLM integration guidelines
+- **llm-test.mdc**: Testing LLM functionality
+- **logging.mdc**: Logging standards and patterns
+- **page-structure.mdc**: Page layout and organization
+- **prisma.mdc**: Database access and schema definition
+- **project-structure.mdc**: Project organization and file structure
+- **server-actions.mdc**: Next.js server actions implementation
+- **testing.mdc**: Testing guidelines and best practices
+- **ui-components.mdc**: UI component and styling standards
+- **utilities.mdc**: Utility function patterns
+
+## Available MCP Tools
+Model Context Protocol (MCP) provides additional capabilities beyond standard Cursor tools.
+All MCP tools are running as services and are available for use in your requests:
+
+### Terminal Commands (mcp_terminal)
+- **Command**: `npm exec -- terminal-mcp-server`
+- **Tools**:
+  - `terminal`: Execute terminal commands in a secure environment
+
+### Memory Bank (mcp_memory_bank)
+- **Command**: `npm exec -- @allpepper/memory-bank-mcp`
+- **Tools**:
+  - `list_projects`: List all projects in the memory bank
+  - `list_project_files`: List all files within a specific project
+  - `memory_bank_read`: Read stored information
+  - `memory_bank_write`: Create new stored information
+  - `memory_bank_update`: Update existing stored information
+
+### Figma Integration (mcp_figma_context)
+- **Command**: `npm exec -- mcp-figma`
+- **Tools**:
+  - `set_api_key`: Set your Figma API personal access token
+  - `check_api_key`: Check if a Figma API key is already configured
+  - `get_file`: Get a Figma file by key
+  - `get_file_nodes`: Get specific nodes from a Figma file
+  - `get_image`: Get images for nodes in a Figma file
+  - `get_image_fills`: Get URLs for images used in a Figma file
+  - `get_comments`: Get comments on a Figma file
+  - `post_comment`: Post a comment on a Figma file
+  - `delete_comment`: Delete a comment from a Figma file
+  - `get_team_projects`: Get projects for a team
+  - `get_project_files`: Get files for a project
+  - `get_team_components`: Get components for a team
+  - `get_file_components`: Get components from a file
+  - `get_component`: Get a component by key
+  - `get_team_component_sets`: Get component sets for a team
+  - `get_team_styles`: Get styles for a team
+  - `get_file_styles`: Get styles from a file
+  - `get_style`: Get a style by key
+
+### Web Search (mcp_duckduckgo)
+- **Command**: `npm exec -- duckduckgo-mcp-server`
+- **Tools**:
+  - `duckduckgo_web_search`: Search the web using DuckDuckGo
+
+### Web Scraping and Research (mcp_firecrawl)
+- **Command**: `npm exec -- firecrawl-mcp`
+- **Tools**:
+  - `firecrawl_scrape`: Scrape individual webpages
+  - `firecrawl_map`: Discover URLs from a starting point
+  - `firecrawl_crawl`: Crawl multiple pages from a URL
+  - `firecrawl_batch_scrape`: Scrape multiple URLs in batch mode
+  - `firecrawl_check_batch_status`: Check status of a batch scraping job
+  - `firecrawl_check_crawl_status`: Check status of a crawl job
+  - `firecrawl_search`: Search and retrieve web content
+  - `firecrawl_extract`: Extract structured data from webpages
+  - `firecrawl_deep_research`: Conduct deep research on a topic
+  - `firecrawl_generate_llmstxt`: Generate LLMs.txt file for a website
+
+## Common Rule Combinations
+
+### Frontend Development
+- **@ui-components.mdc @data-fetching.mdc @form-handling.mdc**: For UI components with data fetching and forms
+- **@page-structure.mdc @ui-components.mdc**: For page layouts and design systems
+- **@environment-variables.mdc @data-fetching.mdc**: For components that need environmental configuration
+
+### Backend Development
+- **@api-routes.mdc @prisma.mdc @logging.mdc**: For API endpoints that access the database
+- **@server-actions.mdc @form-handling.mdc @prisma.mdc**: For form submissions that modify data
+- **@error-handling.mdc @api-routes.mdc**: For robust error handling in API routes
+
+### AI/LLM Features
+- **@llm.mdc @llm-test.mdc @api-routes.mdc**: For LLM-powered features
+- **@llm.mdc @902-rl-agent.mdc**: For AI features using the reinforcement learning framework
+- **@data-fetching.mdc @llm.mdc**: For components that fetch data for LLM processing
+
+### Testing and Maintenance
+- **@testing.mdc @llm-test.mdc**: For comprehensive testing strategies
+- **@cleaner.mdc @project-structure.mdc**: For code cleanup and organization
+- **@testing.mdc @logging.mdc**: For testable code with proper debugging
+
+## Essential Project Documents
+- **TODO.md**: [ESSENTIAL] Project task list with priorities and current status
+- **README.md**: Project overview and setup instructions
+- **docs/rl-framework.md**: Reinforcement learning framework documentation
+
+## API and Implementation Files
+- **lib/ai/reinforcement/index.ts**: RL framework entry point
+- **app/api/ai/feedback/route.ts**: API for feedback collection
+
+## How to Reference in Requests
+
+When asking Cursor AI for help, mention your current context by using these reference markers:
+
+1. **Include essential files**:
+   ```
+   @index.mdc @000-base.mdc @TODO.md
+   ```
+
+2. **Include task-specific rule combinations** (see "Common Rule Combinations" above):
+   ```
+   @ui-components.mdc @data-fetching.mdc @form-handling.mdc
+   ```
+
+3. **Include your ABCVL phase and energy level**:
+   ```
+   Phase: Construct
+   Energy: Medium
+   ```
+
+Example request:
+```
+@index.mdc @000-base.mdc @TODO.md @ui-components.mdc @data-fetching.mdc
+Phase: Construct
+Energy: Medium
+
+I need to implement a dashboard component that fetches user activity data and displays it with proper loading states...
+```
+
+## Using MCP Tools in Requests
+To prompt for using specific MCP tools, add a line like:
+
+```
+MCP Tools: Consider using firecrawl for research or memory_bank to store important findings.
+```
+
+This reminds Cursor AI that these extended capabilities are available for the task.
+
+## MCP Tool Use Examples
+
+### Web Research Example
+```
+@index.mdc
+Phase: Analyze
+Energy: High
+MCP Tools: firecrawl, duckduckgo_web_search
+
+Research the latest React state management libraries and compare their performance characteristics.
+```
+
+### Design Integration Example
+```
+@index.mdc @ui-components.mdc
+Phase: Construct
+Energy: Medium
+MCP Tools: figma_context
+
+Extract the design specs from our Figma file and implement the navigation component according to those specs.
+```
+
+### Knowledge Persistence Example
+```
+@index.mdc
+Phase: Learn
+Energy: Medium
+MCP Tools: memory_bank
+
+Store this implementation pattern in the memory bank for future reference under the "authentication" project.
+```
+
+## Workflow Documents
+- **workflow.md**: Current workflow documentation
+- **board.json**: [ESSENTIAL] Project Kanban board - contains current tasks and priorities
+- **TODO.md**: [ESSENTIAL] Task list with prioritization
+
+## Project Documentation
+- **docs/rl-framework.md**: Reinforcement learning framework documentation
+- **lib/ai/reinforcement/index.ts**: RL framework entry point
+- **app/api/ai/feedback/route.ts**: API for feedback collection
+
+## Request Template
+```
+@index.mdc @000-base.mdc @TODO.md [+ RELEVANT RULE COMBINATIONS]
+Phase: [Analyze/Blueprint/Construct/Validate/Learn]
+Energy: [High/Medium/Low]
+MCP Tools: [Mention any specific MCP tools that might be helpful]
+
+[Your specific request]
+```
+
+## Current Project Focus
+- Reinforcement learning framework integration
+- MDC rule automation and consistency
+- Component library standardization
+- Testing infrastructure improvements
+
+## ABCVL Workflow
+- **Analyze**: Understand requirements and context
+- **Blueprint**: Plan implementation approach
+- **Construct**: Implement the solution
+- **Validate**: Test and ensure quality
+- **Learn**: Document learnings and improve 

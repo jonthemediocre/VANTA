@@ -1,0 +1,218 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+---
+description: "Documentation Synchronization: Keeps essential documentation files (Todo.md, Plan.md, Workflow.md) synchronized with intelligent conflict resolution"
+globs: ["todo.md", "Todo.md", "TODO.md", "docs/plan.md", "Plan.md", "docs/project/workflow.md", "Workflow.md", "*.md"]
+alwaysApply: true
+---
+
+# Documentation Synchronization Rule
+
+This rule ensures that essential project documentation files remain synchronized, preserving valuable information across updates and preventing inconsistencies between related files.
+
+## Core Documentation Files
+
+The system tracks and synchronizes these essential documentation files:
+- **Architechure.md**: actaul mirror of what the app is techstack notes, workflow actaul, app capabilities actual current state document
+- **Theplan.md**: Implementation plan, milestones, and timelines, Task lists, priorities, and project status
+- **workflow.md**: Development processes and methodology
+
+
+## Synchronization Behaviors
+
+When editing any of the tracked files, the system will:
+
+1. **Detect Updates**: Monitor changes to tracked documentation files
+2. **Cross-Reference**: Identify related content in other tracked files
+3. **Suggest Syncs**: Propose updates to maintain consistency 
+4. **Resolve Conflicts**: Intelligently merge conflicting changes
+5. **Preserve Value**: Ensure important information is never lost
+
+## Conflict Resolution Strategy
+
+When conflicts are detected between files, the system uses these principles:
+- **Recency Preference**: More recent updates take precedence
+- **Specificity Preservation**: More detailed information is preserved
+- **Context Awareness**: Changes are evaluated in context
+- **Task Status Accuracy**: Task completion status is synchronized
+- **Timeline Consistency**: Project timelines remain aligned
+
+## Implementation Functions
+
+```javascript
+// Check for inconsistencies between documentation files
+function checkDocumentationSync(changedFile, allTrackedFiles) {
+  // Get content from all tracked files
+  const fileContents = allTrackedFiles.map(file => {
+    return { 
+      path: file, 
+      content: readFile(file),
+      lastModified: getFileStats(file).mtime
+    };
+  });
+  
+  // Find potential inconsistencies
+  const inconsistencies = [];
+  
+  // Check for task status inconsistencies
+  const tasks = extractTasksFromFiles(fileContents);
+  const taskInconsistencies = findTaskStatusInconsistencies(tasks);
+  
+  // Check for timeline inconsistencies
+  const timelines = extractTimelinesFromFiles(fileContents);
+  const timelineInconsistencies = findTimelineInconsistencies(timelines);
+  
+  // Combine all inconsistencies
+  inconsistencies.push(...taskInconsistencies, ...timelineInconsistencies);
+  
+  return inconsistencies;
+}
+
+// Extract tasks from all documentation files
+function extractTasksFromFiles(fileContents) {
+  const allTasks = [];
+  
+  fileContents.forEach(file => {
+    const tasks = parseTasksFromContent(file.content);
+    
+    tasks.forEach(task => {
+      allTasks.push({
+        id: generateTaskId(task.title),
+        title: task.title,
+        status: task.status,
+        file: file.path,
+        lastModified: file.lastModified,
+        priority: task.priority,
+        details: task.details
+      });
+    });
+  });
+  
+  return allTasks;
+}
+
+// Find tasks with inconsistent status across files
+function findTaskStatusInconsistencies(tasks) {
+  const taskMap = {};
+  const inconsistencies = [];
+  
+  // Group tasks by ID
+  tasks.forEach(task => {
+    if (!taskMap[task.id]) {
+      taskMap[task.id] = [];
+    }
+    taskMap[task.id].push(task);
+  });
+  
+  // Check for inconsistencies in each task group
+  Object.values(taskMap).forEach(taskGroup => {
+    if (taskGroup.length > 1) {
+      const statuses = new Set(taskGroup.map(t => t.status));
+      
+      if (statuses.size > 1) {
+        // There are inconsistent statuses for this task
+        inconsistencies.push({
+          type: 'taskStatus',
+          taskId: taskGroup[0].id,
+          taskTitle: taskGroup[0].title,
+          instances: taskGroup,
+          recommendation: determineCorrectTaskStatus(taskGroup)
+        });
+      }
+    }
+  });
+  
+  return inconsistencies;
+}
+
+// Determine the correct task status based on recency and priority
+function determineCorrectTaskStatus(taskInstances) {
+  // Sort by last modified (most recent first)
+  const sortedByTime = [...taskInstances].sort((a, b) => b.lastModified - a.lastModified);
+  
+  // Get the most recent status
+  const mostRecentStatus = sortedByTime[0].status;
+  
+  // If TODO is most recent, that's authoritative
+  if (sortedByTime[0].file.toLowerCase().includes('todo')) {
+    return {
+      status: mostRecentStatus,
+      reason: 'TODO file is authoritative for task status'
+    };
+  }
+  
+  // Otherwise use most recent status
+  return {
+    status: mostRecentStatus,
+    reason: 'Most recent update is authoritative'
+  };
+}
+
+// Extract timelines from files
+function extractTimelinesFromFiles(fileContents) {
+  // Implementation for timeline extraction
+  // Would include date parsing, milestone identification, etc.
+  return [];
+}
+
+// Find timeline inconsistencies
+function findTimelineInconsistencies(timelines) {
+  // Implementation for finding timeline inconsistencies
+  return [];
+}
+```
+
+## Usage
+
+This rule automatically:
+1. Monitors changes to documentation files
+2. Alerts developers to inconsistencies
+3. Proposes updates to maintain consistency
+4. Provides guidance on conflict resolution
+
+## Examples
+
+### Example 1: Task Status Synchronization
+
+When a task is marked complete in `TODO.md`:
+```markdown
+- [x] Implement user authentication system
+```
+
+But appears incomplete in `Plan.md`:
+```markdown
+- [ ] Implement user authentication system (Week 2)
+```
+
+The system will:
+1. Detect the inconsistency
+2. Determine the correct status (completed)
+3. Suggest updating `Plan.md` to match the status in `TODO.md`
+
+### Example 2: Timeline Synchronization
+
+When a project phase timeline is updated in `Plan.md`:
+```markdown
+### Phase 1: Core Integration (April 10-30)
+```
+
+But appears with different dates in `Workflow.md`:
+```markdown
+### Phase 1: Core Integration (April 5-25)
+```
+
+The system will:
+1. Detect the inconsistency
+2. Determine the correct timeline based on most recent update
+3. Suggest updating both files for consistency
+
+## Best Practices
+
+1. Make explicit task status changes in `TODO.md` first
+2. Update project timelines in `Plan.md` first
+3. Use consistent task naming across all documentation
+4. Review sync recommendations carefully before applying
+5. Add detailed comments when rejecting sync recommendations 

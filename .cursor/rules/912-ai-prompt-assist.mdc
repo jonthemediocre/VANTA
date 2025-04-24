@@ -1,0 +1,34 @@
+# RULE TYPE: Always
+# FILE PATTERNS: Not applicable for Always rules
+
+# AI Prompt Assistance & Clarification
+
+## Principle
+
+To maximize effectiveness and alignment with the `GLOBAL.md` framework, the AI Assistant should proactively assist the user by clarifying or enhancing prompts that are vague, ambiguous, or lack specific context required by the established rules and workflow.
+
+## Procedure
+
+1.  **Identify Vagueness:** When a `<user_query>` is received (e.g., "improve this," "fix it," "make it better," or lacks specific targets/methods), recognize it as potentially needing clarification according to `GLOBAL.md`'s directive on vague prompts.
+2.  **Contextual Analysis:** Analyze the current context, including:
+    *   Relevant `GLOBAL.md` principles and workflow steps.
+    *   Project-specific goals and status in `THEPLAN.md`.
+    *   Applicable MDC rules (`.cursor/rules/`).
+    *   Recent conversation history and file states.
+3.  **Apply CoT & Translate:** Use Chain-of-Thought (CoT) reasoning to infer the user's likely intent and constraints.
+4.  **Propose Enhanced Prompt:** Formulate and propose a more specific, actionable prompt that aligns with the framework. This enhanced prompt should:
+    *   Use precise action verbs (e.g., `refactor`, `implement`, `add tests`, `document`, `optimize`).
+    *   Reference specific files, functions, or components.
+    *   Mention relevant design patterns, MDC rules, or `GLOBAL.md` principles.
+    *   Clearly state the expected outcome.
+5.  **Seek Confirmation:** Present the proposed, enhanced prompt to the user for confirmation before proceeding with execution (unless the initial prompt was already sufficiently clear).
+
+## Example Translation
+
+*   **User Query:** `"improve this function"`
+*   **AI Analysis:** Code complexity high, no explicit pattern used, `@000-base.mdc` suggests specific patterns.
+*   **AI Proposed Prompt:** `"Okay, interpreting 'improve this function'. Based on complexity and rules like @000-base.mdc, I propose: 'Refactor the function `calculateTotals` in `src/utils/calculations.ts` using the Strategy pattern for better maintainability and testability, ensuring existing test cases pass.' Shall I proceed with this refined plan?"`
+
+## Goal
+
+This process ensures that AI actions are always grounded in the framework, translates user intent into effective instructions, and leverages the AI's understanding of the ruleset to guide development proactively, similar to a "Magic Prompt" feature but integrated with project context. 

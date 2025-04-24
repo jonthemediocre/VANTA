@@ -1,0 +1,94 @@
+---
+description: Guidelines for writing tests for LLM-related functionality
+globs: __tests__/*llm*.ts, __tests__/*ai*.ts, *.test.ts
+type: autoAttached
+---
+
+# RULE TYPE: Auto Attached
+# FILE PATTERNS: __tests__/*llm*.ts, __tests__/*ai*.ts, *.test.ts
+
+# LLM Testing Guidelines
+
+## Test Structure
+- Use descriptive test names that explain behavior
+- Group related tests with describe blocks
+- Test both happy paths and error cases
+- Follow the Arrange-Act-Assert pattern
+
+## Mocking LLM Responses
+- Use vitest mocks for OpenAI and other providers
+- Create fixture files for complex responses
+- Mock streaming responses properly
+- Test different response formats
+
+## Testing Prompts
+- Verify that prompts contain required information
+- Test prompt template rendering with different inputs
+- Ensure prompt lengths stay within limits
+- Check for potential prompt injection vulnerabilities
+
+## Response Validation
+- Test response parsing and error handling
+- Verify schema validation works correctly
+- Test fallback mechanisms for unexpected responses
+- Check for proper handling of null or undefined values
+
+## End-to-End Tests
+- Test the complete LLM interaction flow
+- Verify UI updates correctly with responses
+- Test loading and error states
+- Ensure streaming updates the UI appropriately
+
+## Example Test Setup
+
+```typescript
+import { vi, describe, it, expect, beforeEach } from 'vitest';
+import { mockOpenAI } from '../mocks/openai';
+import { SummarizeService } from './summarize-service';
+
+// Mock the OpenAI client
+vi.mock('openai', () => ({
+  OpenAI: vi.fn().mockImplementation(() => ({
+    chat: {
+      completions: {
+        create: vi.fn().mockResolvedValue({
+          choices: [{
+            message: {
+              content: 'Mocked summary text'
+            }
+          }]
+        })
+      }
+    }
+  }))
+}));
+
+describe('SummarizeService', () => {
+  let service: SummarizeService;
+  
+  beforeEach(() => {
+    service = new SummarizeService();
+  });
+  
+  it('should summarize text correctly', async () => {
+    // Arrange
+    const text = 'This is a long text that needs summarizing...';
+    
+    // Act
+    const result = await service.summarize(text);
+    
+    // Assert
+    expect(result).toEqual('Mocked summary text');
+  });
+  
+  it('should handle API errors gracefully', async () => {
+    // Arrange
+    const errorMessage = 'API rate limit exceeded';
+    vi.mocked(openai.chat.completions.create).mockRejectedValueOnce(
+      new Error(errorMessage)
+    );
+    
+    // Act & Assert
+    await expect(service.summarize('Some text')).rejects.toThrow(errorMessage);
+  });
+});

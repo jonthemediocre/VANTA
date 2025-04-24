@@ -1,0 +1,63 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+\
+---
+description: Standardized strategy for resolving npm/yarn dependency conflicts.
+globs: ["package.json", "**/package.json"]
+type: strategy
+---
+
+# RULE TYPE: Strategy
+# FILE PATTERNS: package.json, **/package.json
+
+# Dependency Conflict Resolution Strategy
+
+## Principle
+
+When encountering dependency conflicts (e.g., `ERESOLVE` errors during `npm install` or `yarn add`), follow a structured approach to resolve them, prioritizing compatibility and stability over forced solutions.
+
+## Rationale
+
+Incorrectly resolved peer dependencies can lead to subtle runtime bugs, broken builds, or unexpected behavior. A consistent strategy minimizes these risks and ensures the project relies on a stable set of dependencies.
+
+## Resolution Hierarchy
+
+1.  **Investigate the Conflict:**
+    *   Carefully read the error message to identify the conflicting packages and version requirements.
+    *   Check the `peerDependencies` sections in the relevant `package.json` files within `node_modules` (or use tools like `npm view <package> peerDependencies`) for the packages involved.
+    *   Consult the documentation for the primary packages involved (especially frameworks like Next.js, Expo, React) regarding version compatibility. Check release notes or compatibility tables.
+
+2.  **Check Project Constraints (`THEPLAN.md` / `ARCHITECTURE.md`):**
+    *   Review the project's core technology stack and version constraints defined in planning documents. Adherence to the specified stack often takes precedence.
+
+3.  **Attempt Compatible Updates/Downgrades:**
+    *   **Update Related Dependencies:** If the conflict involves package A requiring a newer version of package B than currently installed, try updating package B and any closely related packages *if compatible with the rest of the stack*.
+    *   **Check Adapter/Plugin Versions:** If using adapters (like `@expo/next-adapter`), ensure you are using a version specifically compatible with your core framework versions (Next.js, React). You might need to install a *different* version of the adapter rather than the latest.
+    *   **Targeted Downgrade:** If a newly added package requires a dependency version that conflicts with a core framework requirement (and the framework cannot be easily updated), consider if a slightly older version of the *newly added* package is compatible.
+
+4.  **Workspace/Monorepo Considerations:**
+    *   If in a monorepo (like Turborepo), ensure overrides or resolutions in the root `package.json` are correctly configured if necessary. Be cautious, as these can mask underlying issues. Check `pnpm.overrides` or `yarn.resolutions`.
+
+5.  **Use `--legacy-peer-deps` (Use with Caution):**
+    *   If compatibility checks suggest the conflict *might* be overly strict or relates to optional/dev dependencies, you *can* try installing with `npm install --legacy-peer-deps`.
+    *   **Document:** If this flag is necessary, **document why** in a comment near the relevant dependency in `package.json` or in `ARCHITECTURE.md`.
+    *   **Test Thoroughly:** Immediately run comprehensive tests (unit, integration, E2E) targeting the functionality related to the conflicting packages.
+
+6.  **Use `--force` (Use as Last Resort):**
+    *   Forcing the installation (`npm install --force`) should be avoided unless all other options are exhausted and you fully understand the potential consequences.
+    *   **Document:** Clearly document the reason for using `--force` and the specific conflict it overrides.
+    *   **Test Extensively:** Perform rigorous testing. Forced resolutions are the most likely to cause unexpected issues.
+
+## Example Scenario (from initial error)
+
+-   **Conflict:** `@expo/next-adapter` needs `react-native-web@^0.19`, which needs `react-dom@^18.0.0`. However, the project has `react-dom@18.3.1` (likely from Next.js 15+) requiring `react@^18.3.1`.
+-   **Resolution Steps:**
+    1.  **Investigate:** Check `@expo/next-adapter` docs for React 18.3 / Next.js 15 compatibility. Is there a newer *adapter* version? Or does Expo itself have limitations?
+    2.  **Project Constraints:** `THEPLAN.md` requires both Expo and Next.js 15+. Compatibility is key.
+    3.  **Attempt:** Look for an `@expo/next-adapter` version explicitly supporting Next.js 15 / React 18.3. If none exists yet, this signals a larger compatibility issue that might require adjusting `THEPLAN.md` or waiting for updates. *Do not* force install yet. If a compatible adapter exists, install *that specific version*.
+
+---
+*This rule helps maintain a stable and predictable dependency graph.*

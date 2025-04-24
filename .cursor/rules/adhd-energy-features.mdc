@@ -1,0 +1,225 @@
+---
+description: 
+globs: EnergyTracker.tsx,useEnergyLevel.ts,src/lib/energy/**/*.ts
+alwaysApply: false
+---
+---
+description: ADHD-friendly energy level tracking and task management features
+globs: 
+  - src/components/ui/EnergyTracker.tsx
+  - src/hooks/useEnergyLevel.ts
+  - src/lib/energy/**/*.ts
+---
+
+# ADHD Energy Features
+
+## Energy Level Tracking
+- Track energy levels throughout the day
+- Use visual indicators for energy states
+- Provide gentle reminders for energy check-ins
+- Store energy history for pattern analysis
+
+## Task Management
+- Match tasks to current energy level
+- Suggest optimal times for different tasks
+- Allow flexible task rescheduling
+- Provide energy-aware task prioritization
+
+## UI/UX Guidelines
+- Use clear visual hierarchies
+- Implement consistent color coding
+- Provide immediate feedback
+- Keep interactions simple and predictable
+
+## Implementation Details
+- Store energy levels in localStorage
+- Update energy tracking every 2 hours
+- Use smooth transitions for UI changes
+- Implement error-safe data persistence
+
+# ADHD Energy-Based Feature Guidelines
+
+These guidelines should be followed when implementing energy-based features for the RZN ADHD-Optimized Task Management System.
+
+## Core Principles
+
+1. **Energy-Task Matching**: Always implement features that match tasks to user's current energy levels.
+2. **Reduce Decision Fatigue**: Minimize choices required when energy is low.
+3. **Test-Driven Development**: Always write tests first for energy-based features to ensure reliability.
+4. **Executive Function Support**: Design features that reduce executive function demands.
+5. **Transition Assistance**: Include support for energy state transitions.
+
+## Implementation Guidelines
+
+### Energy Level Specification
+
+- Use the standardized `EnergyLevel` type from `@/lib/energyLevels.ts`
+- Energy levels should always be one of: `'low' | 'medium' | 'high'`
+- When storing energy data in task metadata, use the `energyLevel` key
+
+```typescript
+// Import the standard energy level type
+import { EnergyLevel } from '@/lib/energyLevels';
+
+// Correct usage for typed energy levels
+function processTask(task: Task, userEnergyLevel: EnergyLevel) {
+  // Implementation
+}
+```
+
+### Scoring and Matching Algorithms
+
+- Implement clear, weighted scoring systems for matching
+- Consider both task and user energy levels
+- Include executive function and focus requirements in scoring
+- Document all scoring weights and thresholds
+
+```typescript
+// Sample scoring pattern
+function calculateMatchScore(
+  userEnergyLevel: EnergyLevel,
+  taskEnergyLevel: EnergyLevel,
+  executiveFunctionDemand: number,
+  focusRequired: number
+): number {
+  // Base score from energy match
+  let score = getBaseEnergyMatchScore(userEnergyLevel, taskEnergyLevel);
+  
+  // Adjust for executive function demands
+  score = adjustForExecutiveFunction(score, userEnergyLevel, executiveFunctionDemand);
+  
+  // Adjust for focus requirements
+  score = adjustForFocusRequirements(score, userEnergyLevel, focusRequired);
+  
+  return score;
+}
+```
+
+### UI Implementation
+
+- Clearly indicate energy levels using both color and text
+- Use green for high energy, blue/purple for medium, and amber/orange for low
+- Include visual cues that don't rely solely on color (for accessibility)
+- Implement smooth transitions between energy states
+
+```tsx
+// React component example
+function EnergyLevelIndicator({ level }: { level: EnergyLevel }) {
+  const colorMap = {
+    high: 'bg-green-500',
+    medium: 'bg-blue-500',
+    low: 'bg-amber-500'
+  };
+  
+  const iconMap = {
+    high: <BoltIcon className="h-4 w-4" />,
+    medium: <HalfFilledBatteryIcon className="h-4 w-4" />,
+    low: <LowBatteryIcon className="h-4 w-4" />
+  };
+  
+  return (
+    <div className={`flex items-center gap-1 px-2 py-1 rounded-full ${colorMap[level]}`}>
+      {iconMap[level]}
+      <span className="text-white text-xs font-medium capitalize">{level}</span>
+    </div>
+  );
+}
+```
+
+### Testing Requirements
+
+- Test each energy level individually
+- Include test cases for transitions between energy levels
+- Test edge cases like tasks without energy levels
+- Verify scoring and categorization logic
+- Include accessibility tests for energy-level UI components
+
+```typescript
+// Test pattern example
+describe('Energy-based feature', () => {
+  test('should correctly handle low energy state', () => {
+    // Test implementation
+  });
+  
+  test('should correctly handle medium energy state', () => {
+    // Test implementation
+  });
+  
+  test('should correctly handle high energy state', () => {
+    // Test implementation
+  });
+  
+  test('should handle transitions between energy states', () => {
+    // Test implementation
+  });
+  
+  test('should appropriately handle tasks without energy levels', () => {
+    // Test implementation
+  });
+});
+```
+
+### Data Model Requirements
+
+- Always include energy level metadata in task models
+- Add executive function demand (scale 1-5)
+- Include focus requirement (scale 1-5)
+- Store energy preferences in user settings
+
+```typescript
+// Task model pattern
+interface TaskEnergySensitiveMetadata {
+  energyLevel?: EnergyLevel;
+  executiveFunctionDemand?: number; // 1-5 scale
+  focusRequired?: number; // 1-5 scale
+  estimatedDuration?: number; // in minutes
+}
+
+// User preferences pattern
+interface UserEnergyPreferences {
+  defaultEnergyLevel: EnergyLevel;
+  morningEnergyLevel?: EnergyLevel;
+  afternoonEnergyLevel?: EnergyLevel;
+  eveningEnergyLevel?: EnergyLevel;
+  enableEnergyBasedSuggestions: boolean;
+}
+```
+
+## Service Integration
+
+- Use the `EnergyMatchingService` for all energy-based recommendations
+- Integrate with the AI scheduling system for energy-aware scheduling
+- Respect user energy preferences from settings
+- Include energy considerations in the "Now and Next" view
+
+```typescript
+// Integration example
+import { matchTasksToEnergyState } from '@/lib/services/EnergyMatchingService';
+
+// In a component or service
+const energyMatchResults = matchTasksToEnergyState(
+  tasks,
+  userCurrentEnergyLevel,
+  { transitioningTo: userNextEnergyState }
+);
+
+// Use the results
+const recommendedTasks = energyMatchResults.perfectMatches;
+```
+
+## User Experience Guidelines
+
+- Don't force users to specify energy levels for every task
+- Provide smart defaults based on task characteristics
+- Allow users to override energy recommendations
+- Include energy level tracking in the user interface
+- Provide guidance on managing energy transitions
+
+## Documentation Requirements
+
+- Document all energy-related algorithms
+- Include examples of energy-based recommendations
+- Create user guides for energy management features
+- Document integration points with other services
+
+By following these guidelines, we ensure that all energy-based features are consistent, reliable, and truly supportive of ADHD needs. 

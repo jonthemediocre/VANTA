@@ -1,0 +1,48 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+---
+description: [Short description of the rule's purpose]
+globs: [file-pattern-1.ts, file-pattern-2.tsx]
+type: [autoAttached|always|agentRequested|manual]
+---
+
+# RULE TYPE: [Auto Attached|Always|Agent Requested|Manual]
+# FILE PATTERNS: [Comma-separated list of file patterns]
+
+# [Rule Title]
+
+## [Section 1]
+- Guideline 1
+- Guideline 2
+- Guideline 3
+- Guideline 4
+
+## [Section 2]
+- Guideline 5
+- Guideline 6
+- Guideline 7
+- Guideline 8
+
+## [Section 3]
+- Guideline 9
+- Guideline 10
+- Guideline 11
+- Guideline 12
+
+## [Examples]
+```[language]
+// Example code showing proper implementation
+```
+
+```[language]
+// Example code showing improper implementation
+```
+
+## [Best Practices]
+1. Best practice 1
+2. Best practice 2
+3. Best practice 3
+4. Best practice 4 

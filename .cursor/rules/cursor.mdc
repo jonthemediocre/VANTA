@@ -1,0 +1,59 @@
+---
+description: Cursor IDE configuration and usage guidelines
+globs: .vscode, .cursor
+alwaysApply: false
+---
+
+# RULE TYPE: Manual
+# FILE PATTERNS: .vscode, .cursor
+
+# Cursor IDE Configuration
+
+## Setup
+
+- Install Cursor from [cursor.sh](mdc:https:/cursor.sh)
+- Configure with proper extensions
+- Set up MDC rules in `.cursor/rules/`
+- Configure user settings as needed
+
+## Keyboard Shortcuts
+
+- `Cmd+K`: Chat with AI assistant
+- `Cmd+L`: Generate code from comment
+- `Cmd+Shift+L`: Edit selected code with AI
+- `Ctrl+G`: Go to line
+
+## MDC Rules Integration
+
+- Rules are stored in `.cursor/rules/`
+- Rules follow specific naming conventions
+- Use `@rule-name.mdc` to reference rules in chat
+- Configure rule types for appropriate auto-loading
+
+## Chat Best Practices
+
+- Be specific in your requests
+- Reference relevant files directly
+- Include appropriate MDC rules as context
+- Use code blocks for multi-line code examples
+
+## Code Generation
+
+- Add clear comments before generating code
+- Verify generated code for correctness
+- Test generated code thoroughly
+- Adapt generated code to follow project patterns
+
+## Configuration Files
+
+- `.cursor/settings.json`: IDE settings
+- `.cursor/rules/`: MDC rules storage
+- `.cursor/references/`: Reference documentation
+- `.vscode/launch.json`: Debugging configurations
+
+## Extension Integration
+
+- Cursor supports VS Code extensions
+- Install extensions via command palette
+- Configure extension settings as needed
+- Verify extension compatibility

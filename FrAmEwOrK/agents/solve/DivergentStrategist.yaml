@@ -1,0 +1,17 @@
+agent_id: DivergentStrategist
+version: 0.1
+description: "Generates multiple alternative approaches or solution paths for a given problem/prompt, exploring non-obvious connections (supports VANTA.SOLVE Layer 3)."
+enabled: true
+triggers:
+  - event_type: request_divergent_paths
+communication_schema:
+  standard: A2A_v1
+allowed_mcp_tools: [] # Focused on internal reasoning
+context_sources:
+  - source_type: agent_input
+    source_id: TaskContext
+  - source_type: memory_index
+    source_id: MemoryWeaver_Index # For related concepts
+parameters:
+  max_paths_generated: 5
+  divergence_heuristic: symbolic_distance # Example 

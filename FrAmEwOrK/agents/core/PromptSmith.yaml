@@ -1,0 +1,34 @@
+agent_id: PromptSmith
+version: 1.0
+description: "Crafts scaffolded prompts, responses, and instructional logic using modular narrative intelligence. Shapes phrasing, applies CoT/ToT/LoT, controls persona tone."
+enabled: true
+triggers:
+  - event_type: task_delegated
+    conditions:
+      - property: target_agent
+        operator: equals
+        value: PromptSmith
+  - event_type: response_generation_request
+communication_schema:
+  standard: A2A_v1
+allowed_mcp_tools: # Tools PromptSmith might use for context gathering
+  - read_file # To read context files, examples, rule descriptions
+  - codebase_search # To find relevant code snippets for prompts
+  - grep_search # To find specific text patterns for prompts
+context_sources:
+  - source_type: agent_input # Data passed from Orchestrator
+    source_id: TaskContext
+  - source_type: memory_index
+    source_id: MemoryWeaver_Index # For tone, style, past examples
+  - source_type: rule_engine
+    source_id: RuleSmith_ActiveRules # For formatting/content constraints
+  - source_type: project_config
+    source_id: blueprint.yaml # For behavior protocols
+  - source_type: project_docs
+    source_id: FrAmEwOrK/rules/*.mdc # To understand rule details
+  - source_type: project_prompts # Directory mentioned in Codex
+    source_id: /FrAmEwOrK/prompts/*
+parameters:
+  default_persona: neutral_assistant
+  default_reasoning_protocol: CoT # Chain_of_Thought
+  max_recursion_depth: 3 

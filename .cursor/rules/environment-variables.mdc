@@ -1,0 +1,145 @@
+---
+description: Add environment variable
+globs: .env*, next.config.js, config/*.ts
+type: agentRequested
+---
+
+# RULE TYPE: Agent Requested
+# FILE PATTERNS: .env*, next.config.js, config/*.ts
+
+# Environment Variables
+
+## Structure
+- Store environment variables in `.env.local` for local development
+- Use `.env.example` as a template with dummy values
+- Define types for environment variables
+- Validate environment variables on application startup
+
+## Usage
+- Access environment variables through a centralized config file
+- Use `process.env` only in the config file, not throughout the application
+- Add validation for required environment variables
+- Document the purpose of each environment variable
+
+## Naming Convention
+- Use uppercase with underscores (e.g., `DATABASE_URL`)
+- Group related variables with common prefixes (e.g., `AUTH_SECRET`, `AUTH_URL`)
+- Use clear, descriptive names that indicate purpose
+- Include the environment in variable name when needed (e.g., `NEXT_PUBLIC_API_URL_PROD`)
+
+## Security
+- Never commit actual `.env` files to version control
+- Use `NEXT_PUBLIC_` prefix only when the variable must be available in the browser
+- Store sensitive values in secrets management tools
+- Rotate sensitive environment variables regularly
+
+## Example Configuration
+```typescript
+// config/env.ts
+import { z } from 'zod';
+
+const envSchema = z.object({
+  // Database
+  DATABASE_URL: z.string().url(),
+  
+  // Authentication
+  AUTH_SECRET: z.string().min(16),
+  
+  // API Keys
+  OPENAI_API_KEY: z.string().optional(),
+  
+  // Public variables
+  NEXT_PUBLIC_API_URL: z.string().url(),
+});
+
+// Parse and validate environment variables
+const env = envSchema.safeParse(process.env);
+
+if (!env.success) {
+  console.error('❌ Invalid environment variables:', env.error.format());
+  throw new Error('Invalid environment variables');
+}
+
+// Export validated environment variables
+export const config = env.data;
+```
+
+This is how we add environment variables to the project:
+
+  1. Add to `.env.example`:
+      ```bash
+      NEW_VARIABLE=value_example
+      ```
+
+  2. Add to `apps/web/env.ts`:
+      ```typescript
+      // For server-only variables
+      server: {
+        NEW_VARIABLE: z.string(),
+      }
+      // For client-side variables
+      client: {
+        NEXT_PUBLIC_NEW_VARIABLE: z.string(),
+      }
+      experimental__runtimeEnv: {
+        NEXT_PUBLIC_NEW_VARIABLE: process.env.NEXT_PUBLIC_NEW_VARIABLE,
+      }
+      ```
+
+  3. For client-side variables:
+      - Must be prefixed with `NEXT_PUBLIC_`
+      - Add to both `client` and `experimental__runtimeEnv` sections
+
+  4. Add to `turbo.json` under `globalDependencies`:
+      ```json
+      {
+        "tasks": {
+          "build": {
+            "env": [
+              "NEW_VARIABLE"
+            ]
+          }
+        }
+      }
+      ```
+
+examples:
+  - input: |
+      # Adding a server-side API key
+      # .env.example
+      API_KEY=your_api_key_here
+
+      # env.ts
+      server: {
+        API_KEY: z.string(),
+      }
+
+      # turbo.json
+      "build": {
+        "env": ["API_KEY"]
+      }
+    output: "Server-side environment variable properly added"
+
+  - input: |
+      # Adding a client-side feature flag
+      # .env.example
+      NEXT_PUBLIC_FEATURE_ENABLED=false
+
+      # env.ts
+      client: {
+        NEXT_PUBLIC_FEATURE_ENABLED: z.coerce.boolean().default(false),
+      },
+      experimental__runtimeEnv: {
+        NEXT_PUBLIC_FEATURE_ENABLED: process.env.NEXT_PUBLIC_FEATURE_ENABLED,
+      }
+
+      # turbo.json
+      "build": {
+        "env": ["NEXT_PUBLIC_FEATURE_ENABLED"]
+      }
+    output: "Client-side environment variable properly added"
+
+references:
+  - apps/web/env.ts
+  - apps/web/.env.example
+  - turbo.json

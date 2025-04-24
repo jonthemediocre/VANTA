@@ -1,0 +1,169 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+---
+description: Core Documentation Requirements and Guidelines
+globs: .md, .mdx, README.md, CONTRIBUTING.md, docs/
+type: manual
+---
+
+# RULE TYPE: Manual
+# FILE PATTERNS: .md, .mdx, README.md, CONTRIBUTING.md, docs/
+
+# Core Documentation Requirements
+
+## Essential Documents
+
+Every project must include these essential documents:
+
+- **README.md**: Project overview, setup instructions, and documentation links
+- **CONTRIBUTING.md**: Guidelines for contributors
+- **docs/architecture.md**: System architecture and design decisions
+- **docs/api-reference.md**: API documentation (if applicable)
+- **docs/deployment.md**: Deployment procedures and requirements
+- **TODO.md**: Current project tasks and priorities
+- **docs/ai-learnings.md**: AI insights and patterns
+
+## Documentation Structure
+
+### README.md Structure
+
+```markdown
+# Project Name
+
+Brief description of the project.
+
+## Features
+
+- Key feature 1
+- Key feature 2
+- Key feature 3
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js 18+
+- npm or yarn
+- [Other prerequisites]
+
+### Installation
+
+```bash
+git clone [repository url]
+cd [project directory]
+npm install
+```
+
+## Usage
+
+Brief explanation and code examples.
+
+## Documentation
+
+For more detailed documentation, see:
+
+- [Architecture](mdc:docs/architecture.md)
+- [API Reference](mdc:docs/api-reference.md)
+- [Deployment Guide](mdc:docs/deployment.md)
+
+## Contributing
+
+Please see [CONTRIBUTING.md](mdc:CONTRIBUTING.md) for details.
+
+## License
+
+[License information]
+```
+
+### Architecture Document
+
+Architecture documentation should include:
+
+1. System overview diagram
+2. Component relationships
+3. Data flow diagrams
+4. Technology stack details
+5. Design decisions and rationales
+6. Security considerations
+7. Performance considerations
+
+## Documentation Standards
+
+1. **Consistency**: Use consistent formatting, terminology, and structure
+2. **Completeness**: Cover all essential aspects of the system
+3. **Clarity**: Write in clear, concise language with examples
+4. **Accessibility**: Organize content with proper headings and navigation
+5. **Maintenance**: Keep documentation up-to-date with code changes
+
+## API Documentation
+
+API documentation should include:
+
+1. Endpoint descriptions
+2. Request parameters
+3. Response formats
+4. Error codes and messages
+5. Authentication requirements
+6. Example requests and responses
+7. Rate limits and usage guidelines
+
+## Code Documentation
+
+1. Use JSDoc comments for TypeScript/JavaScript code
+2. Document public API functions, classes, and interfaces
+3. Explain complex algorithms and business logic
+4. Include examples for non-obvious usage patterns
+5. Document state management patterns
+
+## Maintenance
+
+1. Review documentation during code reviews
+2. Update documentation when code changes
+3. Validate documentation accuracy regularly
+4. Gather feedback from new team members
+5. Automate documentation generation where possible
+
+## Integration with MDC Rules
+
+1. Reference relevant MDC rules in documentation
+2. Explain how MDC rules influence architecture and code
+3. Document custom MDC rules and their purpose
+4. Provide examples of MDC rule application
+
+## Examples
+
+### Good Component Documentation
+
+```tsx
+/**
+ * DataTable component renders a sortable, filterable table with pagination.
+ *
+ * @example
+ * <DataTable
+ *   columns={columns}
+ *   data={userData}
+ *   pagination={true}
+ *   onRowClick={handleRowClick}
+ * />
+ *
+ * @param {Object} props - Component props
+ * @param {Array<Column>} props.columns - Column definitions
+ * @param {Array<any>} props.data - Data to display
+ * @param {boolean} [props.pagination=false] - Whether to show pagination
+ * @param {Function} [props.onRowClick] - Row click handler
+ * @returns {JSX.Element} Rendered component
+ */
+```
+
+### Bad Component Documentation
+
+```tsx
+/**
+ * Table component
+ * 
+ * @param props - The props
+ */
+``` 

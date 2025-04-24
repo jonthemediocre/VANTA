@@ -1,0 +1,9 @@
+base_model: nvidia/nemotron-3.1-253b
+lora_rank: 32
+lora_target_modules: [qkv_proj, dense]
+training_dataset: /data/vanta/code_math_scene_trigger.jsonl
+batch_size: 16
+epochs: 1
+learning_rate: 2e-5
+max_seq_length: 8192
+output_dir: lora-nemotron-scene

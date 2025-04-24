@@ -1,0 +1,39 @@
+# Global settings for VANTA WhisperMode & BabelStack
+
+whispermode:
+  # Controlled globally by blueprint.yaml dev_flags['ENABLE_WHISPER_BABELSTACK']
+  default_activation_policy: explicit_trigger # Requires specific event or agent call
+
+  triggers:
+    # Examples - Refine based on implementation
+    - type: emotional_tone_spike
+      threshold: 0.75 # Example intensity threshold
+      agent_source: EmotionWeaver # Agent detecting the spike
+    - type: ritual_invocation
+      ritual_ids: # Specific rituals that can activate WhisperMode
+        - bedtime_story # Example from Codex context
+        - inner_child_prompt # Example from Codex context
+        - resilience_mode # From agent_health.mdc
+    - type: manual_override
+      enabled_by_flag: ENABLE_SANCTION_WHISPER_OVERRIDE # From blueprint.yaml
+
+  babelstack:
+    enabled: true # Assuming enabled if WhisperMode is active
+    language_blending:
+      default_strategy: adjacent_semantic # Example strategy
+      max_languages_per_output: 2
+      # Language pool could be defined here or dynamically sourced
+    metaphor_stacking:
+      default_density: medium # low, medium, high
+      max_layers: 3
+      # Metaphor dictionary path (from Codex structure):
+      dictionary_path: /FrAmEwOrK/metaphor/dictionary.yaml
+    semantic_abstraction:
+      default_level: moderate # none, low, moderate, high
+
+  output_framing:
+    default_style: allegorical # dream-logic, allegorical, spiritual, poetic
+    sensory_scaffold_enabled: true
+
+  fallback:
+    on_failure: revert_to_standard_output # Revert or emit specific error signal? 

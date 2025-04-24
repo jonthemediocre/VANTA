@@ -1,0 +1,127 @@
+---
+description: Form handling
+globs: components/forms/.tsx, hooks/useForm*.ts
+type: autoAttached
+---
+
+# RULE TYPE: Auto Attached
+# FILE PATTERNS: components/forms/.tsx, hooks/useForm*.ts
+
+# Form Handling Guidelines
+
+## Form Structure
+- Use `react-hook-form` for form state management
+- Define form schemas with Zod for validation
+- Create reusable form components for common patterns
+- Implement proper error handling and display
+
+## Validation
+- Define Zod schemas for all forms
+- Include appropriate error messages
+- Validate on blur and on submit
+- Handle server-side validation errors
+
+## Accessibility
+- Use proper form semantics (label, fieldset, legend)
+- Implement ARIA attributes for form fields
+- Ensure keyboard navigation works properly
+- Show validation errors in an accessible way
+- For further accessibility guidelines, see **@ui-components.mdc**
+
+## Server Integration
+- Use server actions for form submission
+- Handle loading and success states
+- Provide clear error messages
+- Implement proper client-side validation
+- For server action guidelines, see **@server-actions.mdc**
+
+## Error Handling
+- Display validation errors clearly next to form fields
+- Handle server-side errors with appropriate UI feedback
+- Provide fallback UI for failed submissions
+- For detailed error handling, see **@300-error-handling.mdc**
+
+## Related MDC Rules
+- **@ui-components.mdc**: For form component styling and UI patterns
+- **@server-actions.mdc**: For form submission handling
+- **@300-error-handling.mdc**: For error handling patterns
+- **@400-adhd-patterns.mdc**: For ADHD-friendly form patterns
+- **@api-routes.mdc**: For API-based form submissions
+
+## Example Implementation
+
+```tsx
+// Define schema with Zod
+const formSchema = z.object({
+  name: z.string().min(2, {
+    message: "Name must be at least 2 characters.",
+  }),
+  email: z.string().email({
+    message: "Please enter a valid email address.",
+  }),
+});
+
+// Form component with react-hook-form
+export function ContactForm() {
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+    },
+  });
+
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    try {
+      await submitContactForm(values);
+      toast({
+        title: "Success",
+        description: "Your message has been sent.",
+      });
+      form.reset();
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to send your message. Please try again.",
+        variant: "destructive",
+      });
+    }
+  }
+
+  return (
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <FormField
+          control={form.control}
+          name="name"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Name</FormLabel>
+              <FormControl>
+                <Input placeholder="Your name" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="email"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Email</FormLabel>
+              <FormControl>
+                <Input placeholder="email@example.com" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <Button type="submit" disabled={form.formState.isSubmitting}>
+          {form.formState.isSubmitting ? "Sending..." : "Send Message"}
+        </Button>
+      </form>
+    </Form>
+  );
+}
+```

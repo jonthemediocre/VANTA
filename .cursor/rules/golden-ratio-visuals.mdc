@@ -1,0 +1,160 @@
+---
+description: Guidelines for applying the golden ratio in visual design
+globs: 
+  - "**/*.css"
+  - "**/*.scss"
+  - "src/components/**/*.tsx"
+  - "src/styles/**/*.ts"
+type: bestPractice
+---
+
+# Golden Ratio in Visual Design
+
+## Overview
+The golden ratio (φ ≈ 1.618) should be applied specifically to visual elements to create harmonious and aesthetically pleasing designs. This rule provides guidelines for using the golden ratio effectively in UI components, layouts, and animations.
+
+## Visual Applications
+
+### Layout Composition
+- Use the golden ratio to divide space between primary and secondary content areas
+- Apply to parent-child container relationships for visual harmony
+- Determine margins and padding based on golden ratio relationships
+
+```tsx
+// Good example: Using golden ratio for layout composition
+<div className="container">
+  <main className="content" style={{ flex: 1.618 }}>
+    {/* Primary content */}
+  </main>
+  <aside className="sidebar" style={{ flex: 1 }}>
+    {/* Secondary content */}
+  </aside>
+</div>
+```
+
+### Component Proportions
+- Size UI components using golden ratio relationships
+- Apply to width/height ratios of cards, panels, and images
+- Use for button dimensions and icon sizing
+
+```tsx
+// Good example: Card component with golden ratio proportions
+<Card 
+  className="golden-ratio-card"
+  style={{ 
+    width: '100%',
+    height: `${width / 1.618}px` // Height is width divided by φ
+  }}
+>
+  {/* Card content */}
+</Card>
+```
+
+### Typography
+- Set font size relationships using the golden ratio
+- Apply to heading hierarchies (h1, h2, h3, etc.)
+- Use for line-height calculations
+
+```tsx
+// Good example: Typography scale based on golden ratio
+const typographyScale = {
+  small: '0.75rem',
+  base: '1rem',
+  large: '1.618rem',
+  xlarge: '2.618rem', // 1.618 * 1.618
+};
+```
+
+### Animation Timing
+- Use the golden ratio for animation duration relationships
+- Apply to transition timing and sequence durations
+- Create smooth, natural-feeling motion sequences
+
+```tsx
+// Good example: Animation timing with golden ratio relationships
+<motion.div
+  animate={{ opacity: 1, y: 0 }}
+  initial={{ opacity: 0, y: 20 }}
+  transition={{ 
+    duration: 0.5,
+    staggerChildren: 0.5 / 1.618 // Stagger using golden ratio
+  }}
+>
+  {/* Animated content */}
+</motion.div>
+```
+
+### Spacing System
+- Define a spacing scale based on the golden ratio
+- Apply to margins, padding, and gaps between elements
+- Use consistent spacing variables throughout the application
+
+```typescript
+// Good example: Spacing system based on the golden ratio
+export const spacing = {
+  xs: '0.5rem',
+  sm: '0.809rem',  // 0.5 * 1.618
+  md: '1.309rem',  // 0.809 * 1.618
+  lg: '2.118rem',  // 1.309 * 1.618
+  xl: '3.427rem',  // 2.118 * 1.618
+};
+```
+
+## ❌ Do Not Apply To
+
+### Non-Visual Logic
+Avoid using the golden ratio for:
+- Algorithm complexity scoring
+- Database query optimization
+- Authentication/authorization rules
+- Business logic calculations
+- Tag suggestion algorithms or content ranking
+
+### Backend Systems
+The golden ratio should not be used for:
+- API rate limiting
+- Server response time targets
+- Database connection pool sizing
+- Cache invalidation timing
+- Request timeout configurations
+
+## Implementation Utility
+
+```typescript
+// src/lib/design/goldenRatio.ts
+export const PHI = 1.618033988749895;
+
+export const goldenRatio = {
+  // Scale a base value by the golden ratio (multiply)
+  scale: (value: number, steps = 1): number => {
+    return value * Math.pow(PHI, steps);
+  },
+  
+  // Divide a value by the golden ratio
+  divide: (value: number, steps = 1): number => {
+    return value / Math.pow(PHI, steps);
+  },
+  
+  // Create a golden ratio-based spacing scale
+  createScale: (baseValue: number, steps = 5): number[] => {
+    return Array.from({ length: steps }).map((_, i) => 
+      baseValue * Math.pow(PHI, i)
+    );
+  },
+  
+  // Calculate golden section of a length
+  section: (length: number): { major: number, minor: number } => {
+    const major = length * (PHI - 1) / PHI;
+    const minor = length / PHI;
+    return { major, minor };
+  }
+};
+```
+
+## Best Practices
+
+1. **Consistency** - Use the golden ratio consistently across similar components
+2. **Visual Elements Only** - Apply only to visually perceived elements
+3. **No Overengineering** - Don't force the golden ratio where it doesn't naturally fit
+4. **Limit Nesting** - Avoid applying the golden ratio recursively more than 2-3 levels deep
+5. **Verify Visually** - Always verify that the application of the golden ratio actually improves the design 

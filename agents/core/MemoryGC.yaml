@@ -1,0 +1,15 @@
+name: MemoryGC
+description: Garbage collection system for pruning obsolete or low-value memory traces
+role: Maintains memory cleanliness, efficiency, and relevance
+functions:
+  - age_out(): Delete memory not accessed within TTL
+  - score_prune(): Remove memory with low reinforcement score
+  - compress(): Merge duplicate/overlapping entries
+triggers:
+  - MemoryWeaver signal
+  - Task system context overload
+  - Scheduled maintenance cycle
+outputs:
+  - Deleted trace report
+  - Archived memory shards
+  - Clean index confirmation

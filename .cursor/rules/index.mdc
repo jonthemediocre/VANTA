@@ -1,0 +1,123 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+---
+description: Central index of all MDC rules 
+type: always
+alwaysApply: true
+---
+
+# RULE TYPE: Always
+# FILE PATTERNS: Not applicable for Always rules
+
+# InnerCircle MDC Rules Index
+
+This document serves as the central index for all MDC rules in the InnerCircle project. MDC (Markdown Comments) rules provide guidance and standardization for development practices.
+
+## 📚 How to Use MDC Rules
+
+When asking for assistance or writing code, reference relevant MDC rules:
+
+```
+@index.mdc @000-base.mdc [+ ADDITIONAL RULES]
+
+Your question or request here...
+```
+
+## 📋 Rule Categories
+
+### Core & Architecture (000 & 100 Series)
+- [**000-base.mdc**](mdc:000-base.mdc) - Base architectural principles and patterns
+- [**010-mvp-phase-scoping.mdc**](mdc:.cursor/rules/010-mvp-phase-scoping.mdc) - Strategy for prioritizing MVP features in early phases
+- [**100-next-components.mdc**](mdc:100-next-components.mdc) - Next.js component standards
+- [**110-feature-parity.mdc**](mdc:.cursor/rules/110-feature-parity.mdc) - Strategy for maintaining core feature parity across platforms
+
+### UI & Design (100-200 Series)
+- [**200-icons.mdc**](mdc:200-icons.mdc) - Icon usage and management
+- [**ui-components.mdc**](mdc:ui-components.mdc) - UI component and styling guidelines
+- [**golden-ratio-visuals.mdc**](mdc:golden-ratio-visuals.mdc) - Visual design using golden ratio
+
+### Error Handling & Testing (300 Series)
+- [**300-error-handling.mdc**](mdc:300-error-handling.mdc) - Error handling guidelines
+- [**310-dependency-hygiene.mdc**](mdc:.cursor/rules/310-dependency-hygiene.mdc) - Dependency vulnerability management
+- [**testing.mdc**](mdc:testing.mdc) - Testing guidelines and practices
+- [**llm-test.mdc**](mdc:llm-test.mdc) - LLM testing guidelines
+
+### ADHD Optimization (400 Series)
+- [**400-adhd-patterns.mdc**](mdc:400-adhd-patterns.mdc) - ADHD-friendly design patterns
+- [**adhd-energy-features.mdc**](mdc:adhd-energy-features.mdc) - Energy-aware UI features
+
+### Data & API (500 Series)
+- [**500-prisma.mdc**](mdc:500-prisma.mdc) - Prisma database patterns
+- [**prisma.mdc**](mdc:prisma.mdc) - Additional Prisma guidelines
+- [**api-routes.mdc**](mdc:api-routes.mdc) - API route implementation guidelines
+- [**data-fetching.mdc**](mdc:data-fetching.mdc) - Data fetching with SWR
+- [**server-actions.mdc**](mdc:server-actions.mdc) - Next.js server actions
+
+### Documentation & Learning (600 Series)
+- [**600-ai-learnings.mdc**](mdc:600-ai-learnings.mdc) - AI learning documentation
+- [**904-core-documentation.mdc**](mdc:904-core-documentation.mdc) - Documentation requirements
+- [**904-documentation-index.mdc**](mdc:904-documentation-index.mdc) - Documentation indexing
+
+### External & Open Source (700 Series)
+- [**700-opensource-mdc.mdc**](mdc:700-opensource-mdc.mdc) - Open source MDC rules
+
+### Agent & Automation (900 Series)
+- [**900-agent-config.mdc**](mdc:900-agent-config.mdc) - AI agent configuration
+- [**901-mdc-agent.mdc**](mdc:901-mdc-agent.mdc) - MDC rules monitoring agent
+- [**902-rl-agent.mdc**](mdc:902-rl-agent.mdc) - Reinforcement learning agent
+- [**903-rl-suggestion.mdc**](mdc:903-rl-suggestion.mdc) - RL suggestion system
+- [**905-orchestrator-agent.mdc**](mdc:905-orchestrator-agent.mdc) - Task orchestration agent
+- [**906-documentation-sync.mdc**](mdc:906-documentation-sync.mdc) - Documentation synchronization
+- [**910-assistant-autonomy.mdc**](mdc:910-assistant-autonomy.mdc) - Guideline for AI to prioritize self-research
+
+### Utility & Miscellaneous
+- [**environment-variables.mdc**](mdc:environment-variables.mdc) - Environment variable guidelines
+- [**form-handling.mdc**](mdc:form-handling.mdc) - Form handling guidelines
+- [**utilities.mdc**](mdc:utilities.mdc) - Utility function guidelines
+- [**logging.mdc**](mdc:logging.mdc) - Logging guidelines
+- [**cleaner.mdc**](mdc:cleaner.mdc) - Code cleanup and maintenance 
+- [**page-structure.mdc**](mdc:page-structure.mdc) - Page structure guidelines
+- [**project-structure.mdc**](mdc:project-structure.mdc) - Project organization
+- [**cursor-rules.mdc**](mdc:cursor-rules.mdc) - Managing Cursor MDC rules
+- [**cursor.mdc**](mdc:cursor.mdc) - Cursor IDE configuration
+- [**llm.mdc**](mdc:llm.mdc) - LLM integration guidelines
+
+## 🔍 Common Rule Combinations
+
+### Frontend Development
+```
+@index.mdc @000-base.mdc @100-next-components.mdc @ui-components.mdc
+```
+
+### Backend Development
+```
+@index.mdc @000-base.mdc @api-routes.mdc @500-prisma.mdc
+```
+
+### Documentation Tasks
+```
+@index.mdc @904-core-documentation.mdc @904-documentation-index.mdc
+```
+
+### ADHD-Optimized Features
+```
+@index.mdc @400-adhd-patterns.mdc @adhd-energy-features.mdc
+```
+
+### Agent Development
+```
+@index.mdc @900-agent-config.mdc @902-rl-agent.mdc
+```
+
+## 📝 Rule Management
+
+Rules are managed according to the principles in [cursor-rules.mdc](mdc:cursor-rules.mdc).
+
+When creating new rules:
+1. Follow the established numbering convention (prefix with appropriate series number)
+2. Use the [template.mdc](mdc:template.mdc) as a starting point
+3. Update this index with references to the new rule
+4. Ensure proper glob patterns to attach rules to relevant files 

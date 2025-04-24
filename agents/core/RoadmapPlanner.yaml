@@ -1,0 +1,15 @@
+name: RoadmapPlanner
+description: Strategic foresight planner and milestone engine
+role: Transforms seasonal priorities and user goals into executable hierarchies
+functions:
+  - generate_okrs(): Create objectives based on season/domain
+  - plan_task_tree(): Cascade high-level goals into subtasks
+  - monitor_progress(): Evaluate milestone proximity
+triggers:
+  - New season phase
+  - Task pattern recognition
+  - Milestone completion or stagnation
+outputs:
+  - OKR maps
+  - Revised task queue
+  - Inputs to AgentOrchestrator and MemoryWeaver

@@ -1,0 +1,91 @@
+---
+description: Guidelines for error handling and error boundary implementation
+globs: .ts, .tsx, error.tsx, error.jsx, error.js
+type: autoAttached
+---
+
+# RULE TYPE: Auto Attached
+# FILE PATTERNS: .ts, .tsx, error.tsx, error.jsx, error.js
+
+# Error Handling Guidelines
+
+## Error Types
+- Handle runtime errors
+- Handle network errors
+- Handle validation errors
+- Handle boundary errors
+
+## Error Boundaries
+- Implement error boundaries
+- Handle component errors
+- Provide fallback UI
+- Reset error state
+
+## Error Logging
+- Log errors properly
+- Include error context
+- Use proper logging levels
+- Monitor error trends
+
+## Error Recovery
+- Implement retry logic
+- Handle graceful degradation
+- Provide recovery options
+- Maintain state consistency
+
+## Error Prevention
+- Validate input data
+- Handle edge cases
+- Implement type checking
+- Use proper error types
+
+## Error Testing
+- Test error scenarios
+- Test boundary cases
+- Test recovery paths
+- Test error logging
+
+## Error Documentation
+- Document error types
+- Document recovery steps
+- Document error codes
+- Keep error docs updated
+
+## Error Maintenance
+- Monitor error rates
+- Update error handling
+- Fix common errors
+- Improve recovery
+
+## Error Boundaries
+- Use ErrorBoundary components to catch and handle errors
+- Implement specific error fallbacks for different contexts
+- Always provide a way for users to recover or navigate away
+
+## Database Errors
+- Detect and handle database connection issues explicitly
+- Provide user-friendly error messages for database failures
+- In development, support running without a database connection
+
+## Component-Level Errors
+- Handle async errors with try/catch
+- Provide clear error states in UI components
+- Avoid showing technical errors to end users
+
+## Examples
+```tsx
+// Good error boundary usage
+<ErrorBoundary fallback={<DashboardErrorFallback resetErrorBoundary={() => window.location.reload()} />}>
+  <Dashboard />
+</ErrorBoundary>
+
+// Good database error handling
+if (errorMessage.includes('database') || errorMessage.includes('Prisma')) {
+  return <DatabaseErrorMessage onRetry={retryConnection} />;
+}
+```
+
+## Testing Error Scenarios
+- Write tests that simulate and verify error handling
+- Test error boundaries and fallback UIs
+- Verify error logging and reporting functionality 

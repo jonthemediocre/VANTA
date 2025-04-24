@@ -1,0 +1,27 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+### 🧷 **Rule ID: memory_retention**
+
+**Description**:  
+Controls how, when, and what gets remembered, mutated, or discarded by MemoryWeaver and MemoryGC.
+
+**Agents**: `MemoryWeaver`, `MemoryGC`
+
+**Logic Tree**:
+- ✅ Store context when:
+  - Task is completed successfully with `score >= 0.7`
+  - User signals importance (`e.g., "remember this"`, "save to framework"`)
+  - Outcome is novel or variant-generative
+- 🔁 Mutate context when:
+  - Repetition of patterns exceeds 3 instances in 7 days
+  - Contradiction between current and past memory detected
+- 🧹 Purge context when:
+  - Access count = 0 for > 30 days
+  - `reinforcement score < 0.2` for 3 consecutive evaluations
+- 🧩 Archive before delete: YES  
+- 🔒 Protected tags: `identity`, `user-values`, `ritual-index`, `core-agents`
+
+

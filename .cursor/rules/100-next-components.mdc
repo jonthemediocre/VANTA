@@ -1,0 +1,41 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+---
+description: Next.js Component Standards
+globs: src/app/**/*.tsx
+---
+
+# Next.js Component Guidelines
+
+## Component Structure
+- Use "use client" directive for Client Components
+- Server Components must NOT use "use client"
+- Metadata can only be exported from Server Components
+- Keep components focused on a single responsibility
+- Separate layout concerns from content
+
+## File Organization
+- Page components go in `src/app/**/page.tsx`
+- Layout components go in `src/app/**/layout.tsx`
+- Error handling components go in `src/app/**/error.tsx`
+- Loading states go in `src/app/**/loading.tsx`
+- API routes go in `src/app/api/**/route.ts`
+
+## Error Handling
+- Each page should have proper error boundaries
+- Implement fallback UI for error states
+- Log errors with appropriate context
+
+## Data Fetching
+- Use React Query for client-side data fetching
+- Server Components should fetch data directly
+- Handle loading and error states consistently
+
+## Performance
+- Use proper component memoization
+- Implement suspense boundaries for loading states
+- Optimize image loading with Next.js Image component
+- Use route prefetching appropriately 

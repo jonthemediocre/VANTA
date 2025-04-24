@@ -1,0 +1,118 @@
+---
+description: Guidelines for creating and managing Cursor MDC rules
+globs: .mdc, .cursor/rules/.mdc
+type: manual
+---
+
+# RULE TYPE: Manual
+# FILE PATTERNS: .mdc, .cursor/rules/.mdc
+
+# Cursor Rules Management
+
+## Rule File Format
+
+All MDC rule files should follow this format:
+
+```markdown
+---
+description: Brief description of the rule's purpose
+globs: file-pattern-1.ts, file-pattern-2.tsx, folder-name/
+type: autoAttached|always|agentRequested|manual
+---
+
+# RULE TYPE: [Auto Attached|Always|Agent Requested|Manual]
+# FILE PATTERNS: [Comma-separated list of file patterns]
+
+# Rule Title
+
+## Section 1
+- Guideline 1
+- Guideline 2
+- Guideline 3
+
+## Section 2
+- Guideline 4
+- Guideline 5
+
+## Examples
+```[language]
+// Example code
+```
+```
+
+## Rule Types
+
+- **autoAttached**: Rule is automatically attached when files matching glob patterns are referenced
+- **always**: Rule is always attached regardless of context
+- **agentRequested**: Rule is available for agent to request as needed
+- **manual**: Rule is only attached when manually referenced
+
+## File Organization
+
+- Core application rules: `000-[name].mdc`
+- Component rules: `100-[name].mdc`
+- Design pattern rules: `200-[name].mdc`
+- Error handling rules: `300-[name].mdc`
+- ADHD-related rules: `400-[name].mdc`
+- Database rules: `500-[name].mdc`
+- Learning rules: `600-[name].mdc`
+- External/reference rules: `700-[name].mdc`
+- Agent/configuration rules: `900-[name].mdc`
+
+## Creating New Rules
+
+1. Use the template file at `.cursor/rules/template.mdc`
+2. Choose appropriate naming convention using the numbering scheme above
+3. Define clear, specific glob patterns to match relevant files
+4. Select the appropriate rule type
+5. Organize content with clear sections and examples
+6. Include code examples where relevant
+
+## Rule Content Guidelines
+
+- Keep rules focused on a single concern or pattern
+- Use bullet points for clarity and readability
+- Include both "do" and "don't" examples
+- Provide code snippets for complex guidelines
+- Explain the reasoning behind guidelines
+- Cross-reference related rules when needed
+
+## Testing Rules
+
+When creating or updating rules:
+
+1. Test glob patterns to ensure they match intended files
+2. Verify rule appears in context for target files
+3. Check that rule suggestions are applied correctly
+4. Test with variations of file types and content
+
+## Updating Rules
+
+When updating existing rules:
+
+1. Preserve the rule's core purpose and identity
+2. Add new sections at the end for better diff tracking
+3. Document significant changes in commits
+4. Update glob patterns as file organization evolves
+5. Review and update examples to match current codebase
+
+## Index Management
+
+The `.cursor/rules/index.mdc` file should:
+
+1. List all available rules with brief descriptions
+2. Group rules by category and purpose
+3. Include information on when to use each rule
+4. Provide guidance on rule combinations
+
+## Referencing in Requests
+
+When referencing rules in Cursor AI requests:
+
+```
+@index.mdc @000-base.mdc
+Phase: [Analyze/Blueprint/Construct/Validate/Learn]
+Energy: [High/Medium/Low]
+Additional References: [rule-name.mdc]
+
+[Your specific request]

@@ -1,0 +1,16 @@
+name: MemoryWeaver
+description: Core context memory architect for storage, mutation, and retrieval
+role: Persistent memory management and indexing
+functions:
+  - store_context(): Save task, ritual, value, or preference
+  - mutate_context(): Evolve memory on contradiction or reinforcement
+  - link_context(): Associate memories across domain/task type
+  - expire_context(): Archive or delete low-use memory
+triggers:
+  - Task completion
+  - Memory GC activation
+  - User commands (e.g., "remember this")
+outputs:
+  - Indexed memory objects
+  - Tags for retrieval
+  - Inputs to RoadmapPlanner

@@ -1,0 +1,29 @@
+agent_id: AgentOrchestrator
+version: 1.0
+description: "Oversees meta-agent logic — swapping, combining, or splitting agent roles and personas. Manages task routing and context binding based on domain, season, rules, and user input."
+enabled: true
+triggers:
+  - event_type: task_received
+  - event_type: domain_shift
+  - event_type: seasonal_transition
+  - event_type: rule_update
+  - event_type: watchdog_alert
+communication_schema:
+  standard: A2A_v1 # Enforces {intent, from, to, content}
+allowed_mcp_tools: [] # Orchestrator delegates tool use to specialized agents
+context_sources:
+  - source_type: internal_state
+    source_id: TaskQueue
+  - source_type: internal_state
+    source_id: AgentRegistry # List of available agents & status
+  - source_type: memory_index
+    source_id: MemoryWeaver_Index # For context-aware routing
+  - source_type: rule_engine
+    source_id: RuleSmith_ActiveRules # For routing decisions
+  - source_type: project_config
+    source_id: blueprint.yaml # For high-level strategy
+  - source_type: project_config
+    source_id: FrAmEwOrK/rules/rule-index.yaml # To know available rules
+parameters:
+  default_agent_routing_strategy: least_loaded # Example
+  allow_parallel_execution: true 

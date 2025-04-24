@@ -1,0 +1,72 @@
+---
+description: Guidelines for testing the application with Vitest
+globs: .test.ts, .test.tsx, __tests__/.ts, __tests__/.tsx
+type: autoAttached
+---
+
+# RULE TYPE: Auto Attached
+# FILE PATTERNS: .test.ts, .test.tsx, __tests__/.ts, __tests__/.tsx
+
+# Testing Guidelines
+
+## Test Structure
+- Use describe blocks to group related tests
+- Use test/it blocks for individual test cases
+- Follow the Arrange-Act-Assert pattern
+- Keep tests focused on a single behavior
+
+## Component Testing
+- Test both rendering and interactions
+- Use React Testing Library for component tests
+- Test accessibility concerns
+- Test loading and error states
+
+## Mocking
+- Use vitest.mock for mocking modules
+- Use vi.fn() for mocking functions
+- Use MSW for mocking API requests
+- Reset mocks between tests
+
+## Best Practices
+- Write tests before implementation (TDD)
+- Test edge cases and error handling
+- Avoid testing implementation details
+- Keep tests independent and isolated
+- Use meaningful assertion messages
+
+## Coverage
+- Aim for 80% code coverage minimum
+- Focus on testing business logic thoroughly
+- Ensure all user flows are tested
+- Prioritize critical paths for testing
+
+## Testing Framework
+- `vitest` is used for testing
+- Tests are colocated next to the tested file
+  - Example: `dir/format.ts` and `dir/format.test.ts`
+- AI tests are placed in the `__tests__` directory and are not run by default (they use a real LLM)
+
+## Common Mocks
+
+### Server-Only Mock
+```ts
+vi.mock("server-only", () => ({}));
+```
+
+### Prisma Mock
+```ts
+import { beforeEach } from "vitest";
+import prisma from "@/utils/__mocks__/prisma";
+
+vi.mock("@/utils/prisma");
+
+describe("example", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("test", async () => {
+    prisma.group.findMany.mockResolvedValue([]);
+  });
+});
+```

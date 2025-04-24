@@ -1,0 +1,15 @@
+agent_id: CoTThinker
+version: 0.1
+description: "Executes structured Chain-of-Thought reasoning on a specific path or problem provided by other agents (supports VANTA.SOLVE Layer 3)."
+enabled: true
+triggers:
+  - event_type: request_cot_reasoning
+communication_schema:
+  standard: A2A_v1
+allowed_mcp_tools: [] # Focused on internal reasoning
+context_sources:
+  - source_type: agent_input
+    source_id: ProblemContext
+parameters:
+  max_reasoning_steps: 10
+  output_format: structured_steps 

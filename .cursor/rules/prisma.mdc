@@ -1,0 +1,85 @@
+---
+description: How to use Prisma
+globs: prisma/, lib/db/, schema.prisma
+type: autoAttached
+---
+
+# RULE TYPE: Auto Attached
+# FILE PATTERNS: prisma/, lib/db/, schema.prisma
+
+# Prisma Database Guidelines
+
+## Schema Definition
+- Define models in `prisma/schema.prisma`
+- Use clear, descriptive model and field names
+- Include appropriate relations between models
+- Add comments to document complex relations or fields
+
+## Database Access
+- Use the Prisma client from `lib/db/index.ts`
+- Create service functions for database operations
+- Handle errors with try/catch blocks
+- Use transactions for operations that modify multiple tables
+
+## Error Handling
+- Wrap database operations in try/catch blocks
+- Implement appropriate error logging
+- Return meaningful error messages
+- Handle common database errors (not found, validation, etc.)
+- For detailed error handling patterns, see **@300-error-handling.mdc**
+
+## API Integration
+- Use Prisma with API routes and server actions
+- Implement proper data validation before database operations
+- Return appropriate responses from database operations
+- For API implementation guidelines, see **@api-routes.mdc** and **@server-actions.mdc**
+
+## Related MDC Rules
+- **@api-routes.mdc**: For using Prisma in API routes
+- **@server-actions.mdc**: For using Prisma in server actions
+- **@300-error-handling.mdc**: For error handling patterns
+- **@logging.mdc**: For logging database operations
+- **@testing.mdc**: For testing database access
+
+## Migration Workflow
+- Generate migrations with `npx prisma migrate dev --name description`
+- Apply migrations in production with `npx prisma migrate deploy`
+- Use `npx prisma db seed` for seeding data
+
+## Usage Example
+
+```typescript
+import prisma from "@/utils/prisma";
+
+// Example database service function
+async function getUserById(id: string) {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        // Don't include sensitive fields
+      },
+    });
+    
+    if (!user) {
+      throw new Error(`User with ID ${id} not found`);
+    }
+    
+    return user;
+  } catch (error) {
+    console.error("Error fetching user:", error);
+    throw error;
+  }
+}
+```
+
+This is how we import prisma in the project:
+
+```typescript
+import prisma from "@/utils/prisma";
+```
+
+The prisma file is located at: `apps/web/prisma/schema.prisma`.

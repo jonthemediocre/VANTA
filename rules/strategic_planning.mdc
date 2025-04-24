@@ -1,0 +1,22 @@
+# Rule: strategic_planning
+
+## Description
+Guides short-, mid-, and long-term planning by orchestrating goal prioritization, task transformation, and milestone forecasting.
+
+### 🧭 **Rule ID: strategic_planning**
+
+**Description**:
+Enables RoadmapPlanner to build and update long-term strategy trees, reflecting domain focus, seasonal shifts, and evolving feedback loops.
+
+**Agents**: `RoadmapPlanner`, `AgentOrchestrator`, `RuleSmith`
+
+**Logic Tree**:
+- 🌿 Strategy Node Creation:
+  - On new Season activation (e.g., `Season: Value=Money`)
+  - When milestone cluster achieves 70% completion
+- 🪄 Adjust task weights:
+  - Based on priority tag + seasonal value alignment
+  - Reinforcement scores of > 0.6 increase visibility
+- 🧭 Plan Recalibration:
+  - Triggered by user override (`"pivot strategy"`, `"change goals"`)
+  - RuleSmith detects contradictory objectives

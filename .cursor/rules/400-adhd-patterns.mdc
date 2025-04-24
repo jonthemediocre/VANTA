@@ -1,0 +1,70 @@
+---
+description: ADHD-Friendly Design Patterns
+globs: .tsx, .jsx, .css, components/.tsx
+type: autoAttached
+---
+
+# RULE TYPE: Auto Attached
+# FILE PATTERNS: .tsx, .jsx, .css, components/.tsx
+
+# ADHD-Friendly Design Guidelines
+
+## UI Organization
+- Implement progressive disclosure for complex features
+- Use visual differentiation to highlight important elements
+- Provide clear visual hierarchies and grouping
+- Minimize visual clutter and distractions
+
+## Focus Management
+- Implement proper focus protection during important tasks
+- Use the FocusProtectionContext to manage focus states
+- Provide clear entry and exit points for focused activities
+- Allow users to pause and resume tasks easily
+
+## Reducing Cognitive Load
+- Break complex forms into manageable steps
+- Provide clear, concise instructions
+- Use consistent patterns throughout the application
+- Minimize required decisions to reduce decision paralysis
+
+## Visual Cues
+- Use color-coding to differentiate between different types of content
+- Implement consistent iconography for quick recognition
+- Provide visual feedback for actions and state changes
+- Use animation sparingly and purposefully
+
+## Navigation
+- Support multiple view options (list, calendar, kanban)
+- Implement consistent navigation patterns
+- Keep primary navigation visible and accessible
+- Provide breadcrumbs for complex navigation paths
+
+## Task Management
+- Enable energy-based task planning
+- Allow tagging tasks with energy requirements
+- Support breaking tasks into smaller subtasks
+- Provide clear progress indicators
+
+## Time Management
+- Implement time blocking features
+- Provide reminders and notifications
+- Show time estimates for tasks
+- Allow flexible scheduling based on energy levels
+
+## Examples
+```tsx
+// Good implementation of progressive disclosure
+<Accordion type="single" collapsible>
+  <AccordionItem value="details">
+    <AccordionTrigger>Advanced Options</AccordionTrigger>
+    <AccordionContent>
+      {/* Complex options here */}
+    </AccordionContent>
+  </AccordionItem>
+</Accordion>
+
+// Good implementation of focus protection
+const { focusState, settings } = useFocusProtectionContext();
+
+// Conditionally render simpler UI during focus
+{inFocusMode ? <SimplifiedView /> : <FullFeaturedView />} 

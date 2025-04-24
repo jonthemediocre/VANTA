@@ -1,0 +1,189 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+---
+description: AI agent configuration and settings
+---
+
+# RULE TYPE: Always
+# FILE PATTERNS: Not applicable for Always rules
+
+# AI Agent Configuration
+
+## Agent Types
+
+### Code Assistant
+- Provide code suggestions
+- Help with refactoring
+- Assist with debugging
+- Generate test cases
+
+### Documentation Agent
+- Update documentation
+- Generate comments
+- Maintain README files
+- Document changes
+
+### Pattern Monitor
+- Detect code patterns
+- Analyze changes
+- Track rule usage
+- Generate insights
+
+### Test Assistant
+- Generate test cases
+- Verify coverage
+- Suggest improvements
+- Track test quality
+
+## Agent Settings
+
+```yaml
+agents:
+  codeAssistant:
+    enabled: true
+    confidence: 0.8
+    suggestionsPerRequest: 3
+    
+  documentationAgent:
+    enabled: true
+    autoUpdate: true
+    updateFrequency: "daily"
+    
+  patternMonitor:
+    enabled: true
+    minConfidence: 0.7
+    analysisFrequency: "hourly"
+    
+  testAssistant:
+    enabled: true
+    coverageTarget: 80
+    generateTests: true
+```
+
+## Integration Points
+
+### With Version Control
+- Monitor commits
+- Track changes
+- Analyze diffs
+- Generate reports
+
+### With Testing
+- Monitor test runs
+- Track coverage
+- Analyze failures
+- Suggest fixes
+
+### With Documentation
+- Update docs
+- Track changes
+- Generate summaries
+- Maintain indexes
+
+## Agent Workflows
+
+### Code Review
+1. Analyze changes
+2. Check patterns
+3. Verify tests
+4. Update docs
+
+### Documentation
+1. Monitor changes
+2. Update docs
+3. Generate reports
+4. Maintain index
+
+### Pattern Analysis
+1. Detect patterns
+2. Analyze impact
+3. Generate report
+4. Update rules
+
+## Maintenance
+
+### Daily Tasks
+- Update documentation
+- Generate reports
+- Check patterns
+- Verify rules
+
+### Weekly Tasks
+- Analyze trends
+- Update settings
+- Generate insights
+- Review changes
+
+### Monthly Tasks
+- Comprehensive review
+- Update configuration
+- Generate metrics
+- Plan improvements
+
+## Configuration Structure
+- Use standard YAML format for agent configuration
+- Include version number for backward compatibility
+- Group related settings together
+- Include comments to explain complex settings
+
+## Standard Settings
+- Set critic agent threshold to 0.85
+- Use Chain-of-Thought (CoT) reasoning for complex problems
+- Enable Mixture of Experts (MoE) for specialized domains
+- Configure memory persistence for learning retention
+
+## Tool Integration
+- Define tool handlers for filesystem, terminal, and external services
+- Specify parameter schemas for each tool
+- Include error handling for tool invocations
+- Document required permissions
+
+## Agent Communication
+- Define communication protocols between agents
+- Specify message formats and schemas
+- Include retry logic for failed communications
+- Implement proper error handling
+
+## Example Configuration
+```yaml
+version: 1.0
+agents:
+  coder:
+    model: gpt-4
+    temperature: 0.2
+    maxTokens: 4000
+    
+  critic:
+    model: claude-3-opus-20240229
+    temperature: 0.1
+    threshold: 0.85
+    
+  orchestrator:
+    model: gpt-4-turbo
+    temperature: 0.3
+    
+tools:
+  filesystem:
+    handler: tool.fileSystem
+    permissions: [read, write]
+    
+  terminal:
+    handler: tool.terminal
+    permissions: [execute]
+    
+memory:
+  persistence: true
+  location: .cursor/memory
+  
+reasoning:
+  chainOfThought: true
+  mixtureOfExperts: true
+```
+
+## Integration with MDC Rules
+- Reference MDC rules in agent configuration
+- Use agent insights to update MDC rules
+- Evolve configurations based on AI learnings 

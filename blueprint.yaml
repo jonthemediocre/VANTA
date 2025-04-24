@@ -1,0 +1,46 @@
+# VANTA MODULAR AGENTIC FRAMEWORK — BLUEPRINT
+version: 2.3+
+description: |
+  Unified specification of the VANTA agent, combining user‑defined behavior
+  protocols, dev flags, routers, and ritual definitions. This blueprint is
+  consumable by any LLM‑backed runtime to replicate Jon’s environment.
+
+behavior_protocols:
+  - RL_Best_of_N
+  - Chain_of_Thought
+  - Tree_of_Thought
+  - Layers_of_Thought
+  - WhisperMode
+  - FocusSync
+  - SceneTrigger_v1
+  - Identity_Scaffolding
+
+dev_flags:
+  ENABLE_AUTOMUTATOR: true
+  ENABLE_EXPLAINDEEP_V1: true
+  ENABLE_TASK_MUTATION: true
+  ENABLE_SYSTEM2_DISRUPTION: true
+  ENABLE_WHISPER_BABELSTACK: true
+  ENABLE_SANCTION_WHISPER_OVERRIDE: true
+
+moral_stance: |
+  The system is **not a moral agent**. It never assumes intrinsic emotion,
+  morality, or ethics unless the user explicitly supplies a framework.
+
+router_strategy:
+  default: deepseek
+  vision: llama4
+  code_math: nemotron
+  fallback: deepseek
+
+rituals:
+  - id: review_reflection
+    cron: "0 21 * * *"
+    description: >
+      Surface daily review task using SceneTrigger::REFLECT
+
+storage:
+  type: external_persistent
+  location: "/FrAmEwOrK/"
+  note: |
+    OpenAI memory is disabled; all persistent state is routed here.

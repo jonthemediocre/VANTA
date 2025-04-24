@@ -1,0 +1,54 @@
+---
+description: new feature 
+globs: 
+alwaysApply: false
+---
+---
+description: Open Source MDC Rules Index
+---
+
+# RULE TYPE: Always
+# FILE PATTERNS: Not applicable for Always rules
+
+# Open Source MDC Rules
+
+We've incorporated MDC rules from the [inbox-zero](mdc:https:/github.com/elie222/inbox-zero) repository by Elie Steinbock to enhance our development practices. These rules are stored in `.cursor/rules/opensource/` and provide guidelines for various aspects of development.
+
+## Available Rules
+
+- **api-routes.mdc**: Guidelines for API route implementation and structure
+- **cleaner.mdc**: Code cleanliness and formatting standards
+- **cursor-rules.mdc**: Meta-guidelines for creating and managing MDC rules
+- **data-fetching.mdc**: Best practices for data fetching using SWR and other methods
+- **environment-variables.mdc**: Managing environment variables and configuration
+- **form-handling.mdc**: Implementation of forms, validation, and error handling
+- **llm.mdc**: Implementation of LLM (Language Model) functionality
+- **llm-test.mdc**: Testing strategies for LLM implementations
+- **logging.mdc**: Logging standards and best practices
+- **page-structure.mdc**: Page structure and organization
+- **prisma.mdc**: Database access patterns using Prisma
+- **project-structure.mdc**: Project organization and file structure
+- **server-actions.mdc**: Implementation of Next.js server actions
+- **testing.mdc**: General testing strategies and best practices
+- **ui-components.mdc**: UI component implementation using Shadcn UI and Tailwind
+- **utilities.mdc**: Utility function organization and best practices
+
+## Usage
+
+These rules provide reference patterns from a production app that can be adapted to our needs. They can be useful as:
+
+1. **Learning resources**: Understanding best practices from another production app
+2. **Inspiration**: Adapting patterns to fit our own architecture
+3. **Reference**: Consulting when implementing similar features
+
+## Integration with Our Rules
+
+Our own MDC rules take precedence over these open source rules. When there are conflicts:
+
+1. Follow our project-specific rules first
+2. Use open source rules as supplementary guidance
+3. Document any adaptations made in our AI learnings
+
+## Updating
+
+To update these rules, run the download script to fetch the latest versions from the inbox-zero repository. 

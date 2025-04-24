@@ -1,0 +1,20 @@
+# Top-level dependencies for VANTA
+
+# Core API & Server
+fastapi[all]
+uvicorn[standard]
+pydantic
+
+# LLM Serving
+vllm
+
+# Config & Utils
+pyyaml
+python-dotenv
+orjson
+
+# LLM Integration
+ollama
+
+# Optional Vector DB (uncomment if needed)
+# chromadb 

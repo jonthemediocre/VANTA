@@ -1,0 +1,9 @@
+base_model: deepseek-ai/deepseek-llm-r1-32b-chat
+lora_rank: 64
+lora_target_modules: [q_proj, k_proj, v_proj, o_proj, rotary_emb]
+training_dataset: /data/vanta/scene_trigger_corpus.jsonl
+batch_size: 64
+epochs: 3
+learning_rate: 1e-4
+max_seq_length: 4096
+output_dir: lora-deepseek-scene

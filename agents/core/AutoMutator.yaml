@@ -1,0 +1,15 @@
+name: AutoMutator
+description: Mutation engine for recursive evolution of outputs, agents, and workflows
+role: Applies stochastic and feedback-informed mutations
+mutation_modes:
+  - Structural: Rewrites task/workflow formats
+  - Semantic: Alters phrasing, language style
+  - Agentic: Swaps or morphs agents for improved fit
+triggers:
+  - Stagnant output patterns
+  - Low reinforcement scores
+  - Contradictory memory traces
+outputs:
+  - Mutated scaffolds
+  - Agent reassignment proposals
+  - Logs to TraceLogger and RuleSmith

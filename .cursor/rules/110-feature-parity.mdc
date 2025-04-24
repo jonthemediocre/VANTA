@@ -1,0 +1,39 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# ---
+# description: Ensure core feature parity between different platform interfaces (e.g., web and mobile).
+# type: strategy
+# ---
+
+# RULE TYPE: Strategy
+# FILE PATTERNS: Not applicable for strategic rules affecting multiple platforms.
+
+# Feature Parity Guideline
+
+## Principle
+
+For projects targeting multiple platforms (e.g., web, mobile) that aim for a unified user experience, strive to maintain parity in core functionality across these different interfaces during development cycles.
+
+## Rationale
+
+Feature parity ensures a consistent and predictable experience for users interacting with the application on different devices or platforms. It avoids user frustration caused by missing functionality on one platform compared to another and simplifies support and documentation.
+
+## Application
+
+1.  **Core Feature Identification:** Clearly identify the core features that should be available and function similarly across all targeted platforms, especially for MVP releases.
+2.  **Development Synchronization:** Plan development tasks to address feature implementation on all relevant platforms, either concurrently or in close sequence. Avoid letting one platform's core feature set significantly lag behind another for extended periods.
+3.  **Shared Logic:** Maximize the use of shared business logic (e.g., in shared packages, API layers) to minimize platform-specific implementation differences for core functionality.
+4.  **UI/UX Adaptation:** While core *functionality* should be consistent, UI/UX presentation *may* be adapted to platform-specific conventions. Parity applies primarily to *what* the user can do, not necessarily the exact pixel-perfect layout (unless design dictates otherwise).
+5.  **Testing:** Ensure testing procedures cover core feature functionality on all targeted platforms to verify parity.
+6.  **Documentation:** Note any intentional deviations from feature parity in project documentation (e.g., `THEPLAN.md` or specific feature documents) with justification.
+
+## Relation to MVP Scoping
+
+When applying MVP principles (like `010-mvp-phase-scoping.mdc`), the defined MVP feature set should ideally be implemented across *all* core platforms before moving significantly beyond MVP scope on any single platform.
+
+---
+*Note: This rule provides strategic guidance. The specific list of features requiring parity and any platform-specific adaptations should be defined in project planning documents.*
+

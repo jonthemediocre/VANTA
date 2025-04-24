@@ -1,0 +1,84 @@
+# RULE TYPE: Best Practice
+# FILE PATTERNS: apps/mobile/**, apps/web/**
+
+# Frontend Environment Configuration
+
+## Objective
+
+Ensure consistent and secure handling of environment-specific variables (e.g., API URLs, keys) across different frontend applications (Expo mobile, Next.js web) within the monorepo.
+
+## Core Principles
+
+1.  **Centralized Definition (Source):** Define environment variables primarily in `.env` files at the root of *each specific app* (e.g., `apps/mobile/.env`, `apps/web/.env.local`). Use `.env.example` files for documentation and templates.
+2.  **Platform-Specific Loading:** Utilize the standard environment variable loading mechanisms for each platform:
+    *   **Next.js (Web):** Leverage built-in support for `.env.local`, `.env.development`, `.env.production`. Use `NEXT_PUBLIC_` prefix for variables intended for browser exposure. Access server-side variables directly via `process.env`.
+    *   **Expo (Mobile):** Use libraries like `expo-constants` or dedicated config plugins (`app.config.js`/`app.json` extras) to expose variables to the application build. Avoid embedding secrets directly in `app.json`.
+3.  **Runtime Access:** Access variables within the application code using the methods provided by the respective framework/library (e.g., `process.env.NEXT_PUBLIC_API_URL` in Next.js, `Constants.expoConfig?.extra?.apiUrl` in Expo).
+4.  **Consistency:** Strive for consistent variable *naming* conventions across apps where variables serve the same purpose (e.g., `API_BASE_URL`).
+5.  **Security:**
+    *   Never commit `.env` or `.env.local` files containing secrets to version control. Ensure they are listed in the root `.gitignore`.
+    *   Only expose necessary variables to the client-side (use `NEXT_PUBLIC_` for Next.js web).
+
+## Implementation Examples
+
+### Next.js (`apps/web/.env.local`)
+
+```dotenv
+# Server-side only
+SOME_API_KEY=server_secret_value
+
+# Exposed to browser
+NEXT_PUBLIC_API_BASE_URL=http://localhost:3000/api
+NEXT_PUBLIC_ANALYTICS_ID=tracker-id
+```
+
+*Access in code:*
+```typescript
+// Server-side component / API route
+const apiKey = process.env.SOME_API_KEY;
+const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+
+// Client-side component
+const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+```
+
+### Expo (`apps/mobile/app.config.js` or `app.json` + build env vars)
+
+*Method 1: Using `extra` in `app.config.js` (Requires loading .env manually)*
+```javascript
+// apps/mobile/app.config.js
+require('dotenv').config(); // Load .env at the top
+
+module.exports = {
+  expo: {
+    name: 'InnerCircle Mobile',
+    // ... other expo config ...
+    extra: {
+      eas: {
+        // Example: Project ID for EAS Build
+        projectId: process.env.EAS_PROJECT_ID
+      },
+      // Custom variables
+      API_BASE_URL: process.env.API_BASE_URL || 'http://localhost:3000/api',
+      // Add other env vars needed by the app build
+    },
+  },
+};
+```
+
+*Method 2: Using EAS Build Secrets / Environment Variables (Recommended for secrets)*
+   - Define secrets in EAS (`eas secret:create ...`)
+   - Define environment variables in `eas.json` build profiles.
+   - Access via build-time injection or specific libraries.
+
+*Access in code (using `extra` example):*
+```typescript
+import Constants from 'expo-constants';
+
+const apiUrl = Constants.expoConfig?.extra?.API_BASE_URL;
+```
+
+## Recommendations
+
+-   Prefer using environment variables set during the build/deployment process (e.g., EAS Secrets, Vercel/Fly.io environment variables) for production secrets over committing them even in `.env.production`.
+-   Create shared types or constants packages within the monorepo if configuration structures become complex or need strong typing across apps. 

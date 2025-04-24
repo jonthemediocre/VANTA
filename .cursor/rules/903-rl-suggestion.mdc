@@ -1,0 +1,175 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+---
+description: Guidelines for using the RL-powered suggestion system
+globs: ["**/*.tsx", "**/*.ts"]
+type: bestPractice
+---
+
+# RL-Powered Suggestion System
+
+## Overview
+The reinforcement learning suggestion system provides AI-powered suggestions that adapt to user preferences and behavior patterns. Use this system when you need to provide contextual suggestions that improve with user feedback.
+
+## Core Hook: useRLSuggestion
+
+The main interface for using the RL system in components is the `useRLSuggestion` hook:
+
+```typescript
+import { useRLSuggestion } from '@/lib/ai/reinforcement';
+
+// Inside your component
+const {
+  suggestion,
+  isLoading,
+  error,
+  acceptSuggestion,
+  rejectSuggestion,
+  modifySuggestion,
+  requestNewSuggestion
+} = useRLSuggestion('code', {
+  suggestionType: 'function',
+  initialPrompt: 'Help me optimize this function',
+  refreshInterval: 0,  // Disable auto-refresh
+  maximumSuggestions: 1
+});
+```
+
+## Correct Implementation
+
+✅ DO use the hook with appropriate context and options:
+
+```tsx
+function CodeEditor() {
+  const {
+    suggestion,
+    isLoading,
+    acceptSuggestion,
+    rejectSuggestion
+  } = useRLSuggestion('code', {
+    suggestionType: 'function',
+    initialPrompt: 'Optimize the selected code'
+  });
+  
+  return (
+    <div>
+      {isLoading ? (
+        <div>Loading suggestion...</div>
+      ) : suggestion ? (
+        <div className="suggestion-container">
+          <pre>{suggestion.content}</pre>
+          <div className="actions">
+            <button onClick={acceptSuggestion}>Accept</button>
+            <button onClick={rejectSuggestion}>Reject</button>
+          </div>
+        </div>
+      ) : null}
+    </div>
+  );
+}
+```
+
+## Incorrect Implementation
+
+❌ DON'T implement your own feedback collection or ignore providing feedback:
+
+```tsx
+function CodeEditor() {
+  const { suggestion } = useRLSuggestion('code');
+  
+  // BAD: Not providing feedback mechanisms
+  return suggestion ? <pre>{suggestion.content}</pre> : null;
+}
+```
+
+## Integration with AIContextProvider
+
+Always ensure your application is wrapped with the AIContextProvider:
+
+```tsx
+// In your layout or app component
+import { AIContextProvider } from '@/lib/ai/reinforcement';
+
+function MyApp({ children }) {
+  return (
+    <AIContextProvider>
+      {children}
+    </AIContextProvider>
+  );
+}
+```
+
+## Suggestion Types
+
+The system supports the following suggestion types:
+
+- `suggest_code`: Provides code suggestions
+- `suggest_refactor`: Recommends code refactoring
+- `suggest_docs`: Suggests documentation improvements
+- `suggest_pattern`: Recommends design pattern implementation
+
+## Feedback Collection
+
+Always implement all feedback options to maximize learning:
+
+- `acceptSuggestion()`: User accepted the suggestion as-is
+- `rejectSuggestion()`: User rejected the suggestion
+- `modifySuggestion(newContent)`: User modified the suggestion
+- `requestNewSuggestion()`: User wants a different suggestion
+
+## Implementation with Energy Awareness
+
+When using RL suggestions, consider the user's energy level to provide appropriate suggestions:
+
+```tsx
+function SmartCodeEditor() {
+  const { currentEnergyLevel } = useEnergyContext();
+  const {
+    suggestion,
+    isLoading,
+    acceptSuggestion,
+    rejectSuggestion
+  } = useRLSuggestion('code', {
+    suggestionType: 'function',
+    initialPrompt: 'Optimize the selected code',
+    userContext: {
+      energyLevel: currentEnergyLevel,
+      userPreferences: getUserPreferences()
+    }
+  });
+  
+  // Only show complex suggestions when energy is high
+  const shouldShowSuggestion = 
+    currentEnergyLevel === 'high' || 
+    (suggestion?.complexity === 'low' && currentEnergyLevel !== 'low');
+  
+  return (
+    <div>
+      {isLoading ? (
+        <div>Loading suggestion...</div>
+      ) : (suggestion && shouldShowSuggestion) ? (
+        <div className="suggestion-container">
+          <pre>{suggestion.content}</pre>
+          <div className="actions">
+            <button onClick={acceptSuggestion}>Accept</button>
+            <button onClick={rejectSuggestion}>Reject</button>
+          </div>
+        </div>
+      ) : null}
+    </div>
+  );
+}
+```
+
+## Best Practices
+
+1. **Provide context**: Always specify the appropriate context (e.g., 'code', 'design', 'documentation')
+2. **Handle loading states**: Show loading indicators when `isLoading` is true
+3. **Error handling**: Display appropriate messages when `error` is not null
+4. **Complete feedback loop**: Always implement all feedback options
+5. **Energy awareness**: Consider user's current energy level when showing suggestions
+6. **Respect user preferences**: Use preferences to tailor suggestion frequency and complexity
+7. **Performance monitoring**: Track acceptance rates to evaluate suggestion quality 

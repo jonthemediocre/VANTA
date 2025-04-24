@@ -1,0 +1,117 @@
+---
+description: Prisma database patterns and usage guidelines
+globs: .prisma, prisma.ts, db.ts, database.ts, .ts
+type: autoAttached
+---
+
+# RULE TYPE: Auto Attached
+# FILE PATTERNS: .prisma, prisma.ts, db.ts, database.ts, .ts
+
+# Prisma Database Patterns
+
+## Schema Design
+- Use clear model names
+- Define proper relationships
+- Implement proper indexes
+- Use appropriate field types
+
+## Database Operations
+- Use transactions when needed
+- Implement proper error handling
+- Optimize query performance
+- Handle batch operations
+
+## Data Validation
+- Use field constraints
+- Implement data validation
+- Handle edge cases
+- Prevent data corruption
+
+## Migration Management
+- Plan migrations carefully
+- Test migrations locally
+- Handle data backfills
+- Document changes
+
+## Performance
+- Use query optimization
+- Implement proper caching
+- Monitor query times
+- Handle N+1 queries
+
+## Security
+- Implement access control
+- Validate input data
+- Handle sensitive data
+- Prevent SQL injection
+
+## Testing
+- Test database operations
+- Use test fixtures
+- Mock database calls
+- Verify data integrity
+
+## Maintenance
+- Monitor database health
+- Handle schema updates
+- Manage connections
+- Implement backups
+
+## Connection Management
+- Use connection pooling in production
+- Implement graceful fallbacks for connection failures
+- Support development mode without a database
+
+## Query Construction
+- Use Prisma's query builder for complex queries
+- Implement pagination for large result sets
+- Handle potential null values safely
+
+## Error Handling
+- Catch and handle database errors explicitly
+- Provide meaningful error messages
+- Log database errors with appropriate context
+
+## Transaction Management
+- Use transactions for operations that modify multiple tables
+- Implement proper error handling within transactions
+- Ensure all operations within a transaction are properly isolated
+
+## Development Mode
+- Implement development mode with mock data
+- Use environment variables to control database connections
+- Provide clear error messages for missing database during development
+
+## Examples
+```ts
+// Good connection handling
+export function getPrismaClient() {
+  try {
+    if (!global.prisma) {
+      global.prisma = new PrismaClient();
+    }
+    return global.prisma;
+  } catch (error) {
+    console.error('Failed to initialize Prisma Client:', error);
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Running in development mode with simulated database connection');
+      return getMockPrismaClient();
+    }
+    throw error;
+  }
+}
+
+// Good error handling
+try {
+  const result = await prisma.user.findUnique({ where: { id } });
+  return result;
+} catch (error) {
+  console.error('Database error:', error);
+  throw new DatabaseError('Failed to fetch user data');
+}
+```
+
+## Testing
+- Use an isolated test database for integration tests
+- Implement proper data seeding for tests
+- Clean up test data after tests complete 

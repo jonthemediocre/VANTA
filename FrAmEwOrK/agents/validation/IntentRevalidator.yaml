@@ -1,0 +1,22 @@
+agent_id: IntentRevalidator
+version: 0.1
+description: "Audits and maps user input/task requests against the VANTA ontology and active context to ensure alignment and clarity before processing (VANTA.SOLVE Layer 1)."
+enabled: true
+triggers:
+  - event_type: task_received # First step in VANTA.SOLVE
+communication_schema:
+  standard: A2A_v1
+allowed_mcp_tools:
+  - read_file # To read ontology definitions
+context_sources:
+  - source_type: agent_input
+    source_id: UserInput/Task
+  - source_type: project_config
+    source_id: FrAmEwOrK/ontology/symbol_index.yaml # (From Codex)
+  - source_type: project_config
+    source_id: FrAmEwOrK/ontology/conceptual_weights.yaml # (From Codex)
+  - source_type: memory_index
+    source_id: MemoryWeaver_Index # For user history/preferences
+parameters:
+  validation_strictness: high
+  ambiguity_threshold: 0.3 # Example 

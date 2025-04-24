@@ -1,0 +1,33 @@
+agent_id: MemoryWeaver
+version: 1.0
+description: "Constructs, links, mutates, and persists memories (task states, outcomes, rituals, user values, preferences) across cycles. Interacts with storage (VectorDB/Filesystem)."
+enabled: true
+triggers:
+  - event_type: task_completed
+  - event_type: feedback_received
+  - event_type: context_shift
+  - event_type: seasonal_change
+  - event_type: explicit_memory_request # store(), mutate(), retrieve()
+communication_schema:
+  standard: A2A_v1
+allowed_mcp_tools: # Tools MemoryWeaver might use for interacting with non-DB storage
+  - read_file
+  - edit_file
+  - delete_file
+  - file_search
+context_sources:
+  - source_type: agent_input
+    source_id: DataToProcess
+  - source_type: rule_engine
+    source_id: RuleSmith_ActiveRules # Especially memory_retention.mdc
+  - source_type: internal_state
+    source_id: ReinforcementScoreEngine_Scores
+  - source_type: project_config
+    source_id: blueprint.yaml # For storage path
+parameters:
+  storage_type: hybrid # VectorDB + Filesystem
+  vector_db_config: # Placeholder - details depend on chosen DB
+    connection_env_var: VECTORDB_URI
+  filesystem_path_env_var: FRAMEWORK_STORAGE_PATH # Should map to /FrAmEwOrK/memory
+  default_embedding_model: all-MiniLM-L6-v2 # Example, needs alignment with actual usage
+  pruning_threshold_rule: memory_retention # Reference rule for GC triggers 
