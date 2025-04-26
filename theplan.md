@@ -272,7 +272,7 @@ This deployment includes:
 - Analyze `roadmap.json` structure. *[Completed]*
 - Analyze `vanta.py` (main entry point?). *[Completed - File does not exist; `run.py` is entry point]*
 - Define the structure and content of `agents.index.mpc.json`. *[Completed]*
-- Establish `.cursor/mdc/` rule files.
+- Establish `.cursor/mdc/` rule files. *[Completed - Files exist at `.cursor/rules/`]*
 - Define `BRAND_GUIDE.md`.
 - Implement the visual shell (Phase 1).
 - Set up CI/CD pipeline.
