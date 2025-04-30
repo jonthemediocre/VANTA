@@ -1,0 +1,67 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://example.com/schemas/agent.schema.json",
+  "title": "Agent Definition Schema",
+  "description": "Schema for defining agents in A2A/MPC-compatible format",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Unique agent name"
+    },
+    "type": {
+      "type": "string",
+      "description": "Agent type (e.g., 'code_assistant', 'documentation_agent')"
+    },
+    "intents": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "List of intents this agent can handle"
+    },
+    "triggers": {
+      "type": "object",
+      "description": "Event triggers for the agent",
+      "properties": {
+        "onFileChange": { "type": "boolean" },
+        "onUserQuery": { "type": "boolean" },
+        "onMessage": { "type": "boolean", "description": "Trigger on A2A messages" },
+        "onAPIRequest": { "type": "boolean", "description": "Trigger on external API calls" }
+      },
+      "additionalProperties": false
+    },
+    "entrypoint": {
+      "type": "string",
+      "description": "Path to the agent's implementation file"
+    },
+    "tools": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "List of tool identifiers the agent requires"
+    },
+    "config": {
+      "type": "object",
+      "description": "Agent-specific configuration settings",
+      "additionalProperties": true
+    },
+    "core": {
+      "type": "boolean",
+      "description": "Mark agent as core; exposes external API endpoints",
+      "default": false
+    },
+    "api": {
+      "type": "object",
+      "description": "If core, defines external API exposure",
+      "properties": {
+        "path": { "type": "string", "description": "HTTP path for agent API" },
+        "methods": { "type": "array", "items": { "type": "string", "enum": ["GET","POST","PUT","DELETE"] }, "description": "Allowed HTTP methods" },
+        "auth_required": { "type": "boolean", "description": "Require authentication for API access" },
+        "rate_limit": { "type": "object", "properties": { "requests": { "type": "integer" }, "per_seconds": { "type": "integer" } }, "description": "Rate limiting configuration" },
+        "schema_ref": { "type": "string", "description": "Reference to request/response JSON schema for API" }
+      },
+      "required": ["path","methods"],
+      "additionalProperties": false
+    }
+  },
+  "required": ["name", "type", "intents", "entrypoint"],
+  "additionalProperties": false
+} 

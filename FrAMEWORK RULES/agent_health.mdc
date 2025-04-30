@@ -1,0 +1,27 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+### 🛡 **Rule ID: agent_health**
+
+**Description**:
+Ensures that all agents remain operational, non-redundant, and responsive. Watchdog uses heartbeat and output checks to detect failures.
+
+**Agents**: `Watchdog`, `System2_Disruption`, `AutoMutator`
+
+**Triggers**:
+- Agent hangs > 7s = quarantine
+- Output entropy score < 0.1 (measured across 3 outputs) = reset
+- System2 trigger not activated in 24h = synthetic disruption injection
+
+**Actions**:
+- Quarantine Agent
+- Initiate fallback agent (backup persona)
+- Log failure in TraceLogger and flag for RuleSmith mutation
+
+**Resilience Mode**:
+- Recovery ritual invoked if >2 agents fail within 60m
+- Ritual includes: Reset active tasks, re-engage Season priorities, apply WhisperMode
+
+

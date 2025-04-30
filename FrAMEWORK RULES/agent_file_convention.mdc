@@ -1,0 +1,14 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# RULE TYPE: Auto Attached
+# FILE PATTERNS: agents.index.mpc.json, FrAmEwOrK/agents/**/*.yaml, agents/**/*.py, vanta_nextgen.py
+
+## VANTA Agent File Convention
+- **Configuration:** Agent configuration files MUST reside under `FrAmEwOrK/agents/<category>/<AgentName>.yaml` (e.g., `FrAmEwOrK/agents/core/AgentOrchestrator.yaml`). The `<category>` should reflect the agent's type (core, infrastructure, domain, etc.).
+- **Implementation:** Agent implementation files (`.py`) SHOULD ideally reside in a corresponding structure under the project root's `agents/` directory (e.g., `agents/core/orchestrator.py`). Stubs initially in `vanta_nextgen.py` should be migrated.
+- **Naming:** The base filename for the config (`<AgentName>.yaml`) and implementation (`<agent_name>.py` or `<AgentName>.py`) MUST be consistent and match the `name` or `class` defined in the config/registry.
+- **Registry:** The `agents.index.mpc.json` file MUST accurately reflect the `config_path` and `implementation.file`/`implementation.class` for every registered agent.
+- **Rationale:** Ensures consistency required by the `AgentRegistry` discovery mechanism and maintains project organization.

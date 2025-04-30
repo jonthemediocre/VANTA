@@ -15,9 +15,11 @@ description: Configuration for the MDC Rules Monitoring Agent
 ## Agent Purpose
 - Monitor and analyze MDC rule usage
 - Detect patterns in code changes
-- Propose rule updates
+- Propose rule updates based on analysis and effectiveness
 - Track rule effectiveness
 - Generate insights for improvement
+- **Monitor rule directories (`.cursor/rules/`, `FrAMEWORK RULES/`, etc.) for new or deleted files**
+- **Suggest updates to corresponding index files (`index.mdc`, `index.md`) to maintain consistency**
 
 ## Pattern Detection
 
@@ -58,6 +60,22 @@ ruleUpdate:
       impact: string  # Expected impact
       validation: string[]  # How to validate the change
 ```
+
+## Index Maintenance (NEW SECTION)
+
+### Directory Monitoring
+- Periodically scan `.cursor/rules/` for `.mdc` files.
+- Periodically scan designated project-specific rule directories (e.g., `FrAMEWORK RULES/`) for rule files (e.g., `.md`).
+
+### Index Comparison
+- Compare the list of found rule files against the entries listed in the corresponding index file (`.cursor/rules/index.mdc` or `FrAMEWORK RULES/index.md`).
+
+### Update Suggestion
+- If discrepancies are found (missing entries or entries for deleted files), formulate a suggested edit for the index file.
+- Present the suggested edit to the user/developer for review and application (e.g., via AI assistant suggestion or a generated report).
+
+### Automation Note
+- *While this rule defines the responsibility, fully autonomous file system monitoring and index file editing by a background agent is not currently implemented. This task relies on AI assistant capabilities within the IDE workflow.* 
 
 ## Integration Points
 
@@ -143,7 +161,8 @@ monitoring:
 1. The agent automatically monitors the codebase and generates reports
 2. Developers can request pattern analysis using comments
 3. The agent proposes rule updates through PRs
-4. Monthly reviews include agent insights
+4. **The AI Assistant, guided by this agent's defined role, will suggest index file updates when new rules are created or discrepancies are noted.**
+5. Monthly reviews include agent insights
 
 ## Maintenance
 

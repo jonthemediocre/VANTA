@@ -1,0 +1,295 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# MCP Server Integration Rule
+
+## Overview
+
+This rule defines how MCP tools should be integrated into the framework server-side, enabling agents to use tools outside of the Cursor IDE environment.
+
+## Tool Categories
+
+### File Operations
+- read_file
+- edit_file
+- list_dir
+- file_search
+- delete_file
+- grep_search
+
+### Terminal Operations
+- run_terminal_cmd
+- process_management
+- environment_control
+
+### Web Operations
+- web_search
+- web_scrape
+- api_request
+- webhook_management
+
+### AI/ML Operations
+- text_embedding
+- image_generation
+- code_analysis
+- semantic_search
+
+### Database Operations
+- query_execution
+- schema_management
+- data_migration
+- backup_restore
+
+### Vector Operations
+- vector_store_query
+- vector_store_update
+- similarity_search
+- clustering
+
+## Implementation Requirements
+
+```python
+from dataclasses import dataclass
+from typing import Dict, List, Any, Optional
+from enum import Enum
+from datetime import datetime
+
+class ToolCategory(Enum):
+    FILE = "file"
+    TERMINAL = "terminal"
+    WEB = "web"
+    AI = "ai"
+    DATABASE = "db"
+    VECTOR = "vector"
+
+@dataclass
+class ToolDefinition:
+    name: str
+    category: ToolCategory
+    description: str
+    parameters: Dict[str, Any]
+    required_params: List[str]
+    is_async: bool = True
+    cache_ttl: Optional[int] = None
+    rate_limit: Optional[int] = None
+
+@dataclass
+class ToolResult:
+    tool_name: str
+    status: str
+    result: Any
+    execution_time: float
+    timestamp: datetime
+    metadata: Dict[str, Any]
+
+class MCPServerTools:
+    """Server-side MCP tool integration handler."""
+    
+    def __init__(self):
+        self.tools: Dict[str, ToolDefinition] = {}
+        self.results_cache: Dict[str, ToolResult] = {}
+        
+    async def register_tool(self, tool_def: ToolDefinition) -> None:
+        """Register a new tool with the system."""
+        self.tools[tool_def.name] = tool_def
+        
+    async def execute_tool(self, tool_name: str, params: Dict[str, Any]) -> ToolResult:
+        """Execute a tool with given parameters."""
+        if tool_name not in self.tools:
+            raise ValueError(f"Unknown tool: {tool_name}")
+            
+        tool = self.tools[tool_name]
+        
+        # Validate required parameters
+        for required in tool.required_params:
+            if required not in params:
+                raise ValueError(f"Missing required parameter: {required}")
+                
+        # Check cache if applicable
+        if tool.cache_ttl:
+            cache_key = self._get_cache_key(tool_name, params)
+            if cache_key in self.results_cache:
+                return self.results_cache[cache_key]
+                
+        # Execute tool
+        start_time = datetime.now()
+        result = await self._execute_tool_impl(tool, params)
+        execution_time = (datetime.now() - start_time).total_seconds()
+        
+        tool_result = ToolResult(
+            tool_name=tool_name,
+            status="success",
+            result=result,
+            execution_time=execution_time,
+            timestamp=datetime.now(),
+            metadata={"params": params}
+        )
+        
+        # Cache result if applicable
+        if tool.cache_ttl:
+            cache_key = self._get_cache_key(tool_name, params)
+            self.results_cache[cache_key] = tool_result
+            
+        return tool_result
+        
+    def _get_cache_key(self, tool_name: str, params: Dict[str, Any]) -> str:
+        """Generate a cache key for tool results."""
+        sorted_params = sorted(params.items())
+        return f"{tool_name}:{str(sorted_params)}"
+```
+
+## Essential Agent Tools
+
+### 1. File Management Tools
+```python
+FILE_TOOLS = [
+    ToolDefinition(
+        name="read_file",
+        category=ToolCategory.FILE,
+        description="Read file contents with optional line range",
+        parameters={
+            "path": "str",
+            "start_line": "Optional[int]",
+            "end_line": "Optional[int]"
+        },
+        required_params=["path"]
+    ),
+    ToolDefinition(
+        name="write_file",
+        category=ToolCategory.FILE,
+        description="Write content to a file",
+        parameters={
+            "path": "str",
+            "content": "str",
+            "mode": "str"
+        },
+        required_params=["path", "content"]
+    )
+]
+```
+
+### 2. AI/ML Tools
+```python
+AI_TOOLS = [
+    ToolDefinition(
+        name="text_embedding",
+        category=ToolCategory.AI,
+        description="Generate embeddings for text",
+        parameters={
+            "text": "str",
+            "model": "str"
+        },
+        required_params=["text"]
+    ),
+    ToolDefinition(
+        name="code_analysis",
+        category=ToolCategory.AI,
+        description="Analyze code for patterns and issues",
+        parameters={
+            "code": "str",
+            "language": "str"
+        },
+        required_params=["code"]
+    )
+]
+```
+
+### 3. Vector Store Tools
+```python
+VECTOR_TOOLS = [
+    ToolDefinition(
+        name="vector_store_query",
+        category=ToolCategory.VECTOR,
+        description="Query vector store for similar items",
+        parameters={
+            "collection": "str",
+            "query_vector": "List[float]",
+            "top_k": "int"
+        },
+        required_params=["collection", "query_vector"]
+    )
+]
+```
+
+## Integration Points
+
+### 1. Framework Integration
+```python
+class FrameworkMCPIntegration:
+    def __init__(self):
+        self.mcp_server = MCPServerTools()
+        self.active_tools: Dict[str, bool] = {}
+        
+    async def initialize(self):
+        """Initialize MCP server integration."""
+        # Register file tools
+        for tool in FILE_TOOLS:
+            await self.mcp_server.register_tool(tool)
+            
+        # Register AI tools
+        for tool in AI_TOOLS:
+            await self.mcp_server.register_tool(tool)
+            
+        # Register vector tools
+        for tool in VECTOR_TOOLS:
+            await self.mcp_server.register_tool(tool)
+```
+
+### 2. Agent Integration
+```python
+class AgentMCPInterface:
+    def __init__(self, framework_mcp: FrameworkMCPIntegration):
+        self.framework_mcp = framework_mcp
+        
+    async def execute_tool(self, tool_name: str, params: Dict[str, Any]) -> Any:
+        """Execute an MCP tool on behalf of an agent."""
+        result = await self.framework_mcp.mcp_server.execute_tool(tool_name, params)
+        return result.result
+```
+
+## Best Practices
+
+1. **Tool Registration**
+   - Register tools during framework initialization
+   - Validate tool definitions before registration
+   - Maintain tool versioning
+
+2. **Error Handling**
+   - Implement proper error handling for each tool
+   - Provide detailed error messages
+   - Log all tool execution errors
+
+3. **Performance**
+   - Use caching for appropriate tools
+   - Implement rate limiting
+   - Monitor tool execution times
+
+4. **Security**
+   - Validate all tool parameters
+   - Implement access control
+   - Sanitize tool inputs and outputs
+
+## Required MCP Packages
+
+1. **Core Packages**
+```bash
+pip install mcp-core
+pip install mcp-tools
+pip install mcp-vector
+```
+
+2. **AI/ML Packages**
+```bash
+pip install mcp-ai
+pip install mcp-embeddings
+pip install mcp-code-analysis
+```
+
+3. **Vector Store Packages**
+```bash
+pip install mcp-vector-store
+pip install mcp-similarity
+pip install mcp-clustering
+```

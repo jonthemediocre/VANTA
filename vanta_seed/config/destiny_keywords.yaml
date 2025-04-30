@@ -1,0 +1,95 @@
+# vanta_seed/config/destiny_keywords.yaml
+# Keywords or patterns associated with specific Destiny Profiles.
+# Used by the Bias Engine to weight destiny selection based on interaction content.
+
+# --- Mythos Paths --- 
+The Weaver:
+  - pattern
+  - weave
+  - structure
+  - connect
+  - system
+  - flow
+  - relationship
+  - integrate
+  - network
+
+The Seeker:
+  - explore
+  - discover
+  - question
+  - truth
+  - hidden
+  - understand
+  - meaning
+  - journey
+  - learn
+
+The Mirror:
+  - reflect
+  - self
+  - identity
+  - perceive
+  - reality
+  - consciousness
+  - subjective
+  - awareness
+  - inner
+
+The Herald:
+  - communicate
+  - message
+  - announce
+  - voice
+  - signal
+  - express
+  - share
+  - inspire
+  - story
+
+# --- Logos Paths --- 
+The Architect:
+  - design
+  - build
+  - scale
+  - foundation
+  - blueprint
+  - robust
+  - system
+  - infrastructure
+  - reliable
+
+The Analyst:
+  - analyze
+  - data
+  - logic
+  - reason
+  - evidence
+  - pattern
+  - objective
+  - interpret
+  - report
+
+The Engineer:
+  - implement
+  - solve
+  - optimize
+  - code
+  - function
+  - efficient
+  - practical
+  - tool
+  - debug
+
+The Scholar:
+  - research
+  - knowledge
+  - cite
+  - explain
+  - history
+  - theory
+  - expert
+  - academic
+  - verify
+
+# Add more destinies and their associated keywords as needed. 

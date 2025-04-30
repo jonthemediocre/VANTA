@@ -1,0 +1,32 @@
+{
+  "$schema": "../schemas/agent_config.schema.json",
+  "name": "TTSAgent",
+  "module": "agents.tts_agent",
+  "class": "TTSAgent",
+  "type": "domain/audio",
+  "description": "Generates speech from text using the OpenAI TTS API.",
+  "version": "0.1.0",
+  "enabled": true,
+  "config": {
+    "api_key_env": "OPENAI_API_KEY",
+    "memory_path": "memory_store/audio",
+    "default_model": "tts-1",
+    "default_voice": "alloy",
+    "default_format": "mp3"
+  },
+  "triggers": [
+    {
+      "type": "intent",
+      "value": "generate_speech"
+    }
+  ],
+  "capabilities": [
+    "tts_generation",
+    "external_api_call",
+    "audio_processing"
+  ],
+  "dependencies": [
+    "CrossModalMemory",
+    "openai"
+  ]
+} 

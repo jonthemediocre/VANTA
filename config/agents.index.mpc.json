@@ -1,0 +1,46 @@
+{
+  "agents": {
+    "AgentOrchestrator": {
+      "description": "The main VANTA orchestrator (placeholder entry, loaded directly).",
+      "module": "vanta_seed.core.seed_orchestrator",
+      "class": "AgentOrchestrator",
+      "config": {},
+      "status": "system"
+    },
+    "ImageGeneratorAgent": {
+      "description": "Generates images based on prompts using external APIs.",
+      "module": "agents.image_generator",
+      "class": "ImageGeneratorAgent",
+      "config": {
+        "api_provider": "openai",
+        "default_model": "dall-e-3",
+        "default_size": "1024x1024"
+      },
+      "status": "active"
+    },
+    "TTSAgent": {
+        "description": "Generates speech from text using external APIs.",
+        "module": "agents.tts_agent",
+        "class": "TTSAgent",
+        "config": {
+            "api_provider": "openai",
+            "default_model": "tts-1",
+            "default_voice": "alloy"
+        },
+        "status": "active"
+    },
+    "ChatAgent": { 
+        "description": "Handles chat interactions, interfaces with LLMs.",
+        "module": "agents.chat_agent",
+        "class": "ChatAgent",
+        "config": {
+            "llm_provider": "openai", 
+            "default_model": "gpt-4-turbo-preview", 
+            "max_context_tokens": 8000,
+            "system_prompt": "You are VANTA, a helpful AI assistant within a complex evolving system."
+        },
+        "status": "active"
+    }
+    // Add more agents here
+  }
+} 

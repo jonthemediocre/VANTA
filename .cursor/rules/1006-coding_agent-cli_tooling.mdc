@@ -1,0 +1,40 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# RULE TYPE: Always
+# FILE PATTERNS: **/scripts/*.py
+
+## CLI Tooling Guidelines
+- Scripts intended as CLI tools must use a standard argument parser (e.g., `argparse` or `typer`).
+- Validate input arguments against a JSON Schema or equivalent schema definition before execution.
+- Use a templating engine (e.g., Jinja2) for code or file generation; do not use string concatenation or f-strings for large templates.
+- Update central registries or index files (e.g., `agents.index.mpc.json`) in a consistent, atomic operation when modifying metadata.
+- Provide clear usage messages and help text for all CLI options.
+
+## Examples
+✅ Good:
+```python
+import argparse
+from jsonschema import validate
+from jinja2 import Template
+
+def main():
+    parser = argparse.ArgumentParser(description="Generate an agent stub")
+    parser.add_argument('--schema', required=True)
+    args = parser.parse_args()
+    schema = load_schema(args.schema)
+    validate(instance=data, schema=schema)
+    tmpl = Template("""class {{name}}: pass""")
+    code = tmpl.render(name="MyAgent")
+    update_registry(entry)
+```
+
+❌ Bad:
+```python
+# No argument parsing, no validation, direct string concatenation
+name = sys.argv[1]
+code = f"class {name}: pass"
+open('output.py','w').write(code)
+```

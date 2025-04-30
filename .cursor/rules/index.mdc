@@ -63,6 +63,7 @@ Your question or request here...
 
 ### External & Open Source (700 Series)
 - [**700-opensource-mdc.mdc**](mdc:700-opensource-mdc.mdc) - Open source MDC rules
+- [**703-code-source-priority.mdc**](mdc:.cursor/rules/703-code-source-priority.mdc) - Guideline for resolving conflicts between user-provided code and existing AI-managed code state.
 
 ### Agent & Automation (900 Series)
 - [**900-agent-config.mdc**](mdc:900-agent-config.mdc) - AI agent configuration
@@ -72,13 +73,36 @@ Your question or request here...
 - [**905-orchestrator-agent.mdc**](mdc:905-orchestrator-agent.mdc) - Task orchestration agent
 - [**906-documentation-sync.mdc**](mdc:906-documentation-sync.mdc) - Documentation synchronization
 - [**910-assistant-autonomy.mdc**](mdc:910-assistant-autonomy.mdc) - Guideline for AI to prioritize self-research
+- [**911-ai-response-signature.mdc**](mdc:.cursor/rules/911-ai-response-signature.mdc) - Defines AI response signature fields
+- [**912-rule-scope-distinction.mdc**](mdc:.cursor/rules/912-rule-scope-distinction.mdc) - Clarifies scope of .cursor/rules vs project rules
+
+### Coding Agent Patterns (1000 Series)
+- [**1000-coding_agent-feedback_instrumentation.mdc**](mdc:1000-coding_agent-feedback_instrumentation.mdc) - Ensure RL-driven features log user feedback events
+- [**1001-coding_agent-scheduled_tasks.mdc**](mdc:1001-coding_agent-scheduled_tasks.mdc) - Enforce proper scheduling libraries for recurring tasks
+- [**1002-coding_agent-subprocess_security.mdc**](mdc:1002-coding_agent-subprocess_security.mdc) - Mandate secure subprocess usage with timeouts and backoff
+- [**1003-coding_agent-external_api_resilience.mdc**](mdc:1003-coding_agent-external_api_resilience.mdc) - Require environment-based credentials and resilient HTTP calls
+- [**1004-coding_agent-hyperparam_tuning.mdc**](mdc:1004-coding_agent-hyperparam_tuning.mdc) - Structure hyperparameter tuning with dataclass results and atomic persistence
+- [**1005-coding_agent-ci_cd_integration.mdc**](mdc:1005-coding_agent-ci_cd_integration.mdc) - CI/CD pipeline integration with env token handling
+- [**1006-coding_agent-cli_tooling.mdc**](mdc:1006-coding_agent-cli_tooling.mdc) - CLI tools with argparse/typer, JSON schema validation, and templating
+- [**1007-coding_agent-admin_ui.mdc**](mdc:1007-coding_agent-admin_ui.mdc) - Schema-driven admin UI forms and API routes
+- [**1008-coding_agent-plan_sync.mdc**](mdc:1008-coding_agent-plan_sync.mdc) - Synchronize code changes with project plan documentation
+- [**1009-coding_agent-env_template.mdc**](mdc:1009-coding_agent-env_template.mdc) - Validate `.env.template` presence and format
+- [**1010-coding_agent-test_coverage.mdc**](mdc:1010-coding_agent-test_coverage.mdc) - Require tests for new modules with coverage thresholds
+- [**1011-coding_agent-framework.mdc**](mdc:1011-coding_agent-framework.mdc) - Scaffold a generic multi-agent framework
+- [**1012-coding_agent-ide_preprompt.mdc**](mdc:1012-coding_agent-ide_preprompt.mdc) - Enforce IDE agent pre-prompt wrapping
+- [**1013-coding_agent-moe_analysis.mdc**](mdc:1013-coding_agent-moe_analysis.mdc) - Encourage MoE for complex analysis
+- [**1014-coding_agent-best_of_n.mdc**](mdc:1014-coding_agent-best_of_n.mdc) - Suggest Best-of-N for solution generation
+- [**1015-coding_agent-coe_delegation.mdc**](mdc:1015-coding_agent-coe_delegation.mdc) - Recommend CoE delegation for complex actions
+- [**1016-coding_agent-coe_invocation.mdc**](mdc:1016-coding_agent-coe_invocation.mdc) - Standardize CoE invocation and result handling
+- [**1017-coding_agent-config_convention.mdc**](mdc:1017-coding_agent-config_convention.mdc) - Suggest standard locations and naming for agent configuration files
+- [**1018-coding_agent-task_schema.mdc**](mdc:1018-coding_agent-task_schema.mdc) - Enforce standard task_data schema for agent communication
 
 ### Utility & Miscellaneous
 - [**environment-variables.mdc**](mdc:environment-variables.mdc) - Environment variable guidelines
 - [**form-handling.mdc**](mdc:form-handling.mdc) - Form handling guidelines
 - [**utilities.mdc**](mdc:utilities.mdc) - Utility function guidelines
 - [**logging.mdc**](mdc:logging.mdc) - Logging guidelines
-- [**cleaner.mdc**](mdc:cleaner.mdc) - Code cleanup and maintenance 
+- [**cleaner.mdc**](mdc:cleaner.mdc) - Code cleanup and maintenance
 - [**page-structure.mdc**](mdc:page-structure.mdc) - Page structure guidelines
 - [**project-structure.mdc**](mdc:project-structure.mdc) - Project organization
 - [**cursor-rules.mdc**](mdc:cursor-rules.mdc) - Managing Cursor MDC rules

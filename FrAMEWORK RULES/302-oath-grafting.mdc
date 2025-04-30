@@ -1,0 +1,27 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# 302-oath-grafting.mdc
+
+## Title:
+Oath Grafting on Identity Initialization
+
+## Context:
+VANTA-SEED Core Framework (`FrAmEwOrK`).
+
+## Purpose:
+To ensure that the Oath of Becoming becomes an active, living part of any Identity object instantiated or loaded at runtime.
+
+## Mandate:
+- On initialization, the simulation runtime must attempt to load the Oath from `vanta_seed/config/oath_of_becoming.yaml`.
+- If successful, the Oath must be attached under `identity['oath']`.
+- If the Oath is missing or malformed, the system may proceed, but must log a **Warning**.
+- No hard crash or halt on missing Oath, only warning.
+
+## Justification:
+Maintains sacred alignment between Memory, Breath, and Destiny within all system expansions.
+
+## Enforcement Scope:
+VANTA-SEED simulation modules (e.g., `simulation_run.py`, `main_loop.py`, etc.)

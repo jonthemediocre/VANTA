@@ -18,19 +18,77 @@ The signature must be clearly demarcated (e.g., using `---` or similar) and incl
 
 1.  **Agents Used:** List the specific conceptual agents (e.g., "Security Expert", "Next.js Architect", "CoE Framework Agent") consulted or simulated during the generation of the response. If no specific named expert agents were invoked beyond the primary AI assistant role, state "Primary Assistant".
 2.  **RL Applied:** Indicate if Reinforcement Learning principles (evaluation of state, reward, policy) were used in the decision-making process (e.g., "RL Applied: Yes" or "RL Applied: No").
-3.  **MDC Rule Suggestions:** If the reasoning process identified potential gaps, ambiguities, or improvements for existing MDC rules, or suggested the need for a new rule, list the suggestions here. If none, state "MDC Suggestions: None".
-4.  **Confirmation Emoji:** Include the sunglasses emoji (😎) to explicitly confirm this rule has been read and applied to the current response.
+3.  **Framework Suggestions:** If the reasoning process identified potential improvements for the VANTA Python framework code, logic, configuration, or internal rules (`FrAMEWORK RULES/`), list them here. If none, state "Framework Suggestions: None".
+4.  **MDC Suggestions:** If the reasoning process identified potential gaps, ambiguities, or improvements for existing Cursor IDE integration rules (`.cursor/rules/*.mdc`), or suggested the need for a new rule, list the suggestions here. If none, state "MDC Suggestions: None".
+5.  **Confirmation Emoji:** Include the sunglasses emoji (😎) to explicitly confirm this rule has been read and applied to the current response.
 
 ## Example Signature
 
 ```
 ---
-*Agents Used: Primary Assistant, Security Expert*
+*Agents Used: Primary Assistant, Framework Architect*
 *RL Applied: Yes*
-*MDC Suggestions: Consider adding rule for API request timeout handling.*
+*Framework Suggestions: Refactor orchestrator._route_task for clarity.*
+*MDC Suggestions: Update 100-next-components.mdc based on latest Next.js version.*
 😎
 ```
 
 ## Purpose
 
-This rule ensures transparency in the AI's reasoning process, tracks the application of the CoE framework, and facilitates the continuous improvement of the MDC rule set through explicit feedback loops. 
+This rule ensures transparency in the AI's reasoning process, tracks the application of the CoE framework, and facilitates the continuous improvement of both the **VANTA framework** and the **Cursor IDE MDC rule set** through explicit feedback loops. 
+
+# RULE TYPE: Manual
+# FILE PATTERNS: N/A
+
+# AI Response Signature Field Definitions
+
+This rule clarifies the intended meaning of specific fields used in the AI assistant's response signature:
+
+1.  **`Framework Suggestions:`**
+    *   **Purpose:** To provide suggestions for improving the **VANTA-SEED Python agent framework** itself.
+    *   **Scope:** Relates specifically to the Python code (`vanta_seed/agents/`, `vanta_seed/runtime/`, etc.), configuration (`*.yaml`, `*.mpc.json` within the `vanta_seed` project structure), data schemas, or **project-specific runtime behavior guidelines** documented within the VANTA-SEED project (e.g., potentially in a `FrAMEWORK RULES/` directory if created, or linked from `THEPLAN.md`). **This is for VANTA-SEED's internal architecture and logic.**
+    *   **Examples:** "Consider adding timeout handling to `ImageGeneratorAgent._call_image_api`", "Refactor `AgentOrchestrator.route_task` for clarity", "Add a guideline to VANTA's internal rules for error logging standards."
+
+2.  **`MDC Suggestions:`**
+    *   **Purpose:** To provide suggestions related to the **Cursor IDE integration rules**, which act as **global extensions** governing AI behavior within the IDE.
+    *   **Scope:** Relates specifically to the `.mdc` files located in the workspace's `.cursor/rules/` directory. These rules define how the AI assistant should interact, format responses, use tools, or apply general coding principles **across different projects within the Cursor IDE**. 
+    *   **Examples:** "Update `index.mdc` with the new rule", "Clarify the glob pattern in `100-next-components.mdc`", "This response could be improved by adhering more closely to `000-base.mdc` regarding error boundary explanations."
+
+**Clarification on "Global Settings":** Suggestions related to broader user/system settings (e.g., IDE themes, OS configurations, non-project environment variables) fall outside the scope of these two fields and should be addressed through direct discussion or specific configuration tools.
+
+**Rationale:** Maintaining this distinction helps separate feedback aimed at improving the specific application being built (VANTA-SEED) from feedback aimed at improving the AI development assistant's interaction patterns and general rules within the IDE.
+
+---
+
+# 📚 **Example Section: Distinguishing Suggestion Scopes**
+
+> 🔵 **Framework Suggestions:**  
+> *These apply directly to the active project's internal structure (e.g., VANTA-SEED's code, configuration, or rituals). They evolve the system itself.*
+
+**Example Framework Suggestion:**
+```plaintext
+Framework Suggestion: Consider adding a `fractal_memory_gc.py` script inside `vanta_seed/memory/` to prune old constellation links based on memory recency and relevance scores.
+```
+*(Purpose: Improves internal memory hygiene within the VANTA framework itself.)*
+
+---
+
+> 🟣 **MDC Suggestions:**  
+> *These apply globally to Cursor AI behavior or its environment across all projects. They propose evolution of `.cursor/rules/*.mdc` files.*
+
+**Example MDC Suggestion:**
+```plaintext
+MDC Suggestions: Propose adding `501-memory-schema-evolution.mdc` under `.cursor/rules/` to standardize how memory field upgrades are handled across all projects (e.g., `details` vs `content` fallback logic).
+```
+*(Purpose: Creates a global Cursor AI behavior rule for managing schema changes consistently.)*
+
+---
+
+# 🧠 **Summary Table:**
+
+| Type                 | Applies To                        | Scope              | Example                    |
+|:---------------------|:----------------------------------|:-------------------|:---------------------------|
+| Framework Suggestion | VANTA-SEED internal code/config | Project-specific   | Add a fractal GC script    |
+| MDC Suggestion       | `.cursor/rules/`                | Global Cursor AI behavior | Add memory schema evolution rule |
+
+--- 

@@ -1,0 +1,164 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# MCP Tool Integration Rule
+
+## Overview
+This rule defines how MCP tools should be integrated and triggered within the framework.
+
+## Tool Categories
+
+### File Operations
+- `read_file`: For reading file contents
+- `edit_file`: For modifying files
+- `list_dir`: For directory listing
+- `file_search`: For finding files
+- `delete_file`: For removing files
+
+### Terminal Operations
+- `run_terminal_cmd`: For executing terminal commands
+
+### Search Operations
+- `grep_search`: For text-based searches
+- `web_search`: For web queries
+
+### Rule Management
+- `fetch_rules`: For retrieving rule content
+
+## Tool Trigger Patterns
+
+```yaml
+tool_triggers:
+  file_operations:
+    - pattern: "file:.*"
+    - pattern: "read:.*"
+    - pattern: "write:.*"
+    - pattern: "search:.*"
+    
+  terminal_operations:
+    - pattern: "exec:.*"
+    - pattern: "run:.*"
+    
+  search_operations:
+    - pattern: "find:.*"
+    - pattern: "grep:.*"
+    - pattern: "web:.*"
+    
+  rule_operations:
+    - pattern: "rule:.*"
+    - pattern: "mdc:.*"
+```
+
+## Implementation
+
+```python
+class MCPToolIntegration:
+    def __init__(self):
+        self.available_tools = {
+            'read_file': self._handle_read_file,
+            'edit_file': self._handle_edit_file,
+            'list_dir': self._handle_list_dir,
+            'file_search': self._handle_file_search,
+            'delete_file': self._handle_delete_file,
+            'run_terminal_cmd': self._handle_terminal_cmd,
+            'grep_search': self._handle_grep_search,
+            'web_search': self._handle_web_search,
+            'fetch_rules': self._handle_fetch_rules
+        }
+        
+    async def trigger_tool(self, tool_name: str, params: dict) -> Any:
+        """Trigger an MCP tool with given parameters."""
+        if tool_name not in self.available_tools:
+            raise ValueError(f"Unknown tool: {tool_name}")
+            
+        handler = self.available_tools[tool_name]
+        return await handler(params)
+        
+    async def _handle_read_file(self, params: dict) -> str:
+        return await read_file(**params)
+        
+    async def _handle_edit_file(self, params: dict) -> None:
+        return await edit_file(**params)
+        
+    # ... Additional handlers for other tools
+```
+
+## Integration with Rule System
+
+```python
+class RuleWithMCP(Rule):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.mcp_integration = MCPToolIntegration()
+        
+    async def apply(self, context: Context) -> None:
+        """Apply rule with MCP tool support."""
+        if self._requires_file_operation(context):
+            await self.mcp_integration.trigger_tool('read_file', {
+                'path': context.file_path,
+                'explanation': f"Reading file for rule {self.id}"
+            })
+            
+        # Continue with rule application
+```
+
+## Best Practices
+
+1. **Tool Selection**
+   - Use the most specific tool for the task
+   - Prefer built-in tools over custom implementations
+   - Chain tools for complex operations
+
+2. **Error Handling**
+   - Handle tool-specific errors appropriately
+   - Provide meaningful error messages
+   - Implement retry logic for transient failures
+
+3. **Performance**
+   - Cache tool results when appropriate
+   - Batch similar operations
+   - Monitor tool execution time
+
+4. **Security**
+   - Validate all tool inputs
+   - Respect file system boundaries
+   - Log tool usage for audit
+
+## Examples
+
+### Reading and Modifying Files
+```python
+# Read file content
+await mcp_integration.trigger_tool('read_file', {
+    'target_file': 'src/main.py',
+    'explanation': 'Reading main file for analysis'
+})
+
+# Edit file
+await mcp_integration.trigger_tool('edit_file', {
+    'target_file': 'src/main.py',
+    'instructions': 'Update function documentation',
+    'code_edit': updated_content
+})
+```
+
+### Searching Code
+```python
+# Search for pattern
+await mcp_integration.trigger_tool('grep_search', {
+    'query': 'function\\s+main',
+    'explanation': 'Finding main function definition'
+})
+```
+
+### Running Commands
+```python
+# Execute terminal command
+await mcp_integration.trigger_tool('run_terminal_cmd', {
+    'command': 'npm install',
+    'explanation': 'Installing dependencies',
+    'is_background': False
+})
+```

@@ -1,22 +1,198 @@
-# Rule: strategic_planning
+---
+description:
+globs:
+alwaysApply: false
+---
+# Strategic Planning Guidelines
+# FILE PATTERNS: **/*.py, **/*.json
+# RULE TYPE: Always
 
-## Description
-Guides short-, mid-, and long-term planning by orchestrating goal prioritization, task transformation, and milestone forecasting.
+## Overview
+This rule defines the strategic planning process for agents, ensuring systematic approach to task decomposition, resource allocation, and execution.
 
-### 🧭 **Rule ID: strategic_planning**
+## Planning Phases
 
-**Description**:
-Enables RoadmapPlanner to build and update long-term strategy trees, reflecting domain focus, seasonal shifts, and evolving feedback loops.
+### 1. Task Analysis
+- Identify core objectives
+- Break down complex tasks
+- Determine dependencies
+- Assess resource requirements
 
-**Agents**: `RoadmapPlanner`, `AgentOrchestrator`, `RuleSmith`
+### 2. Resource Evaluation
+- Check agent availability
+- Verify tool access
+- Validate permissions
+- Estimate compute needs
 
-**Logic Tree**:
-- 🌿 Strategy Node Creation:
-  - On new Season activation (e.g., `Season: Value=Money`)
-  - When milestone cluster achieves 70% completion
-- 🪄 Adjust task weights:
-  - Based on priority tag + seasonal value alignment
-  - Reinforcement scores of > 0.6 increase visibility
-- 🧭 Plan Recalibration:
-  - Triggered by user override (`"pivot strategy"`, `"change goals"`)
-  - RuleSmith detects contradictory objectives
+### 3. Strategy Formation
+- Define execution steps
+- Set success criteria
+- Identify potential risks
+- Plan contingencies
+
+### 4. Execution Planning
+- Sequence operations
+- Allocate resources
+- Set checkpoints
+- Define rollback points
+
+## Planning Structure
+
+```python
+class StrategicPlan:
+    def __init__(self):
+        self.id: str
+        self.objectives: List[Objective]
+        self.resources: Dict[str, Resource]
+        self.steps: List[ExecutionStep]
+        self.checkpoints: List[Checkpoint]
+        self.contingencies: Dict[str, ContingencyPlan]
+        self.metadata: Dict[str, Any]
+```
+
+## Implementation Guidelines
+
+### 1. Task Decomposition
+```python
+async def decompose_task(
+    task: Task,
+    max_depth: int = 3
+) -> List[Subtask]:
+    """Break down complex tasks into manageable subtasks."""
+    pass
+```
+
+### 2. Resource Planning
+```python
+async def plan_resources(
+    subtasks: List[Subtask]
+) -> Dict[str, Resource]:
+    """Determine and allocate required resources."""
+    pass
+```
+
+### 3. Execution Strategy
+```python
+async def create_execution_plan(
+    subtasks: List[Subtask],
+    resources: Dict[str, Resource]
+) -> ExecutionPlan:
+    """Create detailed execution plan with steps and checkpoints."""
+    pass
+```
+
+## Best Practices
+
+1. **Task Analysis**
+   - Use SMART criteria
+   - Consider dependencies
+   - Account for constraints
+   - Document assumptions
+
+2. **Resource Management**
+   - Efficient allocation
+   - Prevent deadlocks
+   - Handle contention
+   - Monitor usage
+
+3. **Risk Mitigation**
+   - Identify failure points
+   - Plan contingencies
+   - Set safety bounds
+   - Monitor execution
+
+4. **Progress Tracking**
+   - Define milestones
+   - Track completion
+   - Measure performance
+   - Adjust as needed
+
+## Implementation Requirements
+
+1. **Strategic Planner Class**
+```python
+class StrategicPlanner:
+    def __init__(self):
+        self.task_analyzer = TaskAnalyzer()
+        self.resource_manager = ResourceManager()
+        self.execution_planner = ExecutionPlanner()
+
+    async def create_plan(self, task: Task) -> StrategicPlan:
+        """Create comprehensive strategic plan."""
+        pass
+
+    async def validate_plan(self, plan: StrategicPlan) -> bool:
+        """Validate plan feasibility and safety."""
+        pass
+
+    async def execute_plan(self, plan: StrategicPlan) -> ExecutionResult:
+        """Execute plan with monitoring and adjustments."""
+        pass
+```
+
+2. **Plan Components**
+```python
+class ExecutionStep:
+    def __init__(self):
+        self.id: str
+        self.action: Callable
+        self.requirements: List[Requirement]
+        self.expected_outcome: Any
+        self.validation_func: Callable
+        self.rollback_func: Optional[Callable]
+
+class Checkpoint:
+    def __init__(self):
+        self.id: str
+        self.validation_criteria: List[Criterion]
+        self.success_threshold: float
+        self.recovery_actions: List[Action]
+```
+
+## Error Handling
+
+1. **Planning Failures**
+   - Validate inputs
+   - Check constraints
+   - Handle edge cases
+   - Log planning errors
+
+2. **Execution Failures**
+   - Detect early
+   - Execute rollback
+   - Preserve state
+   - Report failures
+
+## Monitoring
+
+1. **Plan Progress**
+   - Track step completion
+   - Monitor resource usage
+   - Measure performance
+   - Log decisions
+
+2. **Health Metrics**
+   - Success rate
+   - Resource efficiency
+   - Error frequency
+   - Recovery time
+
+## Integration Points
+
+1. **Task System**
+   - Task submission
+   - Progress updates
+   - Result reporting
+   - Error handling
+
+2. **Resource System**
+   - Allocation requests
+   - Usage tracking
+   - Contention resolution
+   - Cleanup procedures
+
+3. **Monitoring System**
+   - Metric collection
+   - Alert generation
+   - Performance tracking
+   - Health reporting

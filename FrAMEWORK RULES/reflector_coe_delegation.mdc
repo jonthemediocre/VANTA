@@ -1,0 +1,13 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# RULE TYPE: Auto Attached
+# FILE PATTERNS: agents/reflector_agent.py
+
+## Reflector Agent CoE Delegation Requirement
+- The `ReflectorAgent._apply_mutations` method (or equivalent logic) must not directly apply complex or high-risk mutations (e.g., `propose_mdc_rule`, `review_logic`, `review_triggers`).
+- Such suggestions must instead trigger a Coalition of Experts (CoE) review process via the `AgentOrchestrator` or a dedicated messaging system.
+- Only simple, clearly defined actions (like adjusting specific numeric config parameters within safe bounds) may be applied directly, if configured.
+- Rationale: Enforces safety, oversight, and collaborative decision-making for significant self-modifications.

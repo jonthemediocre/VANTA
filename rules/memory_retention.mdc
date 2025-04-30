@@ -1,27 +1,212 @@
 ---
-description: 
-globs: 
+description:
+globs:
 alwaysApply: false
 ---
-### 🧷 **Rule ID: memory_retention**
+# Memory Retention Guidelines
+# FILE PATTERNS: **/*.py, **/*.json
+# RULE TYPE: Always
 
-**Description**:  
-Controls how, when, and what gets remembered, mutated, or discarded by MemoryWeaver and MemoryGC.
+## Overview
+This rule defines how agents should manage, store, and retrieve memories across sessions.
 
-**Agents**: `MemoryWeaver`, `MemoryGC`
+## Memory Types
 
-**Logic Tree**:
-- ✅ Store context when:
-  - Task is completed successfully with `score >= 0.7`
-  - User signals importance (`e.g., "remember this"`, "save to framework"`)
-  - Outcome is novel or variant-generative
-- 🔁 Mutate context when:
-  - Repetition of patterns exceeds 3 instances in 7 days
-  - Contradiction between current and past memory detected
-- 🧹 Purge context when:
-  - Access count = 0 for > 30 days
-  - `reinforcement score < 0.2` for 3 consecutive evaluations
-- 🧩 Archive before delete: YES  
-- 🔒 Protected tags: `identity`, `user-values`, `ritual-index`, `core-agents`
+### 1. Short-Term Memory
+- Stored in-memory during agent runtime
+- Cleared when agent session ends
+- Used for immediate context and task state
+- Maximum retention: Current session only
 
+### 2. Working Memory
+- Stored in temporary files under ./memory/working/
+- Retained for up to 24 hours
+- Used for ongoing tasks and recent context
+- Auto-cleanup for items older than 24 hours
 
+### 3. Long-Term Memory
+- Stored in vector database
+- Permanent storage unless explicitly deleted
+- Used for pattern recognition and learning
+- Regular consolidation from working memory
+
+## Memory Structure
+
+```python
+class Memory:
+    def __init__(self):
+        self.id: str  # Unique identifier
+        self.timestamp: datetime
+        self.type: MemoryType  # SHORT_TERM, WORKING, LONG_TERM
+        self.content: dict
+        self.metadata: dict
+        self.associations: List[str]  # Related memory IDs
+        self.importance_score: float  # 0.0 to 1.0
+```
+
+## Storage Guidelines
+
+### File Organization
+```
+./memory/
+  ├── working/           # Working memory storage
+  │   ├── tasks/        # Task-specific memories
+  │   ├── context/      # Contextual information
+  │   └── temp/         # Temporary processing data
+  ├── long_term/        # Long-term memory indexes
+  └── archive/          # Archived memories
+```
+
+### Retention Policies
+
+1. **Short-Term Memory**
+   - Keep in RAM only
+   - Clear on agent shutdown
+   - Maximum size: 100MB per agent
+
+2. **Working Memory**
+   - JSON files in ./memory/working/
+   - 24-hour retention
+   - Maximum size: 1GB total
+
+3. **Long-Term Memory**
+   - Vector database storage
+   - Permanent retention
+   - Regular optimization and cleanup
+
+## Memory Operations
+
+### 1. Storage
+```python
+async def store_memory(
+    content: dict,
+    memory_type: MemoryType,
+    importance: float = 0.5
+) -> str:
+    """Store a new memory with proper type and importance."""
+    pass
+```
+
+### 2. Retrieval
+```python
+async def retrieve_memory(
+    query: str,
+    memory_type: Optional[MemoryType] = None,
+    limit: int = 10
+) -> List[Memory]:
+    """Retrieve relevant memories based on query."""
+    pass
+```
+
+### 3. Consolidation
+```python
+async def consolidate_memories(
+    older_than: timedelta = timedelta(hours=24)
+) -> None:
+    """Consolidate working memories into long-term storage."""
+    pass
+```
+
+## Best Practices
+
+1. **Memory Tagging**
+   - Use consistent tags for easy retrieval
+   - Include timestamp and context
+   - Link related memories
+
+2. **Importance Scoring**
+   - Score based on:
+     - Task relevance (0.3)
+     - Pattern frequency (0.3)
+     - User feedback (0.4)
+
+3. **Memory Cleanup**
+   - Regular consolidation jobs
+   - Remove duplicate information
+   - Archive rarely accessed memories
+
+4. **Performance Optimization**
+   - Index frequently accessed memories
+   - Cache recent retrievals
+   - Batch consolidation operations
+
+## Implementation Requirements
+
+1. **Memory Manager Class**
+```python
+class MemoryManager:
+    def __init__(self, agent_id: str):
+        self.agent_id = agent_id
+        self.short_term = ShortTermStorage()
+        self.working = WorkingStorage()
+        self.long_term = LongTermStorage()
+
+    async def store(self, memory: Memory) -> str:
+        """Store memory in appropriate storage."""
+        pass
+
+    async def retrieve(self, query: str) -> List[Memory]:
+        """Retrieve memories across all storage types."""
+        pass
+
+    async def consolidate(self) -> None:
+        """Run memory consolidation process."""
+        pass
+```
+
+2. **Storage Interfaces**
+```python
+class BaseStorage(ABC):
+    @abstractmethod
+    async def store(self, memory: Memory) -> str:
+        pass
+
+    @abstractmethod
+    async def retrieve(self, query: str) -> List[Memory]:
+        pass
+
+    @abstractmethod
+    async def cleanup(self) -> None:
+        pass
+```
+
+## Error Handling
+
+1. **Storage Failures**
+   - Retry failed writes up to 3 times
+   - Log failures with context
+   - Maintain backup if possible
+
+2. **Retrieval Failures**
+   - Return partial results if available
+   - Fall back to alternative storage
+   - Log retrieval errors
+
+## Monitoring
+
+1. **Memory Metrics**
+   - Track storage usage
+   - Monitor retrieval latency
+   - Record consolidation success rate
+
+2. **Health Checks**
+   - Verify storage accessibility
+   - Check memory integrity
+   - Monitor cleanup jobs
+
+## Integration Points
+
+1. **Agent System**
+   - Initialize with agent creation
+   - Cleanup on agent shutdown
+   - Regular maintenance tasks
+
+2. **Vector Database**
+   - Connection management
+   - Query optimization
+   - Backup procedures
+
+3. **Filesystem**
+   - Working directory structure
+   - File locking mechanism
+   - Cleanup routines

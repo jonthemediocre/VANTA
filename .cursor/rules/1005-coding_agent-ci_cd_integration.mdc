@@ -1,0 +1,33 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# RULE TYPE: Always
+# FILE PATTERNS: **/scripts/*.py, **/*.py
+
+## CI/CD Integration Guidelines
+- CI/CD pipeline methods (`trigger`, `status`, `fetch_logs`, `schedule`) must read credentials from environment variables (e.g., `GITHUB_TOKEN`).
+- External API calls for pipelines must be encapsulated behind well-named methods on classes (e.g., `CICDTasks.trigger`).
+- Include error handling for network issues, HTTP errors, and invalid tokens.
+- Provide clear stub or fallback responses (e.g., descriptive `error` field) when functionality is not implemented.
+- No hardcoded secrets or tokens should appear in code.
+
+## Examples
+✅ Good:
+```python
+import os
+from cicd_tasks import CICDTasks
+
+token = os.getenv("GITHUB_TOKEN")
+cicd = CICDTasks(provider="github_actions")
+result = cicd.trigger(workflow_file="ci.yaml", ref="main")
+```  
+
+❌ Bad:
+```python
+# Hardcoded token and no error handling
+cicd = CICDTasks()
+cicd.token = "ghp_ABC123"
+cicd.trigger("ci.yaml")
+```

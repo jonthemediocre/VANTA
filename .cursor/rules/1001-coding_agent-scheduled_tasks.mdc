@@ -1,0 +1,28 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# RULE TYPE: Always
+# FILE PATTERNS: **/*.py
+
+## Scheduled Tasks Guidelines
+- Recurring or periodic tasks must be implemented using a scheduler library (e.g., APScheduler, Celery beat, or systemd timers) or proper cron/service integration.
+- Do not use `while True:` loops with `sleep()` for scheduling; prefer event-based scheduling.
+- Scheduled jobs should define explicit triggers and error handling.
+
+## Examples
+✅ Good:
+```python
+from apscheduler.schedulers.background import BackgroundScheduler
+sched = BackgroundScheduler()
+sched.add_job(my_agent.run_periodic, 'interval', hours=1)
+sched.start()
+```
+
+❌ Bad:
+```python
+while True:
+    run_periodic()
+    time.sleep(3600)
+```

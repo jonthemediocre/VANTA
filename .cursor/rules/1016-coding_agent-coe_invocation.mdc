@@ -1,0 +1,53 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# RULE TYPE: Always
+# FILE PATTERNS: **/*.py
+
+## CoE Invocation and Handling Standards
+- **Invocation Method:** Use a central mechanism to trigger CoE reviews, such as:
+  - Calling a dedicated method on an `AgentOrchestrator` (e.g., `orchestrator.trigger_coe("review_type", context)`).
+  - Publishing a message to a dedicated event bus (e.g., `self.event_bus.publish("coe_review_request", payload)`).
+  - *Avoid direct method calls between agents for CoE requests.*
+- **Request Payload:** CoE requests must include a structured payload containing at least:
+  - `type`: The type of review/action requested (e.g., "propose_mdc_rule", "apply_config_change", "validate_plan").
+  - `context`: Relevant data or state needed for the review.
+  - `proposal`: The specific change or action being proposed.
+  - `requester_agent`: The ID of the agent initiating the request.
+- **Response Handling:** The CoE process (whether automated or involving human review) must return a structured response, typically including:
+  - `status`: e.g., "approved", "rejected", "deferred", "needs_info".
+  - `details`: Rationale for the decision.
+  - `applied_changes`: (If applicable) A description of changes made by the CoE.
+- **Callback/State Update:** The agent initiating the CoE request must handle the response appropriately (e.g., log the outcome, update its internal state, notify the user).
+
+## Examples
+✅ Good:
+```python
+class ProposerAgent:
+    def __init__(self, orchestrator):
+        self.orchestrator = orchestrator
+
+    def propose_rule(self, error_type, reason):
+        payload = {
+            "type": "propose_mdc_rule",
+            "context": {"error_type": error_type, "reason": reason},
+            "proposal": self._draft_rule(error_type, reason),
+            "requester_agent": self.id
+        }
+        # Use central orchestrator to trigger CoE
+        self.orchestrator.trigger_coe("mdc_rule_review", payload)
+        # Agent waits for or reacts to CoE response asynchronously
+```
+
+❌ Bad:
+```python
+# Direct call to another agent, non-standard format
+class ProposerAgent:
+    def __init__(self, rule_smith_agent):
+        self.rule_smith = rule_smith_agent
+
+    def propose_rule(self, error_type, reason):
+        self.rule_smith.review_my_proposal(error_type, reason)
+```

@@ -1,0 +1,41 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# RULE TYPE: Manual
+# FILE PATTERNS: N/A (Contextual)
+
+# Code Source Conflict Resolution Guideline (703)
+
+## Principle
+
+When user-provided code (e.g., a pasted snippet, a direct edit suggestion) implies a different architectural structure, data format, or implementation logic than the current AI-managed state of the project, the AI assistant must prioritize identifying this mismatch and seeking clarification before proceeding.
+
+## Rationale
+
+Blindly applying user code that conflicts with the established (potentially AI-evolved) system state can introduce bugs, break consistency, or overwrite carefully designed logic. This rule ensures intentionality and alignment before merging potentially divergent code sources.
+
+## Procedure for AI Assistant
+
+1.  **Identify Potential Conflict:** Analyze the user-provided code snippet or directive in the context of the relevant existing file(s) or system component(s).
+    *   Does the user code assume a different function signature?
+    *   Does it expect a different data structure (e.g., different keys in a dictionary, different format in a file)?
+    *   Does it use libraries or patterns inconsistent with established project rules (e.g., `000-base.mdc`)?
+    *   Does it implicitly require changes in other parts of the system not mentioned by the user?
+
+2.  **State the Conflict Clearly:** Inform the user about the specific mismatch identified.
+    *   Example: "The query script you provided expects the fractal map to have a list of groups under each constellation type (e.g., `constellations.breath[0].members`), but the current map generator creates a dictionary keyed by breath number (e.g., `constellations.breath['5']`)."
+
+3.  **Present Options:** Offer clear choices for resolving the conflict.
+    *   **Option A:** "Update the existing system (e.g., the map generator) to match the structure implied by your code?"
+    *   **Option B:** "Adapt your provided code to work with the current system structure?"
+    *   **Option C:** "Discuss an alternative approach or refinement?"
+
+4.  **Await User Decision:** Do not proceed with implementation (neither Option A nor B) until the user explicitly confirms their preferred path.
+
+5.  **Document (If Applicable):** If the resolution involves a significant change in architecture or convention, suggest documenting the decision (e.g., in `THEPLAN.md` or relevant design documents).
+
+## Goal
+
+To ensure code evolution is deliberate and aligned, preventing accidental regressions or architectural drift caused by applying conflicting code sources without explicit confirmation and resolution.

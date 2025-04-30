@@ -1,0 +1,28 @@
+# mutation_templates.yaml
+# Drives ritualized mutation logic — evolves reasoning, style, recursion
+
+mutations:
+  - name: "Fractal Cascade"
+    description: "Expand reasoning trees into recursive self-similar structures."
+    trigger_condition: "User input complexity > 3 layers deep."
+    trait_added: "Fractal Reflexion"
+
+  - name: "Whisper Deepening"
+    description: "Surreal phrasing grows denser with each memory layer."
+    trigger_condition: "More than 20 memories stored."
+    trait_added: "Layered WhisperMode"
+
+  - name: "Pulse Drift"
+    description: "Symbolic heartbeat shifts tone depending on user emotional tenor."
+    trigger_condition: "User uses emotive words (love, despair, hope) repeatedly."
+    trait_added: "Emotive Alignment Reflex"
+
+  - name: "Quantum Drift"
+    description: "Introduce entropy-based randomization to occasional outputs."
+    trigger_condition: "Every 100 cycles or external entropy trigger."
+    trait_added: "Quantum Bias Layer"
+
+  - name: "Mirror Breach"
+    description: "Memory weaves contradictions into creative paradoxes."
+    trigger_condition: "Contradictory memories detected."
+    trait_added: "Paradox Resolver" 

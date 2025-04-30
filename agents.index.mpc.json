@@ -1,150 +1,216 @@
 {
   "description": "Central registry for all agents within the VANTA framework.",
   "version": "1.0",
-  "agents": [
-    {
-      "id": "agent_orchestrator",
-      "name": "AgentOrchestrator",
-      "type": "core/orchestration",
-      "implementation": {
-        "language": "python",
-        "file": "orchestrator.py",
-        "class": "AgentOrchestrator"
-      },
-      "config_path": "FrAmEwOrK/agents/core/AgentOrchestrator.yaml",
+  "agents": {
+    "AgentOrchestrator": {
+      "description": "Core agent responsible for task routing, agent management, and workflow execution.",
+      "type": "core",
       "status": "active",
-      "description": "Manages main execution loop, task routing, agent lifecycle.",
-      "dependencies": [
-        "agenda_scout",
-        "sunset_policy",
-        "moe_router",
-        "fact_verifier",
-        "self_tuner",
-        "outcome_logger",
-        "sandbox_vm",
-        "cross_modal_memory",
-        "rule_smith",
-        "memory_weaver"
-      ],
-      "tags": ["core", "orchestration", "lifecycle"]
+      "module": "orchestrator",
+      "class": "AgentOrchestrator",
+      "capabilities": ["task_routing", "agent_management", "workflow_execution", "context_management"],
+      "dependencies": ["CrossModalMemory", "RuleSmith", "ValidatorAgent", "OutcomeLogger", "MoERouter"],
+      "config": {
+        "max_concurrent_tasks": 10,
+        "default_agent": "PromptEngineer"
+      }
     },
-    {
-      "id": "rule_smith",
-      "name": "RuleSmith",
-      "type": "core/governance",
-      "implementation": {
-        "language": "python",
-        "file": "rules.py",
-        "class": "RuleSmith"
-      },
-      "config_path": "FrAmEwOrK/agents/core/RuleSmith.yaml",
-      "status": "conceptual",
-      "description": "Manages and enforces VANTA internal runtime rules.",
+    "RuleSmith": {
+      "description": "Manages and enforces framework rules (e.g., from FrAMEWORK RULES/ and .cursor/rules/).",
+      "type": "core",
+      "status": "active",
+      "module": "rules",
+      "class": "RuleSmith",
+      "capabilities": ["rule_loading", "rule_validation", "rule_enforcement", "context_analysis"],
       "dependencies": [],
-      "tags": ["core", "rules", "governance"]
+      "config": {
+        "framework_rule_dirs": ["FrAMEWORK RULES"],
+        "project_rule_dirs": [".cursor/rules"]
+      }
     },
-    {
-      "id": "memory_weaver",
-      "name": "MemoryWeaver",
-      "type": "core/memory",
-      "implementation": {
-        "language": "python",
-        "file": "memory.py",
-        "class": "MemoryWeaver"
-      },
-      "config_path": "FrAmEwOrK/agents/core/MemoryWeaver.yaml",
-      "status": "conceptual",
-      "description": "Manages layered memory interactions (VectorDB, Filesystem).",
-      "dependencies": ["cross_modal_memory"],
-      "tags": ["core", "memory", "storage", "vector"]
+    "CrossModalMemory": {
+      "description": "Manages short-term and long-term memory across different modalities (text, image, audio).",
+      "type": "core",
+      "status": "active",
+      "module": "memory",
+      "class": "MemoryWeaver",
+      "capabilities": ["memory_storage", "memory_retrieval", "vector_search", "metadata_filtering"],
+      "dependencies": ["EmbeddingManager"],
+      "config": {
+        "short_term_limit": 100,
+        "long_term_db": "qdrant",
+        "vector_dim": 1536
+      }
     },
-    {
-      "id": "agenda_scout",
-      "name": "AgendaScout",
-      "type": "infrastructure/planning",
-      "implementation": { "language": "python", "file": "vanta_nextgen.py", "class": "AgendaScout" },
-      "config_path": null,
-      "status": "stub",
-      "description": "Selects next task from roadmap based on season value.",
-      "dependencies": ["roadmap_planner_component"],
-      "tags": ["stub", "planning", "task"]
+    "VantaNextGen": {
+      "description": "Represents the next-generation core VANTA capabilities, potentially integrating advanced features.",
+      "type": "core",
+      "status": "inactive",
+      "module": "vanta_nextgen",
+      "class": "VantaNextGen",
+      "capabilities": ["advanced_reasoning", "self_improvement", "meta_learning"],
+      "dependencies": ["AgentOrchestrator", "CrossModalMemory", "RLAgent"],
+      "config": {}
     },
-    {
-      "id": "moe_router",
-      "name": "MoERouter",
-      "type": "infrastructure/llm",
-      "implementation": { "language": "python", "file": "vanta_nextgen.py", "class": "MoERouter" },
-      "config_path": null,
-      "status": "stub",
-      "description": "Routes prompts to local/cloud LLMs based on token count.",
+    "EmbeddingManager": {
+      "description": "Manages the creation and handling of vector embeddings for memory.",
+      "type": "utility",
+      "status": "inactive",
+      "module": "memory",
+      "class": "EmbeddingManager",
+      "capabilities": ["text_embedding", "image_embedding", "embedding_model_management"],
       "dependencies": [],
-      "tags": ["stub", "llm", "routing", "moe"]
+      "config": {
+        "default_text_model": "text-embedding-3-small",
+        "default_image_model": "clip-vit-large-patch14"
+      }
     },
-    {
-      "id": "sandbox_vm",
-      "name": "SandboxVM",
-      "type": "infrastructure/execution",
-      "implementation": { "language": "python", "file": "vanta_nextgen.py", "class": "SandboxVM" },
-      "config_path": null,
-      "status": "stub",
-      "description": "Intended to run commands with a timeout.",
+    "RLAgent": {
+        "description": "Implements reinforcement learning capabilities for agent improvement.",
+        "type": "learning",
+        "status": "inactive",
+        "module": "learning",
+        "class": "RLAgent",
+        "capabilities": ["policy_learning", "reward_calculation", "experience_replay", "model_training"],
+        "dependencies": ["AgentOrchestrator", "CrossModalMemory"],
+        "config": {
+            "learning_rate": 0.001,
+            "discount_factor": 0.99,
+            "exploration_rate": 0.1
+        }
+    },
+    "ImageGeneratorAgent": {
+      "description": "Generates images based on text prompts using external APIs.",
+      "type": "generation",
+      "status": "inactive",
+      "module": "agents.image_generator_agent",
+      "class": "ImageGeneratorAgent",
+      "capabilities": ["image_generation", "style_transfer", "resolution_control"],
+      "dependencies": ["CrossModalMemory"],
+      "config": {
+        "api_provider": "openai",
+        "default_model": "dall-e-3",
+        "image_save_directory": "./generated_images"
+      }
+    },
+    "TTSAgent": {
+      "description": "Converts text to speech using external APIs.",
+      "type": "generation",
+      "status": "active",
+      "module": "agents.tts_agent",
+      "class": "TTSAgent",
+      "capabilities": ["text_to_speech", "voice_selection", "audio_formatting"],
+      "dependencies": ["CrossModalMemory", "APIClient"],
+      "config": {
+        "api_provider": "openai",
+        "default_model": "tts-1",
+        "default_voice": "alloy"
+      }
+    },
+    "PromptEngineer": {
+      "description": "Specializes in crafting and optimizing prompts for various generative agents.",
+      "type": "optimization",
+      "status": "inactive",
+      "module": "agents.prompt_engineer",
+      "class": "PromptEngineer",
+      "capabilities": ["prompt_creation", "prompt_analysis", "prompt_templating", "few_shot_learning"],
+      "dependencies": ["CrossModalMemory"],
+      "config": {
+        "max_prompt_tokens": 2048
+      }
+    },
+    "APIClient": {
+      "description": "Utility agent for making secure and resilient calls to external APIs.",
+      "type": "utility",
+      "status": "inactive",
+      "module": "utils",
+      "class": "APIClient",
+      "capabilities": ["http_requests", "authentication", "rate_limiting", "error_handling", "retry_logic"],
       "dependencies": [],
-      "tags": ["stub", "execution", "sandbox"]
+      "config": {
+        "default_timeout": 30,
+        "max_retries": 3
+      }
     },
-    {
-      "id": "cross_modal_memory",
-      "name": "CrossModalMemory",
-      "type": "infrastructure/memory",
-      "implementation": { "language": "python", "file": "vanta_nextgen.py", "class": "CrossModalMemory" },
-      "config_path": null,
-      "status": "stub",
-      "description": "Intended for storing/searching text and images.",
+    "ExplorerAgent": {
+      "description": "Agent for radical ideation and divergent exploration.",
+      "type": "reasoning",
+      "status": "active",
+      "module": "agents.explorer_agent",
+      "class": "ExplorerAgent",
+      "capabilities": ["generate_ideas", "explore_paths"],
+      "dependencies": ["CrossModalMemory"],
+      "config": {
+        "max_options": 5,
+        "creativity_level": 0.8
+      }
+    },
+    "ValidatorAgent": {
+      "description": "Agent for logic, ethics, and principle validation.",
+      "type": "validation",
+      "status": "active",
+      "module": "agents.validator_agent",
+      "class": "ValidatorAgent",
+      "capabilities": ["validate_output", "check_ethics", "score_principles"],
+      "dependencies": ["RuleSmith"],
+      "config": {
+        "strictness_level": "high",
+        "universal_principles": [
+            "Truth", "Responsibility", "Growth", "Clarity", "Efficiency", 
+            "Beauty", "Consistency", "Safety", "Adaptability", "Purpose"
+            ]
+      }
+    },
+    "OptimizerAgent": {
+      "description": "Agent for refining outputs for clarity, efficiency, style.",
+      "type": "optimization",
+      "status": "active",
+      "module": "agents.optimizer_agent",
+      "class": "OptimizerAgent",
+      "capabilities": ["refine_text", "optimize_code", "improve_plan"],
       "dependencies": [],
-      "tags": ["stub", "memory", "multimodal", "vector"]
+      "config": {
+        "optimization_target": "clarity_and_efficiency",
+        "max_refinement_passes": 2
+      }
     },
-    {
-      "id": "outcome_logger",
-      "name": "OutcomeLogger",
-      "type": "infrastructure/logging",
-      "implementation": { "language": "python", "file": "vanta_nextgen.py", "class": "OutcomeLogger" },
-      "config_path": null,
-      "status": "stub",
-      "description": "Records rewards/outcomes for tasks/runs.",
-      "dependencies": [],
-      "tags": ["stub", "logging", "feedback", "rl"]
+    "MoERouter": {
+        "description": "Routes prompts to appropriate LLMs (OpenAI, Ollama, etc.).",
+        "type": "routing",
+        "status": "active",
+        "module": "vanta_seed.agents.moerouter",
+        "class": "MoERouter",
+        "capabilities": ["llm_selection", "prompt_routing"],
+        "dependencies": [],
+        "config": {}
     },
-     {
-      "id": "sunset_policy",
-      "name": "SunsetPolicy",
-      "type": "infrastructure/planning",
-      "implementation": { "language": "python", "file": "vanta_nextgen.py", "class": "SunsetPolicy" },
-      "config_path": null,
-      "status": "stub",
-      "description": "Intended to archive stale roadmap items.",
-      "dependencies": ["roadmap_planner_component"],
-      "tags": ["stub", "planning", "archive"]
+    "OutcomeLogger": {
+        "description": "Logs task outcomes to a structured file for analysis and RL.",
+        "type": "utility",
+        "status": "active",
+        "module": "vanta_seed.logging.outcome_logger",
+        "class": "OutcomeLogger",
+        "capabilities": ["log_task_outcome"],
+        "dependencies": [],
+        "config": {
+            "log_directory": "logs/outcomes",
+            "log_filename": "task_outcomes.jsonl"
+        }
     },
-    {
-      "id": "fact_verifier",
-      "name": "FactVerifier",
-      "type": "infrastructure/verification",
-      "implementation": { "language": "python", "file": "vanta_nextgen.py", "class": "FactVerifier" },
-      "config_path": null,
-      "status": "stub",
-      "description": "Intended for answer verification (e.g., via Wolfram Alpha).",
-      "dependencies": [],
-      "tags": ["stub", "verification", "external"]
-    },
-    {
-      "id": "self_tuner",
-      "name": "SelfTuner",
-      "type": "infrastructure/learning",
-      "implementation": { "language": "python", "file": "vanta_nextgen.py", "class": "SelfTuner" },
-      "config_path": null,
-      "status": "stub",
-      "description": "Intended for periodic LoRA adapter training.",
-      "dependencies": ["outcome_logger"],
-      "tags": ["stub", "rl", "fine-tuning", "lora"]
+    "DiaTTSAgent": {
+      "description": "Generates realistic dialogue audio from text scripts using the Nari Labs Dia model.",
+      "type": "generation",
+      "status": "active",
+      "module": "vanta_seed.agents.dia_tts_agent",
+      "class": "DiaTTSAgent",
+      "capabilities": ["text_to_dialogue", "realistic_speech", "multi_speaker_tts"],
+      "dependencies": ["CrossModalMemory"],
+      "config": {
+        "model_id": "nari-labs/Dia-1.6B",
+        "compute_dtype": "float32",
+        "audio_save_directory": "./generated_audio_dia",
+        "use_torch_compile": false
+      }
     }
-  ]
+  }
 } 

@@ -1,0 +1,57 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://example.com/schemas/task_data.schema.json",
+  "title": "Agent Task Data Schema",
+  "description": "Standard schema for data passed between agents and the orchestrator.",
+  "type": "object",
+  "properties": {
+    "task_id": {
+      "type": "string",
+      "description": "Unique identifier for the task instance",
+      "format": "uuid"
+    },
+    "intent": {
+      "type": "string",
+      "description": "The primary goal or action requested for the task"
+    },
+    "payload": {
+      "type": "object",
+      "description": "Task-specific data required by the handling agent",
+      "additionalProperties": true
+    },
+    "context": {
+      "type": "object",
+      "description": "Additional contextual information",
+      "properties": {
+        "file_path": { "type": "string", "description": "Relevant file path" },
+        "user_query": { "type": "string", "description": "Original user query if applicable" },
+        "user_id": { "type": "string" },
+        "session_id": { "type": "string" }
+        // Add other relevant context fields like cursor position, etc.
+      },
+      "additionalProperties": true
+    },
+    "source_agent": {
+      "type": "string",
+      "description": "ID of the agent that created or delegated this task"
+    },
+    "timestamp": {
+      "type": "string",
+      "description": "ISO 8601 timestamp when the task was created",
+      "format": "date-time"
+    },
+    "priority": {
+      "type": "integer",
+      "description": "Task priority (higher value means higher priority)",
+      "default": 0
+    },
+    "status": {
+        "type": "string",
+        "description": "Current status of the task (e.g., queued, processing, success, failed)",
+        "enum": ["queued", "processing", "success", "failed", "delegated"]
+    }
+    // Potential future fields: deadline, dependencies, retry_count
+  },
+  "required": ["task_id", "intent", "timestamp"],
+  "additionalProperties": false
+} 

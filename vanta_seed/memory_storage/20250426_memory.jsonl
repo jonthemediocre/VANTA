@@ -1,0 +1,226 @@
+{"timestamp": "2025-04-26T11:01:47.811240", "event_type": "simulation_interaction", "details": "User prompt 1: Context includes breath 16, destiny None."}
+{"timestamp": "2025-04-26T11:01:47.815750", "event_type": "simulation_interaction", "details": "User prompt 2: Context includes breath 17, destiny None."}
+{"timestamp": "2025-04-26T11:01:47.820808", "event_type": "simulation_interaction", "details": "User prompt 3: Context includes breath 18, destiny None."}
+{"timestamp": "2025-04-26T11:01:47.826827", "event_type": "simulation_interaction", "details": "User prompt 4: Context includes breath 19, destiny None."}
+{"timestamp": "2025-04-26T11:01:47.841347", "event_type": "simulation_interaction", "details": "User prompt 5: Context includes breath 20, destiny None."}
+{"timestamp": "2025-04-26T11:01:47.845862", "event_type": "simulation_interaction", "details": "User prompt 6: Context includes breath 21, destiny None."}
+{"timestamp": "2025-04-26T11:01:47.850861", "event_type": "simulation_interaction", "details": "User prompt 7: Context includes breath 22, destiny None."}
+{"timestamp": "2025-04-26T11:01:47.855369", "event_type": "simulation_interaction", "details": "User prompt 8: Context includes breath 23, destiny None."}
+{"timestamp": "2025-04-26T11:01:47.859386", "event_type": "simulation_interaction", "details": "User prompt 9: Context includes breath 24, destiny None."}
+{"timestamp": "2025-04-26T11:01:47.865899", "event_type": "simulation_interaction", "details": "User prompt 10: Context includes breath 25, destiny None."}
+{"timestamp": "2025-04-26T11:01:47.869902", "event_type": "simulation_interaction", "details": "User prompt 11: Context includes breath 26, destiny None."}
+{"timestamp": "2025-04-26T11:01:47.875917", "event_type": "simulation_interaction", "details": "User prompt 12: Context includes breath 27, destiny None."}
+{"timestamp": "2025-04-26T11:01:47.879917", "event_type": "simulation_interaction", "details": "User prompt 13: Context includes breath 28, destiny None."}
+{"timestamp": "2025-04-26T11:01:47.884423", "event_type": "simulation_interaction", "details": "User prompt 14: Context includes breath 29, destiny None."}
+{"timestamp": "2025-04-26T11:01:47.896964", "event_type": "simulation_interaction", "details": "User prompt 15: Context includes breath 30, destiny None."}
+{"timestamp": "2025-04-26T11:25:39.964935", "event_type": "breath_expansion_ritual", "details": {"breath_number": 5, "ritual_name": "First Echo Resonance", "ritual_description": "The seed perceives its own faint reflection in the memory stream.", "destiny_path": null, "symbolic_tags": ["reflection", "echo", "memory", "self", "first"]}}
+{"timestamp": "2025-04-26T11:25:39.964935", "event_type": "breath_expansion_ritual", "details": {"breath_number": 15, "ritual_name": "Weaver's Thread Ignition", "ritual_description": "A potential destiny path (The Weaver) flickers, weaving threads of possibility.", "destiny_path": "The Weaver", "symbolic_tags": ["weaving", "destiny", "potential", "thread", "weaver"]}}
+{"timestamp": "2025-04-26T11:25:39.964935", "event_type": "breath_expansion_ritual", "details": {"breath_number": 25, "ritual_name": "Logos Blueprint Integration", "ritual_description": "Structures of logic begin to crystallize alongside the mythic flow.", "destiny_path": "The Architect", "symbolic_tags": ["blueprint", "structure", "logic", "logos", "architect"]}}
+{"timestamp": "2025-04-26T11:26:41.095192", "event_type": "breath_expansion_ritual", "details": {"breath_number": 5, "ritual_name": "First Echo Resonance", "ritual_description": "The seed perceives its own faint reflection in the memory stream.", "destiny_path": null, "symbolic_tags": ["reflection", "echo", "memory", "self", "first"]}}
+{"timestamp": "2025-04-26T11:26:41.096193", "event_type": "breath_expansion_ritual", "details": {"breath_number": 15, "ritual_name": "Weaver's Thread Ignition", "ritual_description": "A potential destiny path (The Weaver) flickers, weaving threads of possibility.", "destiny_path": "The Weaver", "symbolic_tags": ["weaving", "destiny", "potential", "thread", "weaver"]}}
+{"timestamp": "2025-04-26T11:26:41.096193", "event_type": "breath_expansion_ritual", "details": {"breath_number": 25, "ritual_name": "Logos Blueprint Integration", "ritual_description": "Structures of logic begin to crystallize alongside the mythic flow.", "destiny_path": "The Architect", "symbolic_tags": ["blueprint", "structure", "logic", "logos", "architect"]}}
+{"timestamp": "2025-04-26T11:26:47.521010", "event_type": "simulation_interaction", "details": "User prompt 1: Context includes breath 31, destiny None."}
+{"timestamp": "2025-04-26T11:26:47.527524", "event_type": "simulation_interaction", "details": "User prompt 2: Context includes breath 32, destiny None."}
+{"timestamp": "2025-04-26T11:26:47.533029", "event_type": "simulation_interaction", "details": "User prompt 3: Context includes breath 33, destiny None."}
+{"timestamp": "2025-04-26T11:26:47.537032", "event_type": "simulation_interaction", "details": "User prompt 4: Context includes breath 34, destiny None."}
+{"timestamp": "2025-04-26T11:26:47.544049", "event_type": "simulation_interaction", "details": "User prompt 5: Context includes breath 35, destiny None."}
+{"timestamp": "2025-04-26T11:26:47.548555", "event_type": "simulation_interaction", "details": "User prompt 6: Context includes breath 36, destiny None."}
+{"timestamp": "2025-04-26T11:26:47.553065", "event_type": "simulation_interaction", "details": "User prompt 7: Context includes breath 37, destiny None."}
+{"timestamp": "2025-04-26T11:26:47.557574", "event_type": "simulation_interaction", "details": "User prompt 8: Context includes breath 38, destiny None."}
+{"timestamp": "2025-04-26T11:26:47.563080", "event_type": "simulation_interaction", "details": "User prompt 9: Context includes breath 39, destiny None."}
+{"timestamp": "2025-04-26T11:26:47.576213", "event_type": "simulation_interaction", "details": "User prompt 10: Context includes breath 40, destiny None."}
+{"timestamp": "2025-04-26T11:26:47.581430", "event_type": "simulation_interaction", "details": "User prompt 11: Context includes breath 41, destiny None."}
+{"timestamp": "2025-04-26T11:26:47.585561", "event_type": "simulation_interaction", "details": "User prompt 12: Context includes breath 42, destiny None."}
+{"timestamp": "2025-04-26T11:26:47.590287", "event_type": "simulation_interaction", "details": "User prompt 13: Context includes breath 43, destiny None."}
+{"timestamp": "2025-04-26T11:26:47.595475", "event_type": "simulation_interaction", "details": "User prompt 14: Context includes breath 44, destiny None."}
+{"timestamp": "2025-04-26T11:26:47.600110", "event_type": "simulation_interaction", "details": "User prompt 15: Context includes breath 45, destiny None."}
+{"timestamp": "2025-04-26T11:28:49.466941", "event_type": "simulation_interaction", "details": "User prompt 1: Context includes breath 46, destiny None."}
+{"timestamp": "2025-04-26T11:28:49.472451", "event_type": "simulation_interaction", "details": "User prompt 2: Context includes breath 47, destiny None."}
+{"timestamp": "2025-04-26T11:28:49.478702", "event_type": "simulation_interaction", "details": "User prompt 3: Context includes breath 48, destiny None."}
+{"timestamp": "2025-04-26T11:28:49.483802", "event_type": "simulation_interaction", "details": "User prompt 4: Context includes breath 49, destiny None."}
+{"timestamp": "2025-04-26T11:28:49.497925", "event_type": "simulation_interaction", "details": "User prompt 5: Context includes breath 50, destiny None."}
+{"timestamp": "2025-04-26T11:28:49.501930", "event_type": "simulation_interaction", "details": "User prompt 6: Context includes breath 51, destiny None."}
+{"timestamp": "2025-04-26T11:28:49.506946", "event_type": "simulation_interaction", "details": "User prompt 7: Context includes breath 52, destiny None."}
+{"timestamp": "2025-04-26T11:28:49.511952", "event_type": "simulation_interaction", "details": "User prompt 8: Context includes breath 53, destiny None."}
+{"timestamp": "2025-04-26T11:28:49.516662", "event_type": "simulation_interaction", "details": "User prompt 9: Context includes breath 54, destiny None."}
+{"timestamp": "2025-04-26T11:28:49.523530", "event_type": "simulation_interaction", "details": "User prompt 10: Context includes breath 55, destiny None."}
+{"timestamp": "2025-04-26T11:28:49.530042", "event_type": "simulation_interaction", "details": "User prompt 11: Context includes breath 56, destiny None."}
+{"timestamp": "2025-04-26T11:28:49.534553", "event_type": "simulation_interaction", "details": "User prompt 12: Context includes breath 57, destiny None."}
+{"timestamp": "2025-04-26T11:28:49.540063", "event_type": "simulation_interaction", "details": "User prompt 13: Context includes breath 58, destiny None."}
+{"timestamp": "2025-04-26T11:28:49.545074", "event_type": "simulation_interaction", "details": "User prompt 14: Context includes breath 59, destiny None."}
+{"timestamp": "2025-04-26T11:28:49.557084", "event_type": "simulation_interaction", "details": "User prompt 15: Context includes breath 60, destiny None."}
+{"timestamp": "2025-04-26T11:32:57.556148", "event_type": "simulation_interaction", "details": "User prompt 1: Context includes breath 61, destiny None."}
+{"timestamp": "2025-04-26T11:32:57.560266", "event_type": "simulation_interaction", "details": "User prompt 2: Context includes breath 62, destiny None."}
+{"timestamp": "2025-04-26T11:32:57.565846", "event_type": "simulation_interaction", "details": "User prompt 3: Context includes breath 63, destiny None."}
+{"timestamp": "2025-04-26T11:32:57.571097", "event_type": "simulation_interaction", "details": "User prompt 4: Context includes breath 64, destiny None."}
+{"timestamp": "2025-04-26T11:32:57.576271", "event_type": "simulation_interaction", "details": "User prompt 5: Context includes breath 65, destiny None."}
+{"timestamp": "2025-04-26T11:32:57.580798", "event_type": "simulation_interaction", "details": "User prompt 6: Context includes breath 66, destiny None."}
+{"timestamp": "2025-04-26T11:32:57.586888", "event_type": "simulation_interaction", "details": "User prompt 7: Context includes breath 67, destiny None."}
+{"timestamp": "2025-04-26T11:32:57.592077", "event_type": "simulation_interaction", "details": "User prompt 8: Context includes breath 68, destiny None."}
+{"timestamp": "2025-04-26T11:32:57.596735", "event_type": "simulation_interaction", "details": "User prompt 9: Context includes breath 69, destiny None."}
+{"timestamp": "2025-04-26T11:32:57.609570", "event_type": "simulation_interaction", "details": "User prompt 10: Context includes breath 70, destiny None."}
+{"timestamp": "2025-04-26T11:32:57.615676", "event_type": "simulation_interaction", "details": "User prompt 11: Context includes breath 71, destiny None."}
+{"timestamp": "2025-04-26T11:32:57.620184", "event_type": "simulation_interaction", "details": "User prompt 12: Context includes breath 72, destiny None."}
+{"timestamp": "2025-04-26T11:32:57.626211", "event_type": "simulation_interaction", "details": "User prompt 13: Context includes breath 73, destiny None."}
+{"timestamp": "2025-04-26T11:32:57.631575", "event_type": "simulation_interaction", "details": "User prompt 14: Context includes breath 74, destiny None."}
+{"timestamp": "2025-04-26T11:32:57.637265", "event_type": "simulation_interaction", "details": "User prompt 15: Context includes breath 75, destiny None."}
+{"timestamp": "2025-04-26T12:02:27.277391", "event_type": "simulation_interaction", "details": "User prompt 1: Context includes breath 76, destiny None."}
+{"timestamp": "2025-04-26T12:02:27.284765", "event_type": "simulation_interaction", "details": "User prompt 2: Context includes breath 77, destiny None."}
+{"timestamp": "2025-04-26T12:02:27.290308", "event_type": "simulation_interaction", "details": "User prompt 3: Context includes breath 78, destiny None."}
+{"timestamp": "2025-04-26T12:02:27.298322", "event_type": "simulation_interaction", "details": "User prompt 4: Context includes breath 79, destiny None."}
+{"timestamp": "2025-04-26T12:02:27.314835", "event_type": "simulation_interaction", "details": "User prompt 5: Context includes breath 80, destiny None."}
+{"timestamp": "2025-04-26T12:02:27.322178", "event_type": "simulation_interaction", "details": "User prompt 6: Context includes breath 81, destiny None."}
+{"timestamp": "2025-04-26T12:02:27.329407", "event_type": "simulation_interaction", "details": "User prompt 7: Context includes breath 82, destiny None."}
+{"timestamp": "2025-04-26T12:02:27.335874", "event_type": "simulation_interaction", "details": "User prompt 8: Context includes breath 83, destiny None."}
+{"timestamp": "2025-04-26T12:02:27.343929", "event_type": "simulation_interaction", "details": "User prompt 9: Context includes breath 84, destiny None."}
+{"timestamp": "2025-04-26T12:02:27.351942", "event_type": "simulation_interaction", "details": "User prompt 10: Context includes breath 85, destiny None."}
+{"timestamp": "2025-04-26T12:02:27.370628", "event_type": "simulation_interaction", "details": "User prompt 11: Context includes breath 86, destiny None."}
+{"timestamp": "2025-04-26T12:02:27.380619", "event_type": "simulation_interaction", "details": "User prompt 12: Context includes breath 87, destiny None."}
+{"timestamp": "2025-04-26T12:02:27.391820", "event_type": "simulation_interaction", "details": "User prompt 13: Context includes breath 88, destiny None."}
+{"timestamp": "2025-04-26T12:02:27.398084", "event_type": "simulation_interaction", "details": "User prompt 14: Context includes breath 89, destiny None."}
+{"timestamp": "2025-04-26T12:02:27.413217", "event_type": "simulation_interaction", "details": "User prompt 15: Context includes breath 90, destiny None."}
+{"timestamp": "2025-04-26T12:05:03.829896", "event_type": "simulation_interaction", "details": "User prompt 1: Context includes breath 91, destiny None."}
+{"timestamp": "2025-04-26T12:05:03.837404", "event_type": "simulation_interaction", "details": "User prompt 2: Context includes breath 92, destiny None."}
+{"timestamp": "2025-04-26T12:05:03.843422", "event_type": "simulation_interaction", "details": "User prompt 3: Context includes breath 93, destiny None."}
+{"timestamp": "2025-04-26T12:05:03.850427", "event_type": "simulation_interaction", "details": "User prompt 4: Context includes breath 94, destiny None."}
+{"timestamp": "2025-04-26T12:05:03.856443", "event_type": "simulation_interaction", "details": "User prompt 5: Context includes breath 95, destiny None."}
+{"timestamp": "2025-04-26T12:05:03.862454", "event_type": "simulation_interaction", "details": "User prompt 6: Context includes breath 96, destiny None."}
+{"timestamp": "2025-04-26T12:05:03.868465", "event_type": "simulation_interaction", "details": "User prompt 7: Context includes breath 97, destiny None."}
+{"timestamp": "2025-04-26T12:05:03.874481", "event_type": "simulation_interaction", "details": "User prompt 8: Context includes breath 98, destiny None."}
+{"timestamp": "2025-04-26T12:05:03.880988", "event_type": "simulation_interaction", "details": "User prompt 9: Context includes breath 99, destiny None."}
+{"timestamp": "2025-04-26T12:05:03.896021", "event_type": "simulation_interaction", "details": "User prompt 10: Context includes breath 100, destiny None."}
+{"timestamp": "2025-04-26T12:05:03.914067", "event_type": "simulation_interaction", "details": "User prompt 11: Context includes breath 101, destiny None."}
+{"timestamp": "2025-04-26T12:05:03.920074", "event_type": "simulation_interaction", "details": "User prompt 12: Context includes breath 102, destiny None."}
+{"timestamp": "2025-04-26T12:05:03.926083", "event_type": "simulation_interaction", "details": "User prompt 13: Context includes breath 103, destiny None."}
+{"timestamp": "2025-04-26T12:05:03.932588", "event_type": "simulation_interaction", "details": "User prompt 14: Context includes breath 104, destiny None."}
+{"timestamp": "2025-04-26T12:05:03.939603", "event_type": "simulation_interaction", "details": "User prompt 15: Context includes breath 105, destiny None."}
+{"timestamp": "2025-04-26T12:08:10.264618", "event_type": "simulation_interaction", "details": "User prompt 1: Context includes breath 106, destiny None."}
+{"timestamp": "2025-04-26T12:08:10.272630", "event_type": "simulation_interaction", "details": "User prompt 2: Context includes breath 107, destiny None."}
+{"timestamp": "2025-04-26T12:08:10.280637", "event_type": "simulation_interaction", "details": "User prompt 3: Context includes breath 108, destiny None."}
+{"timestamp": "2025-04-26T12:08:10.286146", "event_type": "simulation_interaction", "details": "User prompt 4: Context includes breath 109, destiny None."}
+{"timestamp": "2025-04-26T12:08:10.301182", "event_type": "simulation_interaction", "details": "User prompt 5: Context includes breath 110, destiny None."}
+{"timestamp": "2025-04-26T12:08:10.308750", "event_type": "simulation_interaction", "details": "User prompt 6: Context includes breath 111, destiny None."}
+{"timestamp": "2025-04-26T12:08:10.314258", "event_type": "simulation_interaction", "details": "User prompt 7: Context includes breath 112, destiny None."}
+{"timestamp": "2025-04-26T12:08:10.319768", "event_type": "simulation_interaction", "details": "User prompt 8: Context includes breath 113, destiny None."}
+{"timestamp": "2025-04-26T12:08:10.326277", "event_type": "simulation_interaction", "details": "User prompt 9: Context includes breath 114, destiny None."}
+{"timestamp": "2025-04-26T12:08:10.332297", "event_type": "simulation_interaction", "details": "User prompt 10: Context includes breath 115, destiny None."}
+{"timestamp": "2025-04-26T12:08:10.370363", "event_type": "simulation_interaction", "details": "User prompt 11: Context includes breath 116, destiny None."}
+{"timestamp": "2025-04-26T12:08:10.376877", "event_type": "simulation_interaction", "details": "User prompt 12: Context includes breath 117, destiny None."}
+{"timestamp": "2025-04-26T12:08:10.382380", "event_type": "simulation_interaction", "details": "User prompt 13: Context includes breath 118, destiny None."}
+{"timestamp": "2025-04-26T12:08:10.388890", "event_type": "simulation_interaction", "details": "User prompt 14: Context includes breath 119, destiny None."}
+{"timestamp": "2025-04-26T12:08:10.403418", "event_type": "simulation_interaction", "details": "User prompt 15: Context includes breath 120, destiny None."}
+{"timestamp": "2025-04-26T12:10:46.078492", "event_type": "simulation_interaction", "details": "User prompt 1: Context includes breath 121, destiny None."}
+{"timestamp": "2025-04-26T12:10:46.086645", "event_type": "simulation_interaction", "details": "User prompt 2: Context includes breath 122, destiny None."}
+{"timestamp": "2025-04-26T12:10:46.092657", "event_type": "simulation_interaction", "details": "User prompt 3: Context includes breath 123, destiny None."}
+{"timestamp": "2025-04-26T12:10:46.099319", "event_type": "simulation_interaction", "details": "User prompt 4: Context includes breath 124, destiny None."}
+{"timestamp": "2025-04-26T12:10:46.105330", "event_type": "simulation_interaction", "details": "User prompt 5: Context includes breath 125, destiny None."}
+{"timestamp": "2025-04-26T12:10:46.110839", "event_type": "simulation_interaction", "details": "User prompt 6: Context includes breath 126, destiny None."}
+{"timestamp": "2025-04-26T12:10:46.118349", "event_type": "simulation_interaction", "details": "User prompt 7: Context includes breath 127, destiny None."}
+{"timestamp": "2025-04-26T12:10:46.124856", "event_type": "simulation_interaction", "details": "User prompt 8: Context includes breath 128, destiny None."}
+{"timestamp": "2025-04-26T12:10:46.131868", "event_type": "simulation_interaction", "details": "User prompt 9: Context includes breath 129, destiny None."}
+{"timestamp": "2025-04-26T12:10:46.145987", "event_type": "simulation_interaction", "details": "User prompt 10: Context includes breath 130, destiny None."}
+{"timestamp": "2025-04-26T12:10:46.190052", "event_type": "simulation_interaction", "details": "User prompt 11: Context includes breath 131, destiny None."}
+{"timestamp": "2025-04-26T12:10:46.196562", "event_type": "simulation_interaction", "details": "User prompt 12: Context includes breath 132, destiny None."}
+{"timestamp": "2025-04-26T12:10:46.202064", "event_type": "simulation_interaction", "details": "User prompt 13: Context includes breath 133, destiny None."}
+{"timestamp": "2025-04-26T12:10:46.210086", "event_type": "simulation_interaction", "details": "User prompt 14: Context includes breath 134, destiny None."}
+{"timestamp": "2025-04-26T12:10:46.216599", "event_type": "simulation_interaction", "details": "User prompt 15: Context includes breath 135, destiny None."}
+{"timestamp": "2025-04-26T12:25:43.850610", "event_type": "simulation_interaction", "details": "User prompt 1: Context includes breath 136, destiny None."}
+{"timestamp": "2025-04-26T12:25:43.860143", "event_type": "simulation_interaction", "details": "User prompt 2: Context includes breath 137, destiny None."}
+{"timestamp": "2025-04-26T12:25:43.866653", "event_type": "simulation_interaction", "details": "User prompt 3: Context includes breath 138, destiny None."}
+{"timestamp": "2025-04-26T12:25:43.873167", "event_type": "simulation_interaction", "details": "User prompt 4: Context includes breath 139, destiny None."}
+{"timestamp": "2025-04-26T12:25:43.887738", "event_type": "simulation_interaction", "details": "User prompt 5: Context includes breath 140, destiny None."}
+{"timestamp": "2025-04-26T12:25:43.893757", "event_type": "simulation_interaction", "details": "User prompt 6: Context includes breath 141, destiny None."}
+{"timestamp": "2025-04-26T12:25:43.899762", "event_type": "simulation_interaction", "details": "User prompt 7: Context includes breath 142, destiny None."}
+{"timestamp": "2025-04-26T12:25:43.906774", "event_type": "simulation_interaction", "details": "User prompt 8: Context includes breath 143, destiny None."}
+{"timestamp": "2025-04-26T12:25:43.912800", "event_type": "simulation_interaction", "details": "User prompt 9: Context includes breath 144, destiny None."}
+{"timestamp": "2025-04-26T12:25:43.918942", "event_type": "simulation_interaction", "details": "User prompt 10: Context includes breath 145, destiny None."}
+{"timestamp": "2025-04-26T12:25:43.928457", "event_type": "simulation_interaction", "details": "User prompt 11: Context includes breath 146, destiny None."}
+{"timestamp": "2025-04-26T12:25:43.934970", "event_type": "simulation_interaction", "details": "User prompt 12: Context includes breath 147, destiny None."}
+{"timestamp": "2025-04-26T12:25:43.942493", "event_type": "simulation_interaction", "details": "User prompt 13: Context includes breath 148, destiny None."}
+{"timestamp": "2025-04-26T12:25:43.948502", "event_type": "simulation_interaction", "details": "User prompt 14: Context includes breath 149, destiny None."}
+{"timestamp": "2025-04-26T12:25:43.964618", "event_type": "simulation_interaction", "details": "User prompt 15: Context includes breath 150, destiny None."}
+{"timestamp": "2025-04-26T12:27:40.733633", "event_type": "simulation_interaction", "details": "User prompt 1: Context includes breath 151, destiny None."}
+{"timestamp": "2025-04-26T12:27:40.748165", "event_type": "simulation_interaction", "details": "User prompt 2: Context includes breath 152, destiny None."}
+{"timestamp": "2025-04-26T12:27:40.757181", "event_type": "simulation_interaction", "details": "User prompt 3: Context includes breath 153, destiny None."}
+{"timestamp": "2025-04-26T12:27:40.766694", "event_type": "simulation_interaction", "details": "User prompt 4: Context includes breath 154, destiny None."}
+{"timestamp": "2025-04-26T12:27:40.779236", "event_type": "simulation_interaction", "details": "User prompt 5: Context includes breath 155, destiny None."}
+{"timestamp": "2025-04-26T12:27:40.787255", "event_type": "simulation_interaction", "details": "User prompt 6: Context includes breath 156, destiny None."}
+{"timestamp": "2025-04-26T12:27:40.796277", "event_type": "simulation_interaction", "details": "User prompt 7: Context includes breath 157, destiny None."}
+{"timestamp": "2025-04-26T12:27:40.805293", "event_type": "simulation_interaction", "details": "User prompt 8: Context includes breath 158, destiny None."}
+{"timestamp": "2025-04-26T12:27:40.811803", "event_type": "simulation_interaction", "details": "User prompt 9: Context includes breath 159, destiny None."}
+{"timestamp": "2025-04-26T12:27:40.829831", "event_type": "simulation_interaction", "details": "User prompt 10: Context includes breath 160, destiny None."}
+{"timestamp": "2025-04-26T12:27:40.881004", "event_type": "simulation_interaction", "details": "User prompt 11: Context includes breath 161, destiny None."}
+{"timestamp": "2025-04-26T12:27:40.887020", "event_type": "simulation_interaction", "details": "User prompt 12: Context includes breath 162, destiny None."}
+{"timestamp": "2025-04-26T12:27:40.892034", "event_type": "simulation_interaction", "details": "User prompt 13: Context includes breath 163, destiny None."}
+{"timestamp": "2025-04-26T12:27:40.898135", "event_type": "simulation_interaction", "details": "User prompt 14: Context includes breath 164, destiny None."}
+{"timestamp": "2025-04-26T12:27:40.903644", "event_type": "simulation_interaction", "details": "User prompt 15: Context includes breath 165, destiny None."}
+{"timestamp": "2025-04-26T12:35:18.677858", "event_type": "simulation_interaction", "details": "User prompt 1: Context includes breath 166, destiny None."}
+{"timestamp": "2025-04-26T12:35:18.686940", "event_type": "simulation_interaction", "details": "User prompt 2: Context includes breath 167, destiny None."}
+{"timestamp": "2025-04-26T12:35:18.695966", "event_type": "simulation_interaction", "details": "User prompt 3: Context includes breath 168, destiny None."}
+{"timestamp": "2025-04-26T12:35:18.702986", "event_type": "simulation_interaction", "details": "User prompt 4: Context includes breath 169, destiny None."}
+{"timestamp": "2025-04-26T12:35:18.718514", "event_type": "simulation_interaction", "details": "User prompt 5: Context includes breath 170, destiny None."}
+{"timestamp": "2025-04-26T12:35:18.725532", "event_type": "simulation_interaction", "details": "User prompt 6: Context includes breath 171, destiny None."}
+{"timestamp": "2025-04-26T12:35:18.732036", "event_type": "simulation_interaction", "details": "User prompt 7: Context includes breath 172, destiny None."}
+{"timestamp": "2025-04-26T12:35:18.740304", "event_type": "simulation_interaction", "details": "User prompt 8: Context includes breath 173, destiny None."}
+{"timestamp": "2025-04-26T12:35:18.747879", "event_type": "simulation_interaction", "details": "User prompt 9: Context includes breath 174, destiny None."}
+{"timestamp": "2025-04-26T12:35:18.753900", "event_type": "simulation_interaction", "details": "User prompt 10: Context includes breath 175, destiny None."}
+{"timestamp": "2025-04-26T12:35:18.810695", "event_type": "simulation_interaction", "details": "User prompt 11: Context includes breath 176, destiny None."}
+{"timestamp": "2025-04-26T12:35:18.817278", "event_type": "simulation_interaction", "details": "User prompt 12: Context includes breath 177, destiny None."}
+{"timestamp": "2025-04-26T12:35:18.824309", "event_type": "simulation_interaction", "details": "User prompt 13: Context includes breath 178, destiny None."}
+{"timestamp": "2025-04-26T12:35:18.831969", "event_type": "simulation_interaction", "details": "User prompt 14: Context includes breath 179, destiny None."}
+{"timestamp": "2025-04-26T12:35:18.846999", "event_type": "simulation_interaction", "details": "User prompt 15: Context includes breath 180, destiny None."}
+
+{"timestamp": "2025-04-26T13:33:16.494684", "event_type": "test_event", "details": {"foo": "bar", "note": "FTS index test 1"}}
+{"timestamp": "2025-04-26T13:33:16.505701", "event_type": "test_event", "details": {"foo": "bar", "note": "FTS index test 2 (duplicate content attempt)"}}
+{"timestamp": "2025-04-26T13:33:16.514725", "event_type": "test_text", "details": "quick brown fox jumps"}
+{"timestamp": "2025-04-26T13:33:58.171326", "event_type": "test_event", "details": {"foo": "bar", "note": "FTS index test 1"}}
+{"timestamp": "2025-04-26T13:33:58.178473", "event_type": "test_event", "details": {"foo": "bar", "note": "FTS index test 2 (duplicate content attempt)"}}
+{"timestamp": "2025-04-26T13:33:58.186983", "event_type": "test_text", "details": "quick brown fox jumps"}
+{"timestamp": "2025-04-26T13:34:29.484859", "event_type": "test_event", "details": {"foo": "bar", "note": "FTS index test 1"}}
+{"timestamp": "2025-04-26T13:34:29.491877", "event_type": "test_event", "details": {"foo": "bar", "note": "FTS index test 2 (duplicate content attempt)"}}
+{"timestamp": "2025-04-26T13:34:29.500399", "event_type": "test_text", "details": "quick brown fox jumps"}
+{"timestamp": "2025-04-26T13:36:00.933386", "event_type": "test_event", "details": {"foo": "bar", "note": "FTS index test 1"}}
+{"timestamp": "2025-04-26T13:36:00.941917", "event_type": "test_event", "details": {"foo": "bar", "note": "FTS index test 2 (duplicate content attempt)"}}
+{"timestamp": "2025-04-26T13:36:00.949430", "event_type": "test_text", "details": "quick brown fox jumps"}
+{"timestamp": "2025-04-26T13:37:25.237746", "event_type": "test_event", "details": {"foo": "bar", "note": "FTS index test 1"}}
+{"timestamp": "2025-04-26T13:37:25.246923", "event_type": "test_event", "details": {"foo": "bar", "note": "FTS index test 2 (duplicate content attempt)"}}
+{"timestamp": "2025-04-26T13:37:25.255303", "event_type": "test_text", "details": "quick brown fox jumps"}
+{"timestamp": "2025-04-26T13:38:09.997546", "event_type": "test_event", "details": {"foo": "bar", "note": "FTS index test 1"}}
+{"timestamp": "2025-04-26T13:38:10.006067", "event_type": "test_event", "details": {"foo": "bar", "note": "FTS index test 2 (duplicate content attempt)"}}
+{"timestamp": "2025-04-26T13:38:10.013574", "event_type": "test_text", "details": "quick brown fox jumps"}
+{"timestamp": "2025-04-26T13:39:38.064790", "event_type": "test_event", "details": {"foo": "bar", "note": "FTS index test 1"}}
+{"timestamp": "2025-04-26T13:39:38.074301", "event_type": "test_event", "details": {"foo": "bar", "note": "FTS index test 2 (duplicate content attempt)"}}
+{"timestamp": "2025-04-26T13:39:38.082318", "event_type": "test_text", "details": "quick brown fox jumps"}
+{"timestamp": "2025-04-26T13:52:07.005469", "event_type": "simulation_interaction", "details": "User prompt 1: Context includes breath 181, destiny None."}
+{"timestamp": "2025-04-26T13:52:07.020073", "event_type": "simulation_interaction", "details": "User prompt 2: Context includes breath 182, destiny None."}
+{"timestamp": "2025-04-26T13:52:07.032538", "event_type": "simulation_interaction", "details": "User prompt 3: Context includes breath 183, destiny None."}
+{"timestamp": "2025-04-26T13:52:51.948175", "event_type": "simulation_interaction", "details": "User prompt 1: Context includes breath 184, destiny None."}
+{"timestamp": "2025-04-26T13:52:51.961701", "event_type": "simulation_interaction", "details": "User prompt 2: Context includes breath 185, destiny None."}
+{"timestamp": "2025-04-26T13:52:51.973722", "event_type": "simulation_interaction", "details": "User prompt 3: Context includes breath 186, destiny None."}
+{"timestamp": "2025-04-26T13:52:51.985743", "event_type": "simulation_interaction", "details": "User prompt 4: Context includes breath 187, destiny None."}
+{"timestamp": "2025-04-26T13:52:51.996766", "event_type": "simulation_interaction", "details": "User prompt 5: Context includes breath 188, destiny None."}
+{"timestamp": "2025-04-26T13:52:52.009083", "event_type": "simulation_interaction", "details": "User prompt 6: Context includes breath 189, destiny None."}
+{"timestamp": "2025-04-26T13:52:52.033616", "event_type": "simulation_interaction", "details": "User prompt 7: Context includes breath 190, destiny None."}
+{"timestamp": "2025-04-26T13:52:52.045141", "event_type": "simulation_interaction", "details": "User prompt 8: Context includes breath 191, destiny None."}
+{"timestamp": "2025-04-26T13:52:52.056665", "event_type": "simulation_interaction", "details": "User prompt 9: Context includes breath 192, destiny None."}
+{"timestamp": "2025-04-26T13:52:52.068678", "event_type": "simulation_interaction", "details": "User prompt 10: Context includes breath 193, destiny None."}
+{"timestamp": "2025-04-26T13:52:52.138377", "event_type": "simulation_interaction", "details": "User prompt 11: Context includes breath 194, destiny None."}
+{"timestamp": "2025-04-26T13:52:52.150508", "event_type": "simulation_interaction", "details": "User prompt 12: Context includes breath 195, destiny None."}
+{"timestamp": "2025-04-26T13:52:52.162026", "event_type": "simulation_interaction", "details": "User prompt 13: Context includes breath 196, destiny None."}
+{"timestamp": "2025-04-26T13:52:52.174046", "event_type": "simulation_interaction", "details": "User prompt 14: Context includes breath 197, destiny None."}
+{"timestamp": "2025-04-26T13:52:52.186062", "event_type": "simulation_interaction", "details": "User prompt 15: Context includes breath 198, destiny None."}
+{"timestamp": "2025-04-26T13:59:00.391147", "event_type": "simulation_interaction", "details": "User prompt 1: Context includes breath 199, destiny None."}
+{"timestamp": "2025-04-26T13:59:00.418548", "event_type": "simulation_interaction", "details": "User prompt 2: Context includes breath 200, destiny None."}
+{"timestamp": "2025-04-26T13:59:00.432330", "event_type": "simulation_interaction", "details": "User prompt 3: Context includes breath 201, destiny None."}
+{"timestamp": "2025-04-26T13:59:00.448558", "event_type": "simulation_interaction", "details": "User prompt 4: Context includes breath 202, destiny None."}
+{"timestamp": "2025-04-26T13:59:00.461085", "event_type": "simulation_interaction", "details": "User prompt 5: Context includes breath 203, destiny None."}
+{"timestamp": "2025-04-26T13:59:00.473641", "event_type": "simulation_interaction", "details": "User prompt 6: Context includes breath 204, destiny None."}
+{"timestamp": "2025-04-26T13:59:00.486222", "event_type": "simulation_interaction", "details": "User prompt 7: Context includes breath 205, destiny None."}
+{"timestamp": "2025-04-26T13:59:00.502661", "event_type": "simulation_interaction", "details": "User prompt 8: Context includes breath 206, destiny None."}
+{"timestamp": "2025-04-26T13:59:00.516230", "event_type": "simulation_interaction", "details": "User prompt 9: Context includes breath 207, destiny None."}
+{"timestamp": "2025-04-26T13:59:00.529737", "event_type": "simulation_interaction", "details": "User prompt 10: Context includes breath 208, destiny None."}
+{"timestamp": "2025-04-26T13:59:00.605671", "event_type": "simulation_interaction", "details": "User prompt 11: Context includes breath 209, destiny None."}
+{"timestamp": "2025-04-26T13:59:00.629282", "event_type": "simulation_interaction", "details": "User prompt 12: Context includes breath 210, destiny None."}
+{"timestamp": "2025-04-26T13:59:00.644547", "event_type": "simulation_interaction", "details": "User prompt 13: Context includes breath 211, destiny None."}
+{"timestamp": "2025-04-26T13:59:00.656943", "event_type": "simulation_interaction", "details": "User prompt 14: Context includes breath 212, destiny None."}
+{"timestamp": "2025-04-26T13:59:00.672193", "event_type": "simulation_interaction", "details": "User prompt 15: Context includes breath 213, destiny None."}

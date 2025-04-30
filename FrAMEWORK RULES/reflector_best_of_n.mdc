@@ -1,0 +1,14 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# RULE TYPE: Auto Attached
+# FILE PATTERNS: agents/reflector_agent.py
+
+## Reflector Agent Best-of-N Requirement
+- The `ReflectorAgent._generate_mutations` method must implement a Best-of-N selection strategy.
+- It should generate multiple candidate suggestions for identified patterns.
+- Candidates must be ranked based on confidence and/or priority metrics.
+- Only the top N (configurable via `max_reflection_suggestions`) suggestions should be returned or passed to the application stage.
+- Rationale: Ensures the agent considers multiple solutions and selects the most promising.

@@ -26,10 +26,10 @@ The system tracks and synchronizes these essential documentation files:
 When editing any of the tracked files, the system will:
 
 1. **Detect Updates**: Monitor changes to tracked documentation files
-2. **Cross-Reference**: Identify related content in other tracked files
-3. **Suggest Syncs**: Propose updates to maintain consistency 
-4. **Resolve Conflicts**: Intelligently merge conflicting changes
-5. **Preserve Value**: Ensure important information is never lost
+2. **Cross-Reference**: Identify related content (e.g., tasks, milestones, key concepts) in other tracked files.
+3. **Suggest Syncs**: Propose updates to maintain consistency for *shared elements*. Large, self-contained sections added to one file (e.g., detailed feature plans in `Theplan.md`) may not require full synchronization but might trigger suggestions to add cross-references or summaries in related documents.
+4. **Resolve Conflicts**: Intelligently merge conflicting changes for shared elements.
+5. **Preserve Value**: Ensure important information is never lost, prioritizing the source file for unique, large sections unless explicitly cross-referenced.
 
 ## Conflict Resolution Strategy
 
@@ -211,8 +211,10 @@ The system will:
 
 ## Best Practices
 
-1. Make explicit task status changes in `TODO.md` first
-2. Update project timelines in `Plan.md` first
-3. Use consistent task naming across all documentation
-4. Review sync recommendations carefully before applying
-5. Add detailed comments when rejecting sync recommendations 
+1. Make explicit task status changes in `TODO.md` first (if used).
+2. Update project timelines and high-level plans in `Theplan.md` first.
+3. Add detailed architectural changes to `Architecture.md` first.
+4. Use consistent task/feature naming across all documentation.
+5. When adding large, detailed sections primarily relevant to one file (like a specific implementation plan in `Theplan.md`), consider adding only a brief summary and a cross-link in other relevant files instead of full duplication.
+6. Review sync recommendations carefully before applying.
+7. Add detailed comments when rejecting sync recommendations. 

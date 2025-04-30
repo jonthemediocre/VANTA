@@ -1,0 +1,42 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# RULE TYPE: Always
+# FILE PATTERNS: **/*.py
+
+## Hyperparameter Tuning Guidelines
+- Tuning functions must return a dataclass (e.g., `TuningResult`) containing `best_params`, `best_score`, and `history`.
+- Each trial's parameters and scores must be logged via a metrics logger (e.g., `OutcomeLogger`) or similar mechanism.
+- The best parameters must be saved atomically to a JSON file (e.g., `best_params.json`) to avoid corrupt states.
+- Handle exceptions in objective function calls gracefully, marking those trials as failed without aborting the tuning process.
+
+## Examples
+✅ Good:
+```python
+from vanta_nextgen import TuningResult, SelfTuner
+
+tuner = SelfTuner(config_dir="configs")
+result: TuningResult = tuner.tune(
+    objective_fn=my_objective,
+    param_space={"lr": [0.01, 0.001], "batch": [16, 32]},
+    trials=5
+)
+assert isinstance(result, TuningResult)
+with open("configs/best_params.json", "r") as f:
+    data = json.load(f)
+    assert data == result.best_params
+```
+
+❌ Bad:
+```python
+# No structured result and no persistence
+best = None
+for p in params:
+    score = objective(p)
+    if best is None or score > best[1]:
+        best = (p, score)
+# Missing logging and no atomic save
+return best
+```

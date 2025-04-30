@@ -1,0 +1,152 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Rule Index Watcher
+
+## Overview
+
+This rule defines the behavior of the RuleIndexWatcherAgent, which is responsible for maintaining the framework rule index. The agent monitors the rules directory for changes and automatically updates the index to reflect the current state of all rules.
+
+## Requirements
+
+### Agent Responsibilities
+
+1. **Directory Monitoring**
+   - Watch `.cursor/rules` directory for file changes
+   - Detect new, modified, and deleted rule files
+   - Ignore the index file itself (000-framework-index.mdc)
+
+2. **Rule Processing**
+   - Parse YAML front matter from rule files
+   - Extract metadata, dependencies, and triggers
+   - Validate rule format and required fields
+   - Track rule modifications and timestamps
+
+3. **Index Maintenance**
+   - Maintain 000-framework-index.mdc
+   - Update index immediately on rule changes
+   - Preserve rule ordering and relationships
+   - Generate readable markdown documentation
+
+4. **Validation**
+   - Ensure all rules have required metadata
+   - Validate YAML syntax
+   - Check for circular dependencies
+   - Verify trigger patterns
+
+### Performance Requirements
+
+1. **Responsiveness**
+   - Update index within 1 second of rule changes
+   - Minimize file system operations
+   - Use efficient YAML parsing
+   - Implement proper locking mechanisms
+
+2. **Resource Usage**
+   - Low memory footprint
+   - Minimal CPU usage when idle
+   - Efficient file watching mechanism
+   - Smart caching of rule content
+
+### Error Handling
+
+1. **Recovery Procedures**
+   - Handle corrupted rule files
+   - Recover from parsing errors
+   - Maintain index consistency
+   - Log all errors for debugging
+
+2. **Validation Failures**
+   - Report invalid rule formats
+   - Identify missing required fields
+   - Detect dependency conflicts
+   - Provide clear error messages
+
+## Implementation Guidelines
+
+### Agent Configuration
+
+```python
+config = {
+    "watch_paths": [".cursor/rules"],
+    "excluded_patterns": ["000-framework-index.mdc"],
+    "update_delay": 1.0,  # seconds
+    "max_retries": 3,
+    "validation_rules": [
+        "has_metadata",
+        "has_description",
+        "has_type",
+        "valid_yaml"
+    ]
+}
+```
+
+### Index Structure
+
+```yaml
+---
+description: Framework Rule Index
+last_updated: ISO8601_TIMESTAMP
+rules:
+  rule_id:
+    name: string
+    path: string
+    metadata: dict
+    last_modified: ISO8601_TIMESTAMP
+    dependencies: list
+    triggers: list
+---
+```
+
+### Monitoring Process
+
+1. Initialize file system observer
+2. Load existing index if present
+3. Scan rules directory for initial state
+4. Start watching for changes
+5. Handle events asynchronously
+6. Update index as needed
+
+### Validation Process
+
+1. Check YAML syntax
+2. Verify required fields
+3. Validate dependencies
+4. Check trigger patterns
+5. Report any issues
+
+## Best Practices
+
+1. **Performance**
+   - Use async/await for I/O operations
+   - Implement proper locking
+   - Cache rule content when appropriate
+   - Batch updates when possible
+
+2. **Reliability**
+   - Handle all error cases
+   - Implement retry logic
+   - Maintain consistent state
+   - Log important events
+
+3. **Maintainability**
+   - Follow clean code principles
+   - Document all functions
+   - Use type hints
+   - Write unit tests
+
+## Integration Points
+
+1. **Framework Integration**
+   - Start automatically with framework
+   - Provide status API
+   - Emit change events
+   - Support health checks
+
+2. **Tool Integration**
+   - Support rule validation tools
+   - Interface with logging system
+   - Enable monitoring integration
+   - Provide CLI interface

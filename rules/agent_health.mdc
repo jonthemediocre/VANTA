@@ -1,27 +1,269 @@
 ---
-description: 
-globs: 
-alwaysApply: true
+description:
+globs:
+alwaysApply: false
 ---
-### 🛡 **Rule ID: agent_health**
+# Agent Health Monitoring Guidelines
+# FILE PATTERNS: **/*.py, **/*.json, **/*.log
+# RULE TYPE: Always
 
-**Description**:
-Ensures that all agents remain operational, non-redundant, and responsive. Watchdog uses heartbeat and output checks to detect failures.
+## Overview
+This rule defines the health monitoring system for agents, ensuring optimal performance and reliability through continuous monitoring and proactive maintenance.
 
-**Agents**: `Watchdog`, `System2_Disruption`, `AutoMutator`
+## Health Metrics
 
-**Triggers**:
-- Agent hangs > 7s = quarantine
-- Output entropy score < 0.1 (measured across 3 outputs) = reset
-- System2 trigger not activated in 24h = synthetic disruption injection
+### 1. Performance Metrics
+- Response time
+- Task completion rate
+- Resource utilization
+- Memory usage
+- Error frequency
 
-**Actions**:
-- Quarantine Agent
-- Initiate fallback agent (backup persona)
-- Log failure in TraceLogger and flag for RuleSmith mutation
+### 2. Quality Metrics
+- Output accuracy
+- Decision confidence
+- Learning progress
+- Adaptation rate
+- User satisfaction
 
-**Resilience Mode**:
-- Recovery ritual invoked if >2 agents fail within 60m
-- Ritual includes: Reset active tasks, re-engage Season priorities, apply WhisperMode
+### 3. Stability Metrics
+- Uptime percentage
+- Crash frequency
+- Recovery success
+- Resource leaks
+- Error handling success
 
+### 4. Integration Metrics
+- API response times
+- Service availability
+- Data consistency
+- Connection stability
+- Sync status
 
+## Health Structure
+
+```python
+class AgentHealth:
+    def __init__(self):
+        self.agent_id: str
+        self.timestamp: datetime
+        self.performance: PerformanceMetrics
+        self.quality: QualityMetrics
+        self.stability: StabilityMetrics
+        self.integration: IntegrationMetrics
+        self.status: HealthStatus
+        self.alerts: List[HealthAlert]
+```
+
+## Implementation Guidelines
+
+### 1. Health Monitoring
+```python
+async def monitor_health(
+    agent_id: str,
+    metrics: List[str] = None
+) -> AgentHealth:
+    """Monitor agent health across specified metrics."""
+    pass
+```
+
+### 2. Health Analysis
+```python
+async def analyze_health(
+    health: AgentHealth,
+    thresholds: Dict[str, float]
+) -> HealthAnalysis:
+    """Analyze health metrics against thresholds."""
+    pass
+```
+
+### 3. Health Maintenance
+```python
+async def maintain_health(
+    agent_id: str,
+    analysis: HealthAnalysis
+) -> MaintenanceResult:
+    """Execute maintenance tasks based on health analysis."""
+    pass
+```
+
+## Best Practices
+
+1. **Continuous Monitoring**
+   - Regular checks
+   - Real-time alerts
+   - Trend analysis
+   - Predictive warnings
+
+2. **Proactive Maintenance**
+   - Resource cleanup
+   - Performance optimization
+   - Error prevention
+   - Regular updates
+
+3. **Recovery Procedures**
+   - Automatic recovery
+   - Graceful degradation
+   - State preservation
+   - Service continuity
+
+4. **Health Reporting**
+   - Status dashboards
+   - Alert notifications
+   - Trend reports
+   - Incident logs
+
+## Implementation Requirements
+
+1. **Health Monitor Class**
+```python
+class HealthMonitor:
+    def __init__(self):
+        self.metric_collector = MetricCollector()
+        self.analyzer = HealthAnalyzer()
+        self.maintainer = HealthMaintainer()
+
+    async def check_health(
+        self,
+        agent_id: str
+    ) -> AgentHealth:
+        """Perform comprehensive health check."""
+        pass
+
+    async def analyze_trends(
+        self,
+        agent_id: str,
+        time_range: timedelta
+    ) -> HealthTrends:
+        """Analyze health trends over time."""
+        pass
+
+    async def maintain_agent(
+        self,
+        agent_id: str,
+        maintenance_plan: MaintenancePlan
+    ) -> MaintenanceResult:
+        """Execute maintenance tasks."""
+        pass
+```
+
+2. **Metric Components**
+```python
+class PerformanceMetrics:
+    def __init__(self):
+        self.response_time: float
+        self.completion_rate: float
+        self.resource_usage: ResourceMetrics
+        self.memory_usage: MemoryMetrics
+        self.error_rate: float
+
+class QualityMetrics:
+    def __init__(self):
+        self.accuracy: float
+        self.confidence: float
+        self.learning_rate: float
+        self.adaptation_score: float
+        self.user_satisfaction: float
+```
+
+## Error Handling
+
+1. **Monitoring Failures**
+   - Backup monitoring
+   - Metric recovery
+   - Alert escalation
+   - Failure logging
+
+2. **Maintenance Failures**
+   - Safe rollback
+   - Alternative plans
+   - Manual intervention
+   - Incident reporting
+
+## Monitoring System
+
+1. **Real-time Monitoring**
+   - Active checks
+   - Metric collection
+   - Alert generation
+   - Status updates
+
+2. **Historical Analysis**
+   - Trend tracking
+   - Pattern detection
+   - Performance history
+   - Incident analysis
+
+## Maintenance Procedures
+
+1. **Routine Maintenance**
+   - Resource cleanup
+   - Cache clearing
+   - Log rotation
+   - State verification
+
+2. **Preventive Maintenance**
+   - Performance tuning
+   - Resource optimization
+   - Error prevention
+   - Update application
+
+## Integration Points
+
+1. **Monitoring System**
+   - Metric collection
+   - Alert handling
+   - Status reporting
+   - Trend analysis
+
+2. **Maintenance System**
+   - Task scheduling
+   - Resource management
+   - State preservation
+   - Recovery procedures
+
+3. **Reporting System**
+   - Health dashboards
+   - Alert notifications
+   - Trend reports
+   - Incident tracking
+
+## Health States
+
+1. **Optimal**
+   - All metrics within ideal range
+   - No active alerts
+   - High performance
+   - Stable operation
+
+2. **Warning**
+   - Some metrics near thresholds
+   - Minor alerts active
+   - Degraded performance
+   - Requires attention
+
+3. **Critical**
+   - Multiple metrics beyond thresholds
+   - Major alerts active
+   - Significant degradation
+   - Immediate action required
+
+4. **Recovery**
+   - Post-incident state
+   - Metrics improving
+   - Alerts clearing
+   - Stability returning
+
+## Recovery Procedures
+
+1. **Automatic Recovery**
+   - Self-healing actions
+   - Resource reallocation
+   - State restoration
+   - Service restart
+
+2. **Manual Recovery**
+   - Operator intervention
+   - Resource provision
+   - Configuration updates
+   - System verification

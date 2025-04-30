@@ -427,12 +427,9 @@ uvicorn[standard]==0.34.2
     #   -r requirements.in
     #   fastapi
     #   fastapi-cli
-vllm==0.8.4
-    # via -r requirements.in
 watchfiles==1.0.5
     # via
     #   uvicorn
-    #   vllm
 websockets==15.0.1
     # via uvicorn
 wrapt==1.17.2
@@ -441,3 +438,24 @@ yarl==1.20.0
     # via aiohttp
 zipp==3.21.0
     # via importlib-metadata
+
+# === TASK SCHEDULING + PIPELINE ===
+APScheduler>=3.10 # Added for Orchestrator triggers
+# joblib>=1.4
+# prefect>=2.14             # (Optional: Powerful orchestration for workflows)
+
+# --- Core Dependencies ---
+fastapi>=0.100.0
+uvicorn[standard]>=0.20.0
+python-dotenv>=1.0.0
+pydantic>=2.0
+jsonschema>=4.0 # For schema validation
+requests # For making API calls in CLI
+
+# --- OpenAI Integration ---
+
+# === VANTA-SEED Dependencies ===
+chromadb>=0.4.24
+    # via vanta_seed
+# pyyaml>=6.0 is already included
+# ==============================

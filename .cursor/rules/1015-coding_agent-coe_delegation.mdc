@@ -1,0 +1,34 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# RULE TYPE: Always
+# FILE PATTERNS: **/*.py
+
+## CoE Delegation for Complex Actions
+- For agent actions that are complex, high-risk, or require multi-faceted validation (e.g., proposing new rules, significant config changes, deploying code):
+  - Do not implement the action directly within the suggesting agent.
+  - Instead, trigger a Coalition of Experts (CoE) or a dedicated review process.
+  - Package the context, proposed action, and reasoning into a message or event for the CoE.
+  - The CoE (which might include specialized agents or human review) is responsible for validating and executing the action.
+- This promotes separation of concerns, safety, and collaborative decision-making.
+
+## Examples
+✅ Good:
+```python
+class MyAgent:
+    def suggest_complex_change(self, context):
+        proposal = self._generate_proposal(context)
+        # Trigger CoE instead of applying directly
+        self.message_bus.publish("coe_review_request", proposal)
+```
+
+❌ Bad:
+```python
+# Agent directly applies a complex/risky change
+class MyAgent:
+    def suggest_complex_change(self, context):
+        if self._should_change_config():
+            self._apply_risky_config_change()
+```

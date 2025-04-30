@@ -1,0 +1,27 @@
+# Configuration for VANTA API Gateway
+
+# Ollama Settings
+ollama:
+  host: http://localhost:11435 # Reverted port to match Ollama service logs
+  models:
+    default: deepseek-llm:latest
+    code: deepseek-coder:latest
+    vision: null # Example: llava:latest (Set to null if no vision model needed initially)
+    # LoRA-enhanced models (BaseModel:Tag-LoRA_Name)
+    lora_models:
+      python_expert: deepseek-coder:latest-python-lora # Example name, needs creation via /api/create
+      myth_weaver: "hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M" 
+      memory_weaver: deepseek-llm:latest-memorycraft-lora # Example name
+
+# OpenAI Settings
+openai:
+  # API Key should be set via environment variable: OPENAI_API_KEY
+  models:
+    default_chat: gpt-4o
+    default_vision: gpt-4o # Use gpt-4o for vision tasks too
+    # Add other specific models if needed, e.g., gpt-4-turbo
+
+# Routing Keywords (Optional - can refine later)
+routing:
+  openai_image_keywords: ["generate image", "create an image", "make a picture"]
+  # Add other routing rules if desired 

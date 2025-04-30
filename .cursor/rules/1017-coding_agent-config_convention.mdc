@@ -1,0 +1,36 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# RULE TYPE: Always
+# FILE PATTERNS: **/agents/**/*.py, **/agents/**/*.json, **/agents/**/*.yaml
+
+## Agent Configuration File Conventions
+- **Location:** Store agent configuration files alongside or near their corresponding implementation files, typically within an `agents/` directory structure.
+- **Naming:** Use a consistent naming scheme that links the config file to the agent implementation (e.g., `my_agent.py` and `my_agent.json` or `MyAgent.py` and `MyAgent.yaml`).
+- **Format:** Prefer structured formats like JSON or YAML for configuration.
+- **Registry:** Maintain a central registry (e.g., `agents.index.mpc.json`) that maps agent IDs to their implementation and configuration file paths.
+- **Rationale:** Standard conventions improve discoverability, maintainability, and simplify automated loading (e.g., by an `AgentRegistry`).
+
+## Examples
+✅ Good Structure:
+```
+agents/
+├── code_assistant.py
+├── code_assistant.json
+├── doc_agent.py
+└── doc_agent.json
+agents.index.mpc.json
+```
+
+❌ Bad Structure:
+```
+configs/
+├── agent1_cfg.yaml
+src/
+├── agents/
+│   ├── code.py
+│   └── docs.py
+# Configs separated, inconsistent naming
+```

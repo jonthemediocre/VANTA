@@ -1,0 +1,35 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# RULE TYPE: Always
+# FILE PATTERNS: **/*.py
+
+## MoE for Analysis
+- For complex analysis functions (e.g., log parsing, pattern detection), consider breaking down the logic into specialized "expert" sub-methods (MoE pattern).
+- The main analysis method should orchestrate calls to these experts and aggregate their findings.
+- This improves modularity, testability, and allows easier specialization or replacement of analysis components.
+
+## Examples
+✅ Good:
+```python
+class AnalyzerAgent:
+    def analyze(self, data):
+        results = []
+        results.extend(self._analyze_errors(data))
+        results.extend(self._analyze_performance(data))
+        return self._aggregate(results)
+    def _analyze_errors(self, data): ...
+    def _analyze_performance(self, data): ...
+    def _aggregate(self, results): ...
+```
+
+❌ Bad:
+```python
+# Monolithic analysis function
+class AnalyzerAgent:
+    def analyze(self, data):
+        # Complex logic for errors AND performance...
+        pass
+```

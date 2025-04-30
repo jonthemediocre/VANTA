@@ -1,0 +1,43 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# RULE TYPE: Always
+# FILE PATTERNS: **/orchestrator.py, **/agents/**/*.py
+
+## Task Data Schema Enforcement
+- All data passed between agents or queued via the `AgentOrchestrator` (e.g., in `add_task`, `route_task`, `handle` methods) MUST conform to the structure defined in `schemas/task_data.schema.json`.
+- Tasks must include `task_id` (UUID), `intent` (string), and `timestamp` (ISO 8601).
+- Use the `payload` object for task-specific inputs (e.g., prompts, parameters).
+- Use the `context` object for shared context (e.g., file paths, user info).
+- Validate task data against the schema where appropriate, especially at API boundaries or when receiving data from untrusted sources.
+- Rationale: Ensures consistent communication and data handling across the agent framework.
+
+## Examples
+✅ Good:
+```python
+import uuid
+import datetime
+
+def create_task(intent, payload, source_agent):
+    return {
+        "task_id": str(uuid.uuid4()),
+        "intent": intent,
+        "payload": payload,
+        "context": { "user_id": "user123" },
+        "source_agent": source_agent,
+        "timestamp": datetime.datetime.utcnow().isoformat() + "Z",
+        "priority": 1,
+        "status": "queued"
+    }
+
+# orchestrator.add_task(create_task(...))
+```
+
+❌ Bad:
+```python
+# Arbitrary dictionary, missing required fields
+task = {"goal": "generate image", "prompt": "a cat"}
+# orchestrator.add_task(task)
+```

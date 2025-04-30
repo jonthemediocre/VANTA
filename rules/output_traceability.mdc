@@ -1,25 +1,233 @@
 ---
-description: 
-globs: 
+description:
+globs:
 alwaysApply: false
 ---
-### 🔍 **Rule ID: output_traceability**
+# Output Traceability Guidelines
+# FILE PATTERNS: **/*.py, **/*.json, **/*.log
+# RULE TYPE: Always
 
-**Description**:
-TraceLogger must log all significant internal events, including prompt evolution, agent routing, mutation events, and outcome lineage.
+## Overview
+This rule defines how agent outputs should be logged, traced, and analyzed for accountability and improvement.
 
-**Agents**: `TraceLogger`, `PromptSmith`, `AutoMutator`
+## Traceability Requirements
 
-**Logging Schema**:
-- Event Types:
-  - Agent Invocation
-  - Mutation Path
-  - Output Finalization
-  - CoT/ToT/LoT Execution Chain
-- Audit Trigger:
-  - All outputs scoring below 0.3 must be archived with lineage
-- Redaction Rules:
-  - Personal data hashes preserved; visible strings replaced
-- User-accessible logs: ✅ (`on request or debug mode`)
+### 1. Output Identification
+- Unique output ID
+- Timestamp
+- Source agent
+- Task context
+- Output type
 
+### 2. Context Capture
+- Input parameters
+- Environmental state
+- Agent state
+- Resource usage
+- Dependencies
 
+### 3. Decision Trail
+- Reasoning steps
+- Alternative options
+- Selection criteria
+- Confidence scores
+- References used
+
+### 4. Validation Data
+- Success criteria
+- Test results
+- User feedback
+- Performance metrics
+- Error states
+
+## Output Structure
+
+```python
+class TracedOutput:
+    def __init__(self):
+        self.id: str
+        self.timestamp: datetime
+        self.agent_id: str
+        self.task_id: str
+        self.output_type: OutputType
+        self.content: Any
+        self.context: OutputContext
+        self.decision_trail: List[DecisionStep]
+        self.validation: ValidationData
+        self.metadata: Dict[str, Any]
+```
+
+## Implementation Guidelines
+
+### 1. Output Logging
+```python
+async def log_output(
+    output: Any,
+    context: OutputContext,
+    validation: ValidationData
+) -> str:
+    """Log output with full traceability information."""
+    pass
+```
+
+### 2. Context Capture
+```python
+async def capture_context(
+    agent_id: str,
+    task_id: str
+) -> OutputContext:
+    """Capture full context at time of output generation."""
+    pass
+```
+
+### 3. Decision Recording
+```python
+async def record_decision(
+    step: DecisionStep,
+    confidence: float
+) -> None:
+    """Record individual decision steps with confidence."""
+    pass
+```
+
+## Best Practices
+
+1. **Output Documentation**
+   - Clear descriptions
+   - Relevant context
+   - Complete metadata
+   - Version information
+
+2. **Context Management**
+   - Capture state
+   - Track dependencies
+   - Record timestamps
+   - Note conditions
+
+3. **Decision Logging**
+   - Document reasoning
+   - Track alternatives
+   - Record confidence
+   - Note constraints
+
+4. **Validation Process**
+   - Define criteria
+   - Run validations
+   - Record results
+   - Track feedback
+
+## Implementation Requirements
+
+1. **Output Tracer Class**
+```python
+class OutputTracer:
+    def __init__(self):
+        self.logger = TraceLogger()
+        self.context_manager = ContextManager()
+        self.validator = OutputValidator()
+
+    async def trace_output(
+        self,
+        output: Any,
+        agent_id: str,
+        task_id: str
+    ) -> TracedOutput:
+        """Create fully traced output record."""
+        pass
+
+    async def validate_output(
+        self,
+        traced_output: TracedOutput
+    ) -> ValidationResult:
+        """Validate output against defined criteria."""
+        pass
+
+    async def store_trace(
+        self,
+        traced_output: TracedOutput
+    ) -> str:
+        """Store traced output in appropriate storage."""
+        pass
+```
+
+2. **Context Components**
+```python
+class OutputContext:
+    def __init__(self):
+        self.environment_state: Dict[str, Any]
+        self.agent_state: Dict[str, Any]
+        self.resource_usage: ResourceMetrics
+        self.dependencies: List[Dependency]
+        self.parameters: Dict[str, Any]
+
+class DecisionStep:
+    def __init__(self):
+        self.step_id: str
+        self.reasoning: str
+        self.alternatives: List[Alternative]
+        self.selection_criteria: Dict[str, float]
+        self.confidence: float
+        self.references: List[Reference]
+```
+
+## Error Handling
+
+1. **Logging Failures**
+   - Retry mechanism
+   - Fallback storage
+   - Error notification
+   - Data recovery
+
+2. **Validation Failures**
+   - Clear error states
+   - Failure analysis
+   - Recovery options
+   - User notification
+
+## Monitoring
+
+1. **Trace Quality**
+   - Completeness check
+   - Consistency check
+   - Reference validity
+   - Context coverage
+
+2. **System Health**
+   - Storage status
+   - Processing speed
+   - Error rates
+   - Recovery success
+
+## Storage Requirements
+
+1. **Primary Storage**
+   - Structured logs
+   - Indexed access
+   - Query support
+   - Backup system
+
+2. **Archive System**
+   - Long-term storage
+   - Compression
+   - Retention policy
+   - Recovery process
+
+## Integration Points
+
+1. **Logging System**
+   - Log aggregation
+   - Format standards
+   - Retention rules
+   - Access control
+
+2. **Monitoring System**
+   - Health checks
+   - Performance metrics
+   - Alert triggers
+   - Status reporting
+
+3. **Analysis System**
+   - Pattern detection
+   - Trend analysis
+   - Quality metrics
+   - Improvement suggestions

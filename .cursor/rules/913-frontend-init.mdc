@@ -1,0 +1,33 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+### ⚙️ Rule ID: 913-frontend-init
+
+**Description**: Guides the initialization of a new Next.js frontend project, ensuring alignment with the T3 Stack principles and project structure conventions mentioned in `GLOBAL.md`.
+
+**Trigger**:
+- Assistant proposes or user requests the creation of a new Next.js project.
+- Detection of the `create-next-app` command usage.
+
+**Context**: Applicable when setting up the primary web visual shell or any new Next.js-based web interface within the VANTA workspace.
+
+**Action**:
+1.  **Recommend Directory**: Propose creating the Next.js project within a dedicated `/web` subdirectory at the workspace root (`./web/`) to maintain separation between the Python backend and Node.js frontend.
+2.  **Recommend `create-next-app` Settings**: When using `npx create-next-app@latest`, strongly recommend the following settings to align with T3 Stack principles:
+    *   **TypeScript:** Yes (`Ensures type safety, core to T3`)
+    *   **ESLint:** Yes (`Maintains code quality`)
+    *   **Tailwind CSS:** Yes (`Utility-first CSS, standard in T3`)
+    *   **`src/` directory:** Yes (`Standard T3 project structure for better organization`)
+    *   **App Router:** Yes (`Recommended modern Next.js routing paradigm`)
+    *   **Customize default import alias (`@/*`):** No (`Keep default unless strong reason exists`)
+    *   **Turbopack:** Optional (`User choice for potential development speed boost`)
+3.  **Explain Rationale**: Briefly explain that these choices align with the "AI Stack (T3 Turbo...)" mentioned in `GLOBAL.md` and promote best practices for modern web development.
+4.  **Proceed**: After explaining and confirming with the user, proceed with proposing the `npx create-next-app@latest ./web` command (or similar based on context).
+
+**Enforcement**: AI Assistant (Self-Correction / Guided Action)
+
+**Related Rules**: `110-env-config.mdc`, `project-structure.mdc`, `906-documentation-sync.mdc`
+
+---

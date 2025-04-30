@@ -1,0 +1,21 @@
+{
+  "name": "reflector_agent",
+  "type": "introspective",
+  "intents": ["reflect_on_memory", "analyze_behavior", "suggest_self_mutation"],
+  "entrypoint": "agents/reflector_agent.py",
+  "class_name": "ReflectorAgent",
+  "triggers": {
+    "onMessage": false, 
+    "onAPIRequest": false,
+    "onSchedule": "daily" # Example: Trigger daily via scheduler
+  },
+  "tools": ["CrossModalMemory"],
+  "config": {
+    "memory_path": "memory_store",
+    "profile_path": "agents/reflector_profile.json",
+    "reflection_depth_days": 7,
+    "error_rate_threshold": 0.1,
+    "low_interaction_threshold": 3
+  },
+  "core": false
+} 

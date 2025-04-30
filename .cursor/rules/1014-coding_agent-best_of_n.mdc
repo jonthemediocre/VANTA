@@ -1,0 +1,38 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# RULE TYPE: Always
+# FILE PATTERNS: **/*.py
+
+## Best-of-N Selection
+- When an agent function can generate multiple candidate solutions, suggestions, or actions for a given input:
+  1. Generate all reasonable candidates.
+  2. Assign a confidence score or ranking metric to each candidate.
+  3. Sort candidates based on the metric.
+  4. Select the top N (where N might be 1 or more) as the final output.
+- This allows exploring diverse solutions and selecting the most promising ones.
+
+## Examples
+✅ Good:
+```python
+def generate_suggestions(patterns):
+    candidates = []
+    for p in patterns:
+        candidates.extend(generate_candidates_for_pattern(p))
+    # Rank by confidence, then priority
+    candidates.sort(key=lambda x: (x.confidence, x.priority), reverse=True)
+    return candidates[:3] # Return top 3
+```
+
+❌ Bad:
+```python
+# Only returning the first generated suggestion
+def generate_suggestions(patterns):
+    for p in patterns:
+        suggestion = generate_first_suggestion(p)
+        if suggestion:
+            return [suggestion]
+    return []
+```

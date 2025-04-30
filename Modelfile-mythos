@@ -1,0 +1,3 @@
+FROM deepseek-llm:latest
+
+ADAPTER mythos-lora.gguf 

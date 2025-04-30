@@ -1,0 +1,36 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# RULE TYPE: Always
+# FILE PATTERNS: **/*.py
+
+## Subprocess Security
+- All calls to `subprocess` must set `shell=False` and pass commands as a list, not a shell string.
+- Use safe argument parsing functions (e.g., `shlex.split`) for dynamic commands.
+- Always include a `timeout` parameter to prevent hangs.
+- Implement retry logic with exponential backoff and jitter for transient failures.
+- Catch `subprocess.TimeoutExpired` and `subprocess.CalledProcessError` to handle errors gracefully.
+
+## Examples
+✅ Good:
+```python
+import shlex, subprocess, time, random
+cmd = shlex.split("ls -la /")
+for attempt in range(3):
+    try:
+        result = subprocess.run(cmd, capture_output=True, text=True, timeout=10, shell=False)
+        break
+    except subprocess.TimeoutExpired:
+        time.sleep((2 ** attempt) + random.uniform(0,1))
+    except subprocess.CalledProcessError as e:
+        # handle command failure
+        break
+```  
+
+❌ Bad:
+```python
+# Dangerous: shell=True and no timeout
+subprocess.run("rm -rf /", shell=True)
+```

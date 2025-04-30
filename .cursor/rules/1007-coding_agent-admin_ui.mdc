@@ -1,0 +1,62 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# RULE TYPE: Always
+# FILE PATTERNS: src/app/admin/**/*.tsx, src/app/api/agents/**/*.ts
+
+## Admin UI & API Validation
+- Admin UI forms must be driven by a shared JSON schema, using libraries such as `react-hook-form` or `formik` with schema validation.
+- Client-side validation must mirror server-side validation; reuse the same JSON schema in the API route.
+- React form components under `src/app/admin/...` require `use client` directive at the top.
+- API routes under `src/app/api/agents/...` must parse and validate the request body against the schema before processing.
+- API routes must handle authentication (e.g., using middleware) and return proper HTTP status codes.
+
+## Examples
+✅ Good (Form):
+```tsx
+'use client'
+import { useForm, Resolver } from 'react-hook-form'
+import schema, { AgentFields } from '@/schemas/agent.schema.json'
+
+function AgentForm() {
+  const { register, handleSubmit, formState: { errors } } = useForm<AgentFields>({ resolver: Resolver(schema) })
+  const onSubmit = data => fetch('/api/agents', { method: 'POST', body: JSON.stringify(data) })
+  return (
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <input {...register('name')} />
+      {errors.name && <p>{errors.name.message}</p>}
+      <button type="submit">Create</button>
+    </form>
+  )
+}
+```
+
+✅ Good (API Route):
+```ts
+import { NextResponse } from 'next/server'
+import schema from '@/schemas/agent.schema.json'
+import { validate } from 'jsonschema'
+
+export async function POST(request: Request) {
+  const data = await request.json()
+  const { valid, errors } = validate(data, schema)
+  if (!valid) return NextResponse.json({ errors }, { status: 400 })
+  // process data...
+  return NextResponse.json({ success: true })
+}
+```
+
+❌ Bad:
+```tsx
+// No client validation and missing 'use client'
+function Form() { /* ... */ }
+```
+```ts
+// No schema validation in API
+export async function POST(request) {
+  const data = await request.json()
+  // blindly process data
+}
+```

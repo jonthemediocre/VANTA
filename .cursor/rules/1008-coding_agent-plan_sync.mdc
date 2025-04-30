@@ -1,0 +1,26 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# RULE TYPE: Always
+# FILE PATTERNS: **/*.py, **/*.md
+
+## Plan Synchronization
+- Whenever adding or modifying a feature stub or module, update the project plan document (e.g., `THEPLAN.md` or equivalent) with a matching section.
+- Include code citations using the format ```start:end:filepath``` to reference the modified lines.
+- Document each feature's intent, location, and high-level behavior in the plan.
+
+## Examples
+✅ Good:
+```md
+## 6. FeedbackCollectorAgent Stub
+```10:20:vanta_nextgen.py
+collector = FeedbackCollectorAgent()
+```
+
+❌ Bad:
+```md
+## New Agent Feature
+(No code citation provided.)
+```

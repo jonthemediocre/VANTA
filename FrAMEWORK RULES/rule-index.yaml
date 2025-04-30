@@ -1,0 +1,30 @@
+# Rule Index for VANTA Modular Agentic FrAmEwOrK v2.3+
+- id: memory_retention
+  description: Controls memory storage, mutation, and garbage collection
+  agents: [MemoryWeaver, MemoryGC]
+- id: strategic_planning
+  description: Guides task evolution through long-term foresight
+  agents: [RoadmapPlanner]
+- id: agent_health
+  description: Ensures agent continuity and resets malfunctioning components
+  agents: [Watchdog]
+- id: output_traceability
+  description: Logs all outputs, decisions, and agent contributions
+  agents: [TraceLogger]
+- id: reflector_moe
+  path: reflector_moe.mdc
+- id: reflector_best_of_n
+  path: reflector_best_of_n.mdc
+- id: reflector_coe_delegation
+  path: reflector_coe_delegation.mdc
+- id: agent_file_convention
+  path: agent_file_convention.mdc
+- id: env_template
+  description: Defines required environment configuration for the framework
+  path: env_template.mdc
+  agents: [AgentOrchestrator]
+- id: 302
+  title: Oath Grafting on Identity Initialization
+  filename: 302-oath-grafting.mdc
+  description: "Ensures the Oath of Becoming is loaded into the Identity object at runtime."
+  agents: [SimulationRunner, IdentityManager] # Example agents that might enforce this

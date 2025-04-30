@@ -1,0 +1,26 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# RULE TYPE: Always
+# FILE PATTERNS: **/*.py
+
+## Feedback Instrumentation
+- Agents implementing RL or suggestion features must use a feedback logger (e.g., `FeedbackCollectorAgent` or `OutcomeLogger`) to record user feedback events: `accept`, `reject`, and `modify`.
+- Feedback entries must be appended as JSONL to `memory_store/episodes.jsonl` with keys: `timestamp`, `intent`, `agent`, `result`.
+- No agent behavior change or state update should occur without corresponding logged feedback.
+
+## Examples
+✅ Good:
+```python
+from feedback_collector import FeedbackCollectorAgent
+collector = FeedbackCollectorAgent()
+collector.log_feedback(intent='suggest_code', agent='code_assistant', result='accepted')
+```
+
+❌ Bad:
+```python
+# Handling suggestion without logging feedback
+apply_suggestion()
+```

@@ -1,0 +1,82 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# VANTA Environment Configuration
+
+## Overview
+The VANTA framework requires specific environment variables for proper operation. This rule defines the required and optional environment variables, their purposes, and default values where applicable.
+
+## Required Variables
+
+### External APIs
+- `WOLFRAM_APP_ID`: Required for mathematical validation and computation
+  - No default value
+  - Must be obtained from WolframAlpha Developer Portal
+
+### Framework Paths
+- `VANTA_LOG_DIR`: Directory for framework logging
+  - Default: './logs'
+  - Used by trace_logger for operation logging
+  - Critical for system observability
+
+## Optional Variables
+
+### Vector Database Configuration
+- `VECTOR_DB_TYPE`: Type of vector database (qdrant, chroma, pgvector)
+  - Default: None (must be specified if vector storage is used)
+- `VECTOR_DB_URL`: Connection URL for vector database
+  - Default: 'http://localhost:6333' for Qdrant
+- `VECTOR_DB_API_KEY`: Authentication key if required
+  - Default: None
+
+### LLM Configuration
+- `OLLAMA_API_BASE_URL`: Endpoint for Ollama API
+  - Default: 'http://localhost:11434'
+  - Only needed if vLLM interacts via API
+- `DEFAULT_LLM_MODEL`: Default model identifier
+  - Default: 'deepseek-ai/deepseek-llm-r1-32b-chat'
+
+### Framework Storage
+- `FRAMEWORK_BASE_PATH`: Base directory for framework storage
+  - Default: './FrAmEwOrK'
+  - Contains memory, logs, and other persistent data
+- `FRAMEWORK_STORAGE_PATH`: MemoryWeaver filesystem storage
+  - Default: './memory'
+
+### System Configuration
+- `LOG_LEVEL`: Logging verbosity
+  - Default: 'INFO'
+  - Options: DEBUG, INFO, WARNING, ERROR
+
+## Implementation Notes
+
+1. All paths should be absolute or relative to the project root
+2. The .env file must never be committed to version control
+3. A .env.template file should be maintained with placeholder values
+4. The framework should fail gracefully if optional variables are missing
+5. Required variables should trigger clear error messages if missing
+
+## Usage Example
+
+```plaintext
+# Required
+WOLFRAM_APP_ID=YOUR_APP_ID_HERE
+VANTA_LOG_DIR=./logs
+
+# Optional - Vector DB
+VECTOR_DB_TYPE=qdrant
+VECTOR_DB_URL=http://localhost:6333
+
+# Optional - LLM
+OLLAMA_API_BASE_URL=http://localhost:11434
+DEFAULT_LLM_MODEL=deepseek-ai/deepseek-llm-r1-32b-chat
+
+# Optional - Storage
+FRAMEWORK_BASE_PATH=/path/to/FrAmEwOrK
+FRAMEWORK_STORAGE_PATH=/path/to/memory
+
+# Optional - System
+LOG_LEVEL=INFO
+```

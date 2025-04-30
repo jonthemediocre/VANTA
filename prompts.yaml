@@ -1,0 +1,22 @@
+myth_evaluation: |-
+  Analyze the following narrative snippet based on the requested criteria.
+  For each criterion, provide a score (a float between 0.0 and 1.0) and brief notes explaining your reasoning.
+  Format your response strictly as follows, with each criterion on a new line:
+
+  Criterion: [Criterion Name]
+  Score: [Score as float 0.0-1.0]
+  Notes: [Brief notes]
+  ---
+  Criterion: [Next Criterion Name]
+  Score: [Score as float 0.0-1.0]
+  Notes: [Brief notes]
+  ---
+  ... (repeat for all criteria)
+
+  **Narrative Snippet:**
+  {narrative_snippet}
+
+  **Criteria:**
+  {criteria_list}
+
+  **Begin Analysis:** 

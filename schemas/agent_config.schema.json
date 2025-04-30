@@ -1,0 +1,50 @@
+{
+  "type": "object",
+  "description": "Basic agent configuration schema (placeholder). Validation might be incomplete.",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Agent display name"
+    },
+    "module": {
+      "type": "string",
+      "description": "Python module containing the agent class (e.g., agents.tts_agent)"
+    },
+    "class": {
+      "type": "string",
+      "description": "Name of the agent class within the module"
+    },
+    "enabled": {
+      "type": "boolean",
+      "description": "Whether the agent should be loaded",
+      "default": true
+    },
+    "config_path": {
+      "type": ["string", "null"],
+      "description": "Path to the agent's specific JSON/YAML configuration file"
+    },
+    "config": {
+       "type": "object",
+       "description": "Inline configuration passed to the agent's constructor",
+       "additionalProperties": true
+    },
+     "triggers": {
+         "type": "array",
+         "description": "List of triggers that activate this agent",
+         "items": {
+             "type": "object",
+             "properties": {
+                 "type": {
+                     "type": "string",
+                     "enum": ["intent", "schedule", "glob"]
+                 },
+                 "value": {
+                     "type": "string"
+                 }
+             },
+             "required": ["type", "value"]
+         }
+     }
+  },
+  "required": ["name", "module", "class"]
+} 

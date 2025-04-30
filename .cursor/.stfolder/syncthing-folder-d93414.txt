@@ -1,0 +1,5 @@
+# This directory is a Syncthing folder marker.
+# Do not delete.
+
+folderID: cursor_folder_23_20250425170538
+created: 2025-04-25T17:05:38-07:00

@@ -1,0 +1,25 @@
+# ritual_triggers.yaml
+# Defines custom events or conditions that can trigger specific mutations or actions
+
+# Example structure:
+
+triggers:
+  - event: "keyword_detected"
+    keywords: ["collapse", "destiny", "breath"]
+    action: "accelerate_mutation"
+    parameters:
+      modifier: 1.5 # Increase mutation chance by 50%
+      duration_cycles: 10 # For how many cycles
+
+  - event: "prolonged_silence"
+    threshold_seconds: 3600 # 1 hour
+    action: "trigger_dreaming_mutation"
+    parameters:
+      dream_intensity: 0.7
+
+  - event: "contradiction_threshold_reached"
+    threshold_count: 5
+    action: "activate_paradox_resistance"
+    parameters: {}
+
+# Define actions and link them to functions in ritual_growth.py or other modules 

@@ -1,0 +1,37 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# RULE TYPE: Always
+# FILE PATTERNS: tests/**/*.py
+
+## Test Coverage Requirements
+- Every new feature or module must include a pytest test file under `tests/` covering its functionality.
+- Tests must mock or stub external dependencies (HTTP calls, subprocesses, file I/O) using fixtures or `monkeypatch`.
+- New code additions should achieve at least 80% coverage for the affected module(s).
+- Use parametrized tests and fixtures to minimize duplication and enhance readability.
+- Test error and edge-case behaviors, including exception paths.
+
+## Examples
+✅ Good:
+```python
+import pytest
+from src.my_module import MyClass
+
+def test_myclass_success(monkeypatch):
+    # stub external call
+    monkeypatch.setenv('API_KEY', 'dummy')
+    instance = MyClass()
+    assert instance.do_action() == 'expected'
+
+@pytest.mark.parametrize('input,expected', [(1,2),(3,4)])
+def test_compute(input, expected):
+    assert MyClass().compute(input) == expected
+```
+
+❌ Bad:
+```python
+# No tests for new module
+# feature.py created without feature_test.py
+```

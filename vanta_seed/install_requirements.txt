@@ -1,0 +1,8 @@
+# vanta_seed dependencies
+
+chromadb>=0.4.24
+pyyaml>=6.0
+
+# Add other dependencies as reasoning, growth, etc. modules evolve
+# e.g., sentence-transformers if using embeddings directly
+# e.g., specific LLM libraries if calling external models 

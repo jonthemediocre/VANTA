@@ -1,0 +1,34 @@
+{
+  "$schema": "../schemas/agent_config.schema.json",
+  "name": "ImageGeneratorAgent",
+  "module": "agents.image_generator_agent",
+  "class": "ImageGeneratorAgent",
+  "type": "domain/creative",
+  "description": "Generates images from text prompts using the OpenAI DALL-E 3 API.",
+  "version": "0.4.0",
+  "enabled": true,
+  "config": {
+    "api_key_env": "OPENAI_API_KEY",
+    "memory_path": "memory_store/images",
+    "default_model": "dall-e-3",
+    "default_size": "1024x1024",
+    "default_quality": "standard",
+    "default_style": "vivid"
+  },
+  "triggers": [
+    {
+      "type": "intent",
+      "value": "generate_image"
+    }
+  ],
+  "capabilities": [
+    "image_generation",
+    "external_api_call",
+    "openai_dalle"
+  ],
+  "dependencies": [
+    "CrossModalMemory",
+    "openai",
+    "requests"
+  ]
+} 

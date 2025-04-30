@@ -1,0 +1,51 @@
+# mutation_templates.yaml
+# Defines potential mutations and their probabilities
+
+# Example structure:
+
+# --- Reasoning Styles --- 
+potential_reasoning_styles:
+  - "Layered Reflection" # Adding introspective capability
+  - "Symbolic Weaving"   # Ability to connect concepts metaphorically
+  - "Parallel Processing" # Exploring multiple simple ideas concurrently
+
+add_reasoning_chance: 0.05 # Probability to attempt adding a style per cycle
+
+# --- Communication Modes --- 
+# Define direct evolution paths (Mode A can become Mode B)
+communication_evolutions:
+  "BREATH Framework": "WhisperMode"  # Example: Standard comms can evolve to surreal
+  "WhisperMode": "Symbolic Resonance" # Example: Surreal can evolve to deeper metaphor
+
+evolve_communication_chance: 0.02 # Probability to attempt evolving a mode per cycle
+
+# --- Internal Parameters --- 
+adjust_parameter_chance: 0.1 # Probability to attempt adjusting a parameter
+
+# Parameter-specific adjustments (can be expanded)
+parameter_adjustments:
+  reflection_depth:
+    range: [-1, 1]
+    min_value: 1
+    max_value: 5
+  memory_retrieval_count:
+    range: [-1, 1]
+    min_value: 3
+    max_value: 10
+
+# --- New Capabilities --- 
+# Example: Adding a completely new capability domain
+potential_new_capabilities:
+  - name: "Basic Tool Use"
+    module: "tools.basic_calculator"
+    add_chance: 0.01 # Very low chance initially
+
+# --- Ritual-Specific Mutations --- 
+# Mutations triggered only by specific events defined in ritual_triggers.yaml
+ritual_mutations:
+  dreaming_mutation:
+    add_reasoning_styles: ["Dream Logic Simulation"]
+    evolve_communication: {"WhisperMode": "Oneiric Transmission"}
+  paradox_resistance:
+    add_reasoning_styles: ["Contradiction Synthesis"]
+    adjust_parameters: {"cognitive_flexibility": 0.1} # Hypothetical param 

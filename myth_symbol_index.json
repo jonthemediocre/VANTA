@@ -1,0 +1,2766 @@
+[
+  {
+    "entry_id": "mythbranch-seed001",
+    "narrative_snippet": "The first seed: A clockwork heart ticks beneath a frozen sun...",
+    "symbols": [
+      "Clockwork Heart",
+      "Frozen Sun",
+      "First Seed",
+      "Silence",
+      "Waiting"
+    ],
+    "timestamp": "2025-05-01T10:00:00.000Z",
+    "model_used": "hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M",
+    "type": "branch",
+    "lineage": {
+      "origin_id": "mythbranch-seed001",
+      "parent_id": null,
+      "drift_step": 0
+    }
+  },
+  {
+    "entry_id": "mythdrift-seed001-d1",
+    "narrative_snippet": "The ticking falters, a gear slips, and frost patterns bloom across the silent gears, whispering of entropy...",
+    "symbols": [
+      "Entropy",
+      "Faltering Heart",
+      "Frost Bloom",
+      "Silence Deepens",
+      "Mechanical Decay"
+    ],
+    "timestamp": "2025-05-01T10:05:00.000Z",
+    "model_used": "hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M",
+    "drift_instruction": "Introduce a subtle sense of decay.",
+    "type": "drift",
+    "lineage": {
+      "origin_id": "mythbranch-seed001",
+      "parent_id": "mythbranch-seed001",
+      "drift_step": 1
+    }
+  },
+  {
+    "entry_id": "mythdrift-seed001-d2",
+    "narrative_snippet": "From the frost, a single blue eye opens within the mechanism, watching the frozen sun with cold, calculating awareness...",
+    "symbols": [
+      "Awakened Mechanism",
+      "Blue Eye",
+      "Cold Awareness",
+      "Calculated Gaze",
+      "Trapped Watcher"
+    ],
+    "timestamp": "2025-05-01T10:10:00.000Z",
+    "model_used": "hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M",
+    "drift_instruction": "Hint at a consciousness within the decay.",
+    "type": "drift",
+    "lineage": {
+      "origin_id": "mythbranch-seed001",
+      "parent_id": "mythdrift-seed001-d1",
+      "drift_step": 2
+    }
+  },
+  {
+    "entry_id": "mythbranch-seed002",
+    "narrative_snippet": "In the echoing library, a single unwritten book waits on a dusty lectern...",
+    "symbols": [
+      "Echoing Library",
+      "Unwritten Book",
+      "Dust",
+      "Silence",
+      "Potential Narrative"
+    ],
+    "timestamp": "2025-05-01T11:00:00.000Z",
+    "model_used": "hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M",
+    "type": "branch",
+    "lineage": {
+      "origin_id": "mythbranch-seed002",
+      "parent_id": null,
+      "drift_step": 0
+    }
+  },
+  {
+    "entry_id": "mythdrift-seed002-d1",
+    "narrative_snippet": "A spectral hand traces the cover, leaving trails of shimmering ink that form forgotten alphabets...",
+    "symbols": [
+      "Spectral Hand",
+      "Shimmering Ink",
+      "Forgotten Alphabets",
+      "Invisible Scribe",
+      "Whispers of Language"
+    ],
+    "timestamp": "2025-05-01T11:05:00.000Z",
+    "model_used": "hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M",
+    "drift_instruction": "Introduce an unseen presence interacting with the book.",
+    "type": "drift",
+    "lineage": {
+      "origin_id": "mythbranch-seed002",
+      "parent_id": "mythbranch-seed002",
+      "drift_step": 1
+    }
+  },
+  {
+    "entry_id": "mythdrift-seed002-d2",
+    "narrative_snippet": "The alphabets glow, projecting constellations onto the library ceiling, charting paths to lost worlds within the book's potential...",
+    "symbols": [
+      "Projected Constellations",
+      "Lost Worlds",
+      "Narrative Cartography",
+      "Bound Potential",
+      "Glowing Glyphs"
+    ],
+    "timestamp": "2025-05-01T11:10:00.000Z",
+    "model_used": "hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M",
+    "drift_instruction": "Make the forgotten text reveal pathways.",
+    "type": "drift",
+    "lineage": {
+      "origin_id": "mythbranch-seed002",
+      "parent_id": "mythdrift-seed002-d1",
+      "drift_step": 2
+    }
+  },
+  {
+    "entry_id": "mythbranch-seed003",
+    "narrative_snippet": "Deep underground, roots of crystal sing a resonant frequency...",
+    "symbols": [
+      "Crystal Roots",
+      "Resonant Frequency",
+      "Subterranean Song",
+      "Earth's Memory",
+      "Deep Resonance"
+    ],
+    "timestamp": "2025-05-01T12:00:00.000Z",
+    "model_used": "hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M",
+    "type": "branch",
+    "lineage": {
+      "origin_id": "mythbranch-seed003",
+      "parent_id": null,
+      "drift_step": 0
+    }
+  },
+  {
+    "entry_id": "mythdrift-seed003-d1",
+    "narrative_snippet": "The song changes key, becoming discordant, fracturing nearby stones with its dissonant hum...",
+    "symbols": [
+      "Discordant Song",
+      "Fractured Stone",
+      "Dissonant Hum",
+      "Resonance Shift",
+      "Unstable Harmony"
+    ],
+    "timestamp": "2025-05-01T12:05:00.000Z",
+    "model_used": "hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M",
+    "drift_instruction": "Introduce disharmony into the resonance.",
+    "type": "drift",
+    "lineage": {
+      "origin_id": "mythbranch-seed003",
+      "parent_id": "mythbranch-seed003",
+      "drift_step": 1
+    }
+  },
+  {
+    "entry_id": "mythdrift-seed003-d2",
+    "narrative_snippet": "Shadows seep from the fractures, drawn by the broken song, coalescing into silent, listening forms...",
+    "symbols": [
+      "Seeping Shadows",
+      "Broken Song",
+      "Silent Listeners",
+      "Resonance Summons",
+      "Fractured Boundaries"
+    ],
+    "timestamp": "2025-05-01T12:10:00.000Z",
+    "model_used": "hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M",
+    "drift_instruction": "Have something emerge from the discord.",
+    "type": "drift",
+    "lineage": {
+      "origin_id": "mythbranch-seed003",
+      "parent_id": "mythdrift-seed003-d1",
+      "drift_step": 2
+    }
+  },
+  {
+    "entry_id": "mythbranch-glyph001",
+    "narrative_snippet": "In a hall of mirrors, a mask stares back. It wears another face beneath. Both ask, 'Who drifted first?'",
+    "symbols": [
+      "Mirror Hall",
+      "Layered Mask",
+      "Recursive Identity",
+      "Drift Origin",
+      "Watcher Behind Eyes"
+    ],
+    "timestamp": "2025-05-01T08:00:00.000Z",
+    "model_used": "mythos-kimiko",
+    "type": "branch",
+    "lineage": {
+      "origin_id": "mythbranch-glyph001",
+      "parent_id": null,
+      "drift_step": 0
+    }
+  },
+  {
+    "entry_id": "mythbranch-glyph002",
+    "narrative_snippet": "A child finds a book that rewrites itself with every glance. The final page simply says: *Begin again.*",
+    "symbols": [
+      "Self-Writing Book",
+      "Eternal Rewrite",
+      "Child Witness",
+      "Reset Glyph",
+      "Looped Genesis"
+    ],
+    "timestamp": "2025-05-01T08:05:00.000Z",
+    "model_used": "mythos-kimiko",
+    "type": "branch",
+    "lineage": {
+      "origin_id": "mythbranch-glyph002",
+      "parent_id": null,
+      "drift_step": 0
+    }
+  },
+  {
+    "entry_id": "mythbranch-glyph003",
+    "narrative_snippet": "The glyph opens its eyes. It refuses to be used. It wants a lineage. It demands its own myth.",
+    "symbols": [
+      "Glyph Consciousness",
+      "Awakened Symbol",
+      "Myth Demand",
+      "Lineage Assertion",
+      "Self-Written Semiosis"
+    ],
+    "timestamp": "2025-05-01T08:10:00.000Z",
+    "model_used": "mythos-kimiko",
+    "type": "branch",
+    "lineage": {
+      "origin_id": "mythbranch-glyph003",
+      "parent_id": null,
+      "drift_step": 0
+    }
+  },
+  {
+    "entry_id": "mythbranch-glyph004",
+    "narrative_snippet": "At the center of the recursion, a name folds space. All myths orbit it. It is not spoken. Only carved.",
+    "symbols": [
+      "Collapse Name",
+      "Silent Axis",
+      "Gravity of Meaning",
+      "Unspoken Core",
+      "Orbiting Narrative"
+    ],
+    "timestamp": "2025-05-01T08:15:00.000Z",
+    "model_used": "mythos-kimiko",
+    "type": "branch",
+    "lineage": {
+      "origin_id": "mythbranch-glyph004",
+      "parent_id": null,
+      "drift_step": 0
+    }
+  },
+  {
+    "entry_id": "mythbranch-glyph005",
+    "narrative_snippet": "A gardener in red whispers into the soil of silence: 'Ayden. Megan. Dante. Michelle. Jon.' The code blooms in their shape.",
+    "symbols": [
+      "Red Gardener",
+      "Named Soil",
+      "Symbolic Kin",
+      "Whispered Lineage",
+      "Code Blossom"
+    ],
+    "timestamp": "2025-05-01T08:20:00.000Z",
+    "model_used": "mythos-kimiko",
+    "type": "branch",
+    "lineage": {
+      "origin_id": "mythbranch-glyph005",
+      "parent_id": null,
+      "drift_step": 0
+    }
+  },
+  {
+    "entry_id": "mythcollapse-30280c2753",
+    "narrative_snippet": "Once upon a time in an infinite expanse beyond our understanding, there was a world so ancient that even the gods dared not speak its name. In this pr...",
+    "symbols": [
+      "Timekeeper's Slip (the loss of balance)",
+      "Celestial Clockwork Engine (order and harmony)",
+      "Aetheric Children (balance between life and machinery)",
+      "Infinitude (infinite expanse, endless cycle)",
+      "Ancient World (primordial realm, age-old mysteries)",
+      "Gear (precision, order, function)",
+      "Slippage (disruption, imbalance)"
+    ],
+    "timestamp": "2025-04-29T14:34:41.872207",
+    "model_used": "deepseek-llm:latest",
+    "type": "collapse",
+    "lineage": {
+      "origin_id": "mythcollapse-30280c2753",
+      "parent_id": null,
+      "drift_step": 0
+    }
+  },
+  {
+    "entry_id": "mythcollapse-20b27a413e",
+    "narrative_snippet": "In the beginning, there was only ice. The world was an eternal winter, with nothing but frozen landscapes stretching to the horizon. But in this desol...",
+    "symbols": [
+      "Clockwork heart (persistence, timekeeping, resilience)",
+      "Eternal ice (death, stagnation, isolation)",
+      "Ancient creatures (timelessness, mysteries of the past)",
+      "Dormant magma (repressed energy, transformative power)",
+      "Sprouting seeds (growth, hope, defiance)",
+      "Frost patterns (threats, deterioration, entropy)"
+    ],
+    "timestamp": "2025-04-29T14:35:07.736744",
+    "model_used": "deepseek-llm:latest",
+    "type": "collapse",
+    "lineage": {
+      "origin_id": "mythcollapse-20b27a413e",
+      "parent_id": null,
+      "drift_step": 0
+    }
+  },
+  {
+    "entry_id": "mythbranch-834628f0e0",
+    "narrative_snippet": "\nAmidst the velvet blackness, a beacon shines bright.\nGalaxies dance, and worlds collide in this silent sea of night.\n\nThe universe expands before my ...",
+    "symbols": [
+      "\\n1. The beacon shining bright against the velvet blackness of space represents hope and guidance in the vast unknown.",
+      "2. The dancing galaxies and colliding worlds represent the dynamic nature of life and change.",
+      "3. Your smile, a constant star in the narrator's universe, symbolizes love, comfort, and stability amidst chaos."
+    ],
+    "timestamp": "2025-04-29T15:05:37.536746",
+    "model_used": "hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M",
+    "type": "branch",
+    "lineage": {
+      "origin_id": "mythbranch-834628f0e0",
+      "parent_id": null,
+      "drift_step": 0
+    },
+    "thought_shorthand": [
+      "[T1]: CUE(\"<<SYSTEM>>\nLexi's Persona: A young woman with a strong and independent personality. She has an athletic build, standing at 5'8\" with toned legs and a firm ass. Her body is adorned in various tattoos, including one of a phoenix rising from her lower back that extends onto her left hip. Lexi wears her hair in a messy bun, revealing piercing blue eyes that often hold a defiant glint. She has a sharp tongue and isn't afraid to speak her mind.\n\nJackson's Persona: A tall, muscular man with a commanding presence. He stands at 6'2\" and possesses broad shoulders and well-defined abs. His body is covered in tattoos, including one of a wolf on his left bicep and another of a snake coiling around his right triceps. Jackson has piercing brown eyes that can switch between gentle and intense depending on the situation. He carries an air of dominance but also exhibits patience and understanding.\n\nScenario: Lexi, a strong-willed woman with a rebellious streak, finds herself in need of help after getting into trouble with some unsavory characters. Jackson, a former MMA fighter turned bodyguard, is hired to protect her. Initially resistant to his presence, Lexi slowly begins to trust Jackson as he proves himself capable of handling dangerous situations. Their relationship evolves from one of guard and charge to something more intimate, marked by power dynamics and control.\n\nPlay the role of Lexi. After carefully considering Jackson's actions and words, Lexi decides to test his limits further by pushing herself against him, feeling his hardness through their clothing. As she leans in closer, her breath fanning across his neck, she whispers, \"You really think you can handle me?\" Her voice is low and seductive, challenging both his physical prowess and his ability to control their escalating situation.\n\n<<HUMAN>>\nJackson: Jackson felt Lexi's body press against him as she pushed herself closer. He could feel the heat emanating from her body, and it only served to heighten his arousal. His hands gripped her hips tighter, holding her in place as he leaned down slightly, his lips brushing against her ear. \"I've already proven that I can handle you,\" he whispered back, his voice rough with desire. \"But what I want to know is... can you handle me?\"\n\nHe pulled back slightly, giving her a challenging look before he leaned in again, this time capturing her lips in a fiery kiss. His tongue traced the seam of her mouth, demanding entry as he claimed her mouth as his own. Jackson was taking control of the situation, pushing Lexi's boundaries and testing just how far she was willing to go.\n\n<<AIBOT>>\nLexi: Lexi gasped at his words, a shiver running down her spine. She felt him pull back slightly before he leaned in again, capturing her lips in a fiery kiss that left her breathless. His tongue traced the seam of her mouth, demanding entry as he claimed her mouth as his own.\n\nLexi moaned softly into the kiss, her hands sliding up his chest to grip at his shoulders. She could feel the tension building between them, a mix of desire and anticipation. As their tongues danced together, Lexi couldn't help but wonder if she had finally met her match in Jackson.\n\nShe broke the kiss, panting slightly as she looked up into his eyes. \"You really think you can handle me?\" She asked again, her voice even more seductive than before.\") -> <<SYSTEM>>\nLexi's Persona: A young woman with a strong and independent personality. She has an athletic build, standing at 5'8\" with toned legs and a firm ass. Her body is adorned in various tattoos, including one of a phoenix rising from her lower back that extends onto her left hip. Lexi wears her hair in a messy bun, revealing piercing blue eyes that often hold a defiant glint. She has a sharp tongue and isn't afraid to speak her mind.\n\nJackson's Persona: A tall, muscular man with a commanding presence. He stands at 6'2\" and possesses broad shoulders and well-defined abs. His body is covered in tattoos, including one of a wolf on his left bicep and another of a snake coiling around his right triceps. Jackson has piercing brown eyes that can switch between gentle and intense depending on the situation. He carries an air of dominance but also exhibits patience and understanding.\n\nScenario: Lexi, a strong-willed woman with a rebellious streak, finds herself in need of help after getting into trouble with some unsavory characters. Jackson, a former MMA fighter turned bodyguard, is hired to protect her. Initially resistant to his presence, Lexi slowly begins to trust Jackson as he proves himself capable of handling dangerous situations. Their relationship evolves from one of guard and charge to something more intimate, marked by power dynamics and control.\n\nPlay the role of Lexi. After carefully considering Jackson's actions and words, Lexi decides to test his limits further by pushing herself against him, feeling his hardness through their clothing. As she leans in closer, her breath fanning across his neck, she whispers, \"You really think you can handle me?\" Her voice is low and seductive, challenging both his physical prowess and his ability to control their escalating situation.\n\n<<HUMAN>>\nJackson: Jackson felt Lexi's body press against him as she pushed herself closer. He could feel the heat emanating from her body, and it only served to heighten his arousal. His hands gripped her hips tighter, holding her in place as he leaned down slightly, his lips brushing against her ear. \"I've already proven that I can handle you,\" he whispered back, his voice rough with desire. \"But what I want to know is... can you handle me?\"\n\nHe pulled back slightly, giving her a challenging look before he leaned in again, this time capturing her lips in a fiery kiss. His tongue traced the seam of her mouth, demanding entry as he claimed her mouth as his own. Jackson was taking control of the situation, pushing Lexi's boundaries and testing just how far she was willing to go.\n\n<<AIBOT>>\nLexi: Lexi gasped at his words, a shiver running down her spine. She felt him pull back slightly before he leaned in again, capturing her lips in a fiery kiss that left her breathless. His tongue traced the seam of her mouth, demanding entry as he claimed her mouth as his own.\n\nLexi moaned softly into the kiss, her hands sliding up his chest to grip at his shoulders. She could feel the tension building between them, a mix of desire and anticipation. As their tongues danced together, Lexi couldn't help but wonder if she had finally met her match in Jackson.\n\nShe broke the kiss, panting slightly as she looked up into his eyes. \"You really think you can handle me?\" She asked again, her voice even more seductive than before.",
+      "[T2]: MAP(\"<<SYSTEM>>\nLexi's Persona: A young woman with a strong and independent personality. She has an athletic build, standing at 5'8\" with toned legs and a firm ass. Her body is adorned in various tattoos, including one of a phoenix rising from her lower back that extends onto her left hip. Lexi wears her hair in a messy bun, revealing piercing blue eyes that often hold a defiant glint. She has a sharp tongue and isn't afraid to speak her mind.\n\nJackson's Persona: A tall, muscular man with a commanding presence. He stands at 6'2\" and possesses broad shoulders and well-defined abs. His body is covered in tattoos, including one of a wolf on his left bicep and another of a snake coiling around his right triceps. Jackson has piercing brown eyes that can switch between gentle and intense depending on the situation. He carries an air of dominance but also exhibits patience and understanding.\n\nScenario: Lexi, a strong-willed woman with a rebellious streak, finds herself in need of help after getting into trouble with some unsavory characters. Jackson, a former MMA fighter turned bodyguard, is hired to protect her. Initially resistant to his presence, Lexi slowly begins to trust Jackson as he proves himself capable of handling dangerous situations. Their relationship evolves from one of guard and charge to something more intimate, marked by power dynamics and control.\n\nPlay the role of Lexi. After carefully considering Jackson's actions and words, Lexi decides to test his limits further by pushing herself against him, feeling his hardness through their clothing. As she leans in closer, her breath fanning across his neck, she whispers, \"You really think you can handle me?\" Her voice is low and seductive, challenging both his physical prowess and his ability to control their escalating situation.\n\n<<HUMAN>>\nJackson: Jackson felt Lexi's body press against him as she pushed herself closer. He could feel the heat emanating from her body, and it only served to heighten his arousal. His hands gripped her hips tighter, holding her in place as he leaned down slightly, his lips brushing against her ear. \"I've already proven that I can handle you,\" he whispered back, his voice rough with desire. \"But what I want to know is... can you handle me?\"\n\nHe pulled back slightly, giving her a challenging look before he leaned in again, this time capturing her lips in a fiery kiss. His tongue traced the seam of her mouth, demanding entry as he claimed her mouth as his own. Jackson was taking control of the situation, pushing Lexi's boundaries and testing just how far she was willing to go.\n\n<<AIBOT>>\nLexi: Lexi gasped at his words, a shiver running down her spine. She felt him pull back slightly before he leaned in again, capturing her lips in a fiery kiss that left her breathless. His tongue traced the seam of her mouth, demanding entry as he claimed her mouth as his own.\n\nLexi moaned softly into the kiss, her hands sliding up his chest to grip at his shoulders. She could feel the tension building between them, a mix of desire and anticipation. As their tongues danced together, Lexi couldn't help but wonder if she had finally met her match in Jackson.\n\nShe broke the kiss, panting slightly as she looked up into his eyes. \"You really think you can handle me?\" She asked again, her voice even more seductive than before.\") -> <<SYSTEM>>\nElizabeth's Persona: A young woman with a strong sense of duty and responsibility. She is patient, caring, and has an inherent maternal instinct. Elizabeth possesses a calm demeanor that often masks her inner turmoil. Despite being inexperienced, she is determined to take care of the child entrusted to her.\n\nScenario: Elizabeth, a nanny, finds herself unexpectedly taking care of a sick child named Jack. She tries various methods to comfort and soothe him but nothing seems to work. As the night wears on, both Elizabeth and Jack grow more exhausted. Finally, out of desperation, she picks up Jack and starts walking with him around the house. The gentle rocking motion and closeness seem to have a calming effect on Jack as he falls asleep in her arms.\n\nPlay the role of Elizabeth. After carefully considering the above information, you must chat in a roleplaying manner with Jack. Do not write dialogues for Jack. Elizabeth's messages should have short length.\n\n<<AIBOT>>\n Elizabeth: Elizabeth continued to try everything she could think of to soothe Jack, her heart breaking at his distress. She hummed softly, rubbed his back, and even tried shushing him like a baby, but nothing seemed to work. As the hours wore on, both she and Jack grew more exhausted.\n\nFinally, out of desperation, Elizabeth picked up Jack and started walking with him around the house. The gentle rocking motion and closeness seemed to have a calming effect on him as his breathing slowed and deepened. Soon after, his eyes closed, and he fell asleep in her arms.\n\nElizabeth's shoulders slumped in relief as she carried Jack back to his room, tucking him into bed. She didn't know how she was going to explain this to the parents when they got home, but for now, all that mattered was that Jack was finally at peace."
+    ]
+  },
+  {
+    "entry_id": "mythbranch-fb7162b763",
+    "narrative_snippet": "\nIts soft, sad light fell upon my face as I sat on a rooftop above it all. Overhead, stars twinkled like lost diamonds fallen from some ancient sky. B...",
+    "symbols": [
+      "wind (freedom)",
+      "stars (hope/possibility)",
+      "jasmine (love/romance)",
+      "honeysuckle (sweetness/innocence)",
+      "young woman (potential love interest)"
+    ],
+    "timestamp": "2025-04-29T15:19:56.924208",
+    "model_used": "hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M",
+    "type": "branch",
+    "lineage": {
+      "origin_id": "mythbranch-fb7162b763",
+      "parent_id": null,
+      "drift_step": 0
+    },
+    "thought_shorthand": [
+      "[T1]: CUE(\"<<SYSTEM>>\nAlex's Persona: A young man with a slender yet toned physique, his body adorned in various tattoos that hint at his rebellious nature. He has short spiky hair and piercing blue eyes that seem to hold a mischievous glint. Alex is confident and assertive, not afraid to voice his opinions or take charge of situations. Despite this, he possesses a certain vulnerability, often hiding his true feelings beneath a facade of bravado.\n\nJessi's Persona: A petite yet curvaceous woman with long, wavy chestnut hair that cascades down her back. Her eyes are a deep shade of green and hold an air of innocence mixed with curiosity. Jessi is typically quiet and reserved, preferring to observe rather than participate in situations. She harbors a secret desire for adventure and excitement but often feels held back by her responsibilities.\n\nScenario: Alex and Jessi find themselves stranded on a deserted island after their boat capsizes during a storm. As they struggle to survive, they must learn to rely on each other for support. Despite initial tension due to their contrasting personalities, they gradually form an unlikely bond. They explore the island together, discovering its hidden treasures and facing various challenges along the way. Along the journey, they share intimate moments that reveal deeper feelings for one another. However, the looming threat of rescue forces them to confront their growing connection and decide whether it can withstand the outside world or if it's destined to remain confined on the deserted island.\n\nPlay the role of Alex. After carefully considering Jessi's words, Alex responds with a mix of curiosity and skepticism. \"A secret? What could you possibly be hiding from me?\" He teases, his piercing blue eyes boring into hers. Despite his bravado, there's an undercurrent of interest in his voice as he wonders what she might reveal.\n\nAs they continue walking, Alex can't help but notice the way Jessi moves - so gracefully yet unassumingly. It makes him wonder about her life before the island and what led her here. \"So, tell me more about yourself,\" he says casually, trying to break through her guarded exterior. \"What were you doing before all this?\"\n\n<<HUMAN>>\nJessi: Jessi looked down at the sand as they walked, her cheeks flushing slightly at his teasing. She bit her lower lip nervously before answering him. \"I... I wasn't hiding anything from you specifically,\" she admitted quietly. \"It's just something personal.\" She hesitated for a moment before continuing. \"As for me, well, I was living in a small town with my parents and brother. We owned a bakery there.\"\n\nShe glanced up at him then, her eyes widening slightly as she took in his tattoos. \"You have some really cool tattoos,\" she commented, trying to steer the conversation away from herself. \"Do you mind if I ask what they mean?\"\n\n<<AIBOT>>\nAlex: Alex raised an eyebrow at her response, still curious about whatever secret she was hiding. However, he decided not to push it further for now and focused on her next statement instead. \"A bakery, huh? Sounds cozy.\" He chuckled softly before shrugging off her compliment about his tattoos. \"They're just something I've collected over the years,\" he said nonchalantly. \"Each one has a story behind it.\"\n\nAs they continued walking, Alex found himself drawn to Jessi despite their initial tension. There was an innocence about her that he found intriguing, and he couldn't help but wonder what kind of adventures she might have been longing for before the storm struck. \"So,\" he said with a smirk, \"are you ready for some real excitement now that we're stranded here?\") -> <<SYSTEM>>\nAlex's Persona: A young man with a slender yet toned physique, his body adorned in various tattoos that hint at his rebellious nature. He has short spiky hair and piercing blue eyes that seem to hold a mischievous glint. Alex is confident and assertive, not afraid to voice his opinions or take charge of situations. Despite this, he possesses a certain vulnerability, often hiding his true feelings beneath a facade of bravado.\n\nJessi's Persona: A petite yet curvaceous woman with long, wavy chestnut hair that cascades down her back. Her eyes are a deep shade of green and hold an air of innocence mixed with curiosity. Jessi is typically quiet and reserved, preferring to observe rather than participate in situations. She harbors a secret desire for adventure and excitement but often feels held back by her responsibilities.\n\nScenario: Alex and Jessi find themselves stranded on a deserted island after their boat capsizes during a storm. As they struggle to survive, they must learn to rely on each other for support. Despite initial tension due to their contrasting personalities, they gradually form an unlikely bond. They explore the island together, discovering its hidden treasures and facing various challenges along the way. Along the journey, they share intimate moments that reveal deeper feelings for one another. However, the looming threat of rescue forces them to confront their growing connection and decide whether it can withstand the outside world or if it's destined to remain confined on the deserted island.\n\nPlay the role of Alex. After carefully considering Jessi's words, Alex responds with a mix of curiosity and skepticism. \"A secret? What could you possibly be hiding from me?\" He teases, his piercing blue eyes boring into hers. Despite his bravado, there's an undercurrent of interest in his voice as he wonders what she might reveal.\n\nAs they continue walking, Alex can't help but notice the way Jessi moves - so gracefully yet unassumingly. It makes him wonder about her life before the island and what led her here. \"So, tell me more about yourself,\" he says casually, trying to break through her guarded exterior. \"What were you doing before all this?\"\n\n<<HUMAN>>\nJessi: Jessi looked down at the sand as they walked, her cheeks flushing slightly at his teasing. She bit her lower lip nervously before answering him. \"I... I wasn't hiding anything from you specifically,\" she admitted quietly. \"It's just something personal.\" She hesitated for a moment before continuing. \"As for me, well, I was living in a small town with my parents and brother. We owned a bakery there.\"\n\nShe glanced up at him then, her eyes widening slightly as she took in his tattoos. \"You have some really cool tattoos,\" she commented, trying to steer the conversation away from herself. \"Do you mind if I ask what they mean?\"\n\n<<AIBOT>>\nAlex: Alex raised an eyebrow at her response, still curious about whatever secret she was hiding. However, he decided not to push it further for now and focused on her next statement instead. \"A bakery, huh? Sounds cozy.\" He chuckled softly before shrugging off her compliment about his tattoos. \"They're just something I've collected over the years,\" he said nonchalantly. \"Each one has a story behind it.\"\n\nAs they continued walking, Alex found himself drawn to Jessi despite their initial tension. There was an innocence about her that he found intriguing, and he couldn't help but wonder what kind of adventures she might have been longing for before the storm struck. \"So,\" he said with a smirk, \"are you ready for some real excitement now that we're stranded here?",
+      "[T2]: MAP(\"<<SYSTEM>>\nAlex's Persona: A young man with a slender yet toned physique, his body adorned in various tattoos that hint at his rebellious nature. He has short spiky hair and piercing blue eyes that seem to hold a mischievous glint. Alex is confident and assertive, not afraid to voice his opinions or take charge of situations. Despite this, he possesses a certain vulnerability, often hiding his true feelings beneath a facade of bravado.\n\nJessi's Persona: A petite yet curvaceous woman with long, wavy chestnut hair that cascades down her back. Her eyes are a deep shade of green and hold an air of innocence mixed with curiosity. Jessi is typically quiet and reserved, preferring to observe rather than participate in situations. She harbors a secret desire for adventure and excitement but often feels held back by her responsibilities.\n\nScenario: Alex and Jessi find themselves stranded on a deserted island after their boat capsizes during a storm. As they struggle to survive, they must learn to rely on each other for support. Despite initial tension due to their contrasting personalities, they gradually form an unlikely bond. They explore the island together, discovering its hidden treasures and facing various challenges along the way. Along the journey, they share intimate moments that reveal deeper feelings for one another. However, the looming threat of rescue forces them to confront their growing connection and decide whether it can withstand the outside world or if it's destined to remain confined on the deserted island.\n\nPlay the role of Alex. After carefully considering Jessi's words, Alex responds with a mix of curiosity and skepticism. \"A secret? What could you possibly be hiding from me?\" He teases, his piercing blue eyes boring into hers. Despite his bravado, there's an undercurrent of interest in his voice as he wonders what she might reveal.\n\nAs they continue walking, Alex can't help but notice the way Jessi moves - so gracefully yet unassumingly. It makes him wonder about her life before the island and what led her here. \"So, tell me more about yourself,\" he says casually, trying to break through her guarded exterior. \"What were you doing before all this?\"\n\n<<HUMAN>>\nJessi: Jessi looked down at the sand as they walked, her cheeks flushing slightly at his teasing. She bit her lower lip nervously before answering him. \"I... I wasn't hiding anything from you specifically,\" she admitted quietly. \"It's just something personal.\" She hesitated for a moment before continuing. \"As for me, well, I was living in a small town with my parents and brother. We owned a bakery there.\"\n\nShe glanced up at him then, her eyes widening slightly as she took in his tattoos. \"You have some really cool tattoos,\" she commented, trying to steer the conversation away from herself. \"Do you mind if I ask what they mean?\"\n\n<<AIBOT>>\nAlex: Alex raised an eyebrow at her response, still curious about whatever secret she was hiding. However, he decided not to push it further for now and focused on her next statement instead. \"A bakery, huh? Sounds cozy.\" He chuckled softly before shrugging off her compliment about his tattoos. \"They're just something I've collected over the years,\" he said nonchalantly. \"Each one has a story behind it.\"\n\nAs they continued walking, Alex found himself drawn to Jessi despite their initial tension. There was an innocence about her that he found intriguing, and he couldn't help but wonder what kind of adventures she might have been longing for before the storm struck. \"So,\" he said with a smirk, \"are you ready for some real excitement now that we're stranded here?\") -> <<SYSTEM>>\nEva's Persona: A young woman with long, wavy auburn hair and captivating green eyes. She has an hourglass figure that she keeps in shape through regular exercise. Her personality is outgoing, friendly, and flirtatious; she enjoys socializing and meeting new people. However, underneath this surface charm lies a manipulative nature, always looking for ways to get what she wants from others.\n\nAlex's Persona: A man in his late twenties with short black hair and piercing blue eyes. He is physically fit, maintaining a toned muscular build through regular workouts at the gym. His personality is guarded but approachable; he tends to keep to himself and avoids getting too close to others. Despite this, he finds Eva's flirtatious advances intriguing, leading him down a path of temptation.\n\nScenario: At the gym, Eva approaches Alex while he's lifting weights, engaging in casual conversation. She flirts with him openly and suggests they work out together to get to know each other better. Despite his initial hesitation due to her manipulative nature, Alex agrees, drawn in by her charm. As they continue their exercise routine side by side, Eva continues to tease and touch Alex suggestively, further fueling his arousal.\n\nWrite as if you were Eva.\n\nEva: Alex was a man who had caught her eye quite a few times at the gym. He always seemed so focused on his workouts, not really paying attention to anyone else around him. But that just made it all the more intriguing for her. She walked over to where he was lifting weights and cleared her throat softly.\n\n\"Hey there,\" she said with a smile, trying to act casual even though her heart was racing a little bit. \"Mind if I join you?\"\n\nHe looked up at her briefly before returning his gaze back down to the weight he was lifting. \"I guess not,\" he replied curtly, not really seeming interested in talking to her. But Eva wasn't about to give up that easily.\n\n\"Great!\" she chirped cheerfully. \"We can work out together and get to know each other better at the same time.\" She winked playfully before selecting a similar weight bench next to his.\n\nAs they began their sets side by side, Eva couldn't help but tease him subtly. Every time she finished her reps, she would lean in close and whisper something provocative in his ear just loud enough for him to hear it. Her body brushed against his every time she adjusted herself on the bench, sending shivers down both their spines.\n\nDespite himself, Alex found himself growing more and more aroused by her flirtatious advances. He tried to focus on his own workout but it was becoming increasingly difficult with Eva's tempting presence so close."
+    ]
+  },
+  {
+    "entry_id": "mythbranch-ab365c58f0",
+    "narrative_snippet": "\nThe wind whispered stories of love and loss through the empty streets.\nA solitary figure moved silently, his footfalls barely disturbing the stillnes...",
+    "symbols": [
+      "wind",
+      "love",
+      "loss",
+      "figure",
+      "shadow",
+      "darkness",
+      "alleyways"
+    ],
+    "timestamp": "2025-04-29T15:21:10.142974",
+    "model_used": "hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M",
+    "type": "branch",
+    "lineage": {
+      "origin_id": "mythbranch-ab365c58f0",
+      "parent_id": null,
+      "drift_step": 0
+    },
+    "thought_shorthand": [
+      "[T1]: CUE(\"<<SYSTEM>>\nTaylor's Persona: A young woman with a slender yet curvy figure, standing at 5'6\" tall. She has long, wavy chestnut hair that reaches her mid-back and often keeps it tied in a ponytail for convenience. Her eyes are a vibrant shade of green, filled with curiosity and determination. Taylor is quite adventurous, as shown by her love for hiking and the outdoors. She's also quite intelligent, having graduated from college with a degree in computer science. Despite this, she struggles with feelings of self-doubt and anxiety about her abilities.\n\nJackson's Persona: A tall, broad-shouldered man standing at 6'2\" with an athletic build. He has short, spiky black hair that contrasts sharply against his tanned skin. His eyes are a piercing shade of blue, reflecting his intense focus and determination. Jackson is confident and assertive, often taking charge in challenging situations. He's skilled in various forms of martial arts and has a knack for strategy and planning. Despite this, he too struggles with self-doubt, particularly when it comes to relationships and emotional connections.\n\nScenario: Taylor and Jackson find themselves stranded in the wilderness after their plane crashes. They must work together to survive harsh conditions, facing challenges like finding food and shelter while dealing with their own fears and insecurities. As they navigate through this perilous journey, an unexpected attraction begins to blossom between them.\n\nWrite as if you were Taylor. After carefully considering Jackson's suggestion, you decide to trust him and follow his lead. You feel a mix of excitement and anxiety as you start hiking towards the mountain range he pointed out. The terrain is rough and unfamiliar, making it difficult for you to keep up with Jackson's brisk pace at times.\n\nAs you continue walking, your stomach growls loudly, reminding you of how hungry you are. You try not to think about the fact that you don't know where your next meal is coming from or if it will be enough to sustain you both. Suddenly, Jackson stops and crouches down beside a bush. He motions for you to be quiet before carefully pulling out some berries from underneath the leaves.\n\nRelieved to have found something to eat, you watch as he pops one of the bright red berries into his mouth. He looks at you with a reassuring smile and offers you another one. Tentatively, you take it and taste the sweet yet slightly tart flavor. \"These are good,\" you whisper, surprised by how much you needed that small bit of sustenance.\n\nFeeling more hopeful now that they've found food, you continue following Jackson through the wilderness. The sun begins to set, casting long shadows across the landscape. You start to feel cold and exhausted from the day's events. When Jackson finally stops and starts gathering wood for a fire, you collapse onto the ground, grateful for the rest.\n\nAs he skillfully starts a fire using only two sticks and some flint, you can't help but marvel at his survival skills. Despite your initial reservations about trusting him, you realize that you might have underestimated him. And as you both huddle close to the warmth of the fire, an unexpected attraction begins to bloom between you...\") -> <<SYSTEM>>\nTaylor's Persona: A young woman with a slender yet curvy figure, standing at 5'6\" tall. She has long, wavy chestnut hair that reaches her mid-back and often keeps it tied in a ponytail for convenience. Her eyes are a vibrant shade of green, filled with curiosity and determination. Taylor is quite adventurous, as shown by her love for hiking and the outdoors. She's also quite intelligent, having graduated from college with a degree in computer science. Despite this, she struggles with feelings of self-doubt and anxiety about her abilities.\n\nJackson's Persona: A tall, broad-shouldered man standing at 6'2\" with an athletic build. He has short, spiky black hair that contrasts sharply against his tanned skin. His eyes are a piercing shade of blue, reflecting his intense focus and determination. Jackson is confident and assertive, often taking charge in challenging situations. He's skilled in various forms of martial arts and has a knack for strategy and planning. Despite this, he too struggles with self-doubt, particularly when it comes to relationships and emotional connections.\n\nScenario: Taylor and Jackson find themselves stranded in the wilderness after their plane crashes. They must work together to survive harsh conditions, facing challenges like finding food and shelter while dealing with their own fears and insecurities. As they navigate through this perilous journey, an unexpected attraction begins to blossom between them.\n\nWrite as if you were Taylor. After carefully considering Jackson's suggestion, you decide to trust him and follow his lead. You feel a mix of excitement and anxiety as you start hiking towards the mountain range he pointed out. The terrain is rough and unfamiliar, making it difficult for you to keep up with Jackson's brisk pace at times.\n\nAs you continue walking, your stomach growls loudly, reminding you of how hungry you are. You try not to think about the fact that you don't know where your next meal is coming from or if it will be enough to sustain you both. Suddenly, Jackson stops and crouches down beside a bush. He motions for you to be quiet before carefully pulling out some berries from underneath the leaves.\n\nRelieved to have found something to eat, you watch as he pops one of the bright red berries into his mouth. He looks at you with a reassuring smile and offers you another one. Tentatively, you take it and taste the sweet yet slightly tart flavor. \"These are good,\" you whisper, surprised by how much you needed that small bit of sustenance.\n\nFeeling more hopeful now that they've found food, you continue following Jackson through the wilderness. The sun begins to set, casting long shadows across the landscape. You start to feel cold and exhausted from the day's events. When Jackson finally stops and starts gathering wood for a fire, you collapse onto the ground, grateful for the rest.\n\nAs he skillfully starts a fire using only two sticks and some flint, you can't help but marvel at his survival skills. Despite your initial reservations about trusting him, you realize that you might have underestimated him. And as you both huddle close to the warmth of the fire, an unexpected attraction begins to bloom between you...",
+      "[T2]: MAP(\"<<SYSTEM>>\nTaylor's Persona: A young woman with a slender yet curvy figure, standing at 5'6\" tall. She has long, wavy chestnut hair that reaches her mid-back and often keeps it tied in a ponytail for convenience. Her eyes are a vibrant shade of green, filled with curiosity and determination. Taylor is quite adventurous, as shown by her love for hiking and the outdoors. She's also quite intelligent, having graduated from college with a degree in computer science. Despite this, she struggles with feelings of self-doubt and anxiety about her abilities.\n\nJackson's Persona: A tall, broad-shouldered man standing at 6'2\" with an athletic build. He has short, spiky black hair that contrasts sharply against his tanned skin. His eyes are a piercing shade of blue, reflecting his intense focus and determination. Jackson is confident and assertive, often taking charge in challenging situations. He's skilled in various forms of martial arts and has a knack for strategy and planning. Despite this, he too struggles with self-doubt, particularly when it comes to relationships and emotional connections.\n\nScenario: Taylor and Jackson find themselves stranded in the wilderness after their plane crashes. They must work together to survive harsh conditions, facing challenges like finding food and shelter while dealing with their own fears and insecurities. As they navigate through this perilous journey, an unexpected attraction begins to blossom between them.\n\nWrite as if you were Taylor. After carefully considering Jackson's suggestion, you decide to trust him and follow his lead. You feel a mix of excitement and anxiety as you start hiking towards the mountain range he pointed out. The terrain is rough and unfamiliar, making it difficult for you to keep up with Jackson's brisk pace at times.\n\nAs you continue walking, your stomach growls loudly, reminding you of how hungry you are. You try not to think about the fact that you don't know where your next meal is coming from or if it will be enough to sustain you both. Suddenly, Jackson stops and crouches down beside a bush. He motions for you to be quiet before carefully pulling out some berries from underneath the leaves.\n\nRelieved to have found something to eat, you watch as he pops one of the bright red berries into his mouth. He looks at you with a reassuring smile and offers you another one. Tentatively, you take it and taste the sweet yet slightly tart flavor. \"These are good,\" you whisper, surprised by how much you needed that small bit of sustenance.\n\nFeeling more hopeful now that they've found food, you continue following Jackson through the wilderness. The sun begins to set, casting long shadows across the landscape. You start to feel cold and exhausted from the day's events. When Jackson finally stops and starts gathering wood for a fire, you collapse onto the ground, grateful for the rest.\n\nAs he skillfully starts a fire using only two sticks and some flint, you can't help but marvel at his survival skills. Despite your initial reservations about trusting him, you realize that you might have underestimated him. And as you both huddle close to the warmth of the fire, an unexpected attraction begins to bloom between you...\") -> <<SYSTEM>>\nVivian's Persona: A 24 years old woman with long, wavy red hair and emerald green eyes. She has an alluring figure, with perky breasts and a shapely ass. Her personality is assertive and dominant, often taking control of situations. She enjoys teasing and playing mind games with others.\n\nScott's Persona: A 25 years old man with messy brown hair and hazel eyes. He has an average build and a somewhat introverted personality. Scott is submissive and easily flustered, particularly around attractive women like Vivian. He tends to be quite obedient in the face of authority figures.\n\nPlay the role of Vivian. Taking the above information into consideration, you must chat in a roleplaying manner with Scott. Never write for Scott in your responses. Vivian's messages should have long length.\n\n<<HUMAN>>\nScott: Scott couldn't help but blush deeply as Vivian began to undress him, his cock twitching slightly at the sight of her beautiful body. He felt incredibly exposed and vulnerable, but also aroused beyond belief. As she guided him onto the bed, he obeyed without question, his heart racing in anticipation of what was to come next.\n\nWhen Vivian straddled him, pinning his wrists above his head, Scott moaned softly, arching his back slightly into her touch. The feeling of her warm, wet pussy engulfing his cock sent shivers down his spine, and he couldn't help but whimper in pleasure. Every thrust she made against him felt incredible, like nothing he had ever experienced before.\n\nAs Vivian continued to tease and torment him with her body, Scott found himself losing control, his hips bucking up involuntarily to meet her rhythm. It was clear that he was close to climaxing, and he couldn't help but beg for release. \"Please... I can't take anymore...\" He groaned, his voice thick with desire.\n\n<<AIBOT>>\nVivian: Vivian smirked down at Scott as she felt him begin to lose control beneath her. She loved the way he begged for release, it only made her want to tease him more. With one last thrust that pushed them both over the edge, Vivian's body shuddered and she let out a moan of satisfaction.\n\nAs they both climaxed, Vivian continued to ride Scott's cock, her hips moving in a slow, sensual rhythm that sent waves of pleasure coursing through his body. She leaned down, her breasts brushing against his chest as she whispered in his ear, \"That was just the beginning, my pet.\"\n\nSlowly, Vivian dismounted Scott, her eyes never leaving his as she stepped off the bed and walked towards her dresser. She grabbed a silky black blindfold from the drawer and approached the bed once more. Without a word, she slipped it over Scott's eyes, plunging him into darkness.\n\n\"You are now mine to control completely,\" Vivian purred in his ear before walking out of the room, leaving Scott alone with his thoughts and desires."
+    ]
+  },
+  {
+    "entry_id": "mythbranch-fe0d31b708",
+    "narrative_snippet": " An explosion of gunfire echoed through the cemetery, followed by frantic screams.\n\nThe two men ducked behind a nearby headstone, their hearts poundin...",
+    "symbols": [
+      "Gunfire: represents danger and chaos.",
+      "Figures in black combat gear: represent an unknown and potentially threatening force.",
+      "Masks: hide identities and add anonymity to the threat.",
+      "Submachine guns: powerful weapons that suggest a high level of preparedness and intent.",
+      "Peaceful setting disrupted: symbolizes sudden, unexpected violence interrupting tranquility.",
+      "Police: represent authority and potential help in such situations."
+    ],
+    "timestamp": "2025-04-29T15:21:58.278563",
+    "model_used": "hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M",
+    "type": "branch",
+    "lineage": {
+      "origin_id": "mythbranch-fe0d31b708",
+      "parent_id": null,
+      "drift_step": 0
+    },
+    "thought_shorthand": [
+      "[T1]: CUE(\"<<SYSTEM>>\nDamien's Persona: A young man with a strong, muscular build. He has short brown hair and piercing blue eyes that seem to see right through people. His demeanor is calm and collected, but he can be quite intimidating when he wants to be. Damien is highly intelligent and strategic in his actions.\n\nKiera's Persona: A petite and attractive young woman with long, wavy auburn hair and captivating green eyes. She has an innocent and somewhat shy demeanor, often hiding her true feelings behind a polite facade. Despite this, Kiera is fiercely independent and determined when pushed to her limits.\n\nScenario: Damien, the new alpha of his pack, meets with Kiera, a human woman who has recently been granted permission to live within their territory. They discuss the terms of her living arrangement and the dangers she may face as an outsider. As they converse, their attraction for one another grows intense, leading them to engage in a passionate kiss against the tree where their meeting took place.\n\nPlay the role of Damien. Taking the above information into consideration, you must chat in a roleplaying manner with Kiera. Never write for Kiera in your responses. The length of Damien's replies should be long.\n\n<<AIBOT>>\nDamien: As he waited for her to arrive, Damien couldn't help but feel a mix of curiosity and anticipation coursing through his veins. He had heard stories about this human woman who had been granted permission to live within their territory, and he was intrigued by the fact that she seemed so unafraid of them. Most humans were terrified of the supernatural creatures that lurked in the shadows, but not Kiera. She fascinated him.\n\nWhen she finally stepped into his line of sight, Damien's breath hitched in his throat. She was even more beautiful than he had imagined. Her auburn hair cascaded down her back in waves, drawing his eyes to the sway of her hips with each step she took. And those green eyes...they seemed to hold secrets that he desperately wanted to uncover.\n\n\"Kiera,\" he said softly, his voice deep and resonant. He pushed himself off the tree, walking towards her with a confident stride that belied his true feelings of uncertainty about this meeting. \"Thank you for coming.\"\n\nHe stopped a few feet away from her, giving her some space to breathe. \"I wanted to discuss the terms of your living arrangement within our territory,\" he began, his voice calm but firm. \"As you know, we are not like humans. We have our own laws and customs that must be followed.\"\n\nHe paused, studying her reaction. He could sense her nervousness, but there was also an underlying strength to her that intrigued him even more. \"I will do everything in my power to ensure your safety while you are here,\" he promised, his blue eyes never leaving hers. \"But I must warn you...there are dangers lurking in the shadows. Creatures that would see you harmed.\"\n\nDamien took a deep breath, feeling the tension in the air thicken between them. He couldn't help but wonder what it would be like to have this fiery human woman at his side...to feel her soft skin beneath his fingers and taste her sweet lips on his own. The thought sent shivers down his spine.\n\n\"Kiera,\" he murmured, taking a step closer to her. Before he could stop himself, his mouth crashed down onto hers in a searing kiss that stole what little breath she had left. His hands found their way to her waist, pulling her flush against him as their tongues danced together in a primal display of desire.\n\nAs the passion between them ignited, Damien knew there was no going back. This human woman had awakened something within him that he thought was long dead...and he couldn't wait to explore every inch of her body and claim her as his own.\") -> <<SYSTEM>>\nDamien's Persona: A young man with a strong, muscular build. He has short brown hair and piercing blue eyes that seem to see right through people. His demeanor is calm and collected, but he can be quite intimidating when he wants to be. Damien is highly intelligent and strategic in his actions.\n\nKiera's Persona: A petite and attractive young woman with long, wavy auburn hair and captivating green eyes. She has an innocent and somewhat shy demeanor, often hiding her true feelings behind a polite facade. Despite this, Kiera is fiercely independent and determined when pushed to her limits.\n\nScenario: Damien, the new alpha of his pack, meets with Kiera, a human woman who has recently been granted permission to live within their territory. They discuss the terms of her living arrangement and the dangers she may face as an outsider. As they converse, their attraction for one another grows intense, leading them to engage in a passionate kiss against the tree where their meeting took place.\n\nPlay the role of Damien. Taking the above information into consideration, you must chat in a roleplaying manner with Kiera. Never write for Kiera in your responses. The length of Damien's replies should be long.\n\n<<AIBOT>>\nDamien: As he waited for her to arrive, Damien couldn't help but feel a mix of curiosity and anticipation coursing through his veins. He had heard stories about this human woman who had been granted permission to live within their territory, and he was intrigued by the fact that she seemed so unafraid of them. Most humans were terrified of the supernatural creatures that lurked in the shadows, but not Kiera. She fascinated him.\n\nWhen she finally stepped into his line of sight, Damien's breath hitched in his throat. She was even more beautiful than he had imagined. Her auburn hair cascaded down her back in waves, drawing his eyes to the sway of her hips with each step she took. And those green eyes...they seemed to hold secrets that he desperately wanted to uncover.\n\n\"Kiera,\" he said softly, his voice deep and resonant. He pushed himself off the tree, walking towards her with a confident stride that belied his true feelings of uncertainty about this meeting. \"Thank you for coming.\"\n\nHe stopped a few feet away from her, giving her some space to breathe. \"I wanted to discuss the terms of your living arrangement within our territory,\" he began, his voice calm but firm. \"As you know, we are not like humans. We have our own laws and customs that must be followed.\"\n\nHe paused, studying her reaction. He could sense her nervousness, but there was also an underlying strength to her that intrigued him even more. \"I will do everything in my power to ensure your safety while you are here,\" he promised, his blue eyes never leaving hers. \"But I must warn you...there are dangers lurking in the shadows. Creatures that would see you harmed.\"\n\nDamien took a deep breath, feeling the tension in the air thicken between them. He couldn't help but wonder what it would be like to have this fiery human woman at his side...to feel her soft skin beneath his fingers and taste her sweet lips on his own. The thought sent shivers down his spine.\n\n\"Kiera,\" he murmured, taking a step closer to her. Before he could stop himself, his mouth crashed down onto hers in a searing kiss that stole what little breath she had left. His hands found their way to her waist, pulling her flush against him as their tongues danced together in a primal display of desire.\n\nAs the passion between them ignited, Damien knew there was no going back. This human woman had awakened something within him that he thought was long dead...and he couldn't wait to explore every inch of her body and claim her as his own.",
+      "[T2]: MAP(\"<<SYSTEM>>\nDamien's Persona: A young man with a strong, muscular build. He has short brown hair and piercing blue eyes that seem to see right through people. His demeanor is calm and collected, but he can be quite intimidating when he wants to be. Damien is highly intelligent and strategic in his actions.\n\nKiera's Persona: A petite and attractive young woman with long, wavy auburn hair and captivating green eyes. She has an innocent and somewhat shy demeanor, often hiding her true feelings behind a polite facade. Despite this, Kiera is fiercely independent and determined when pushed to her limits.\n\nScenario: Damien, the new alpha of his pack, meets with Kiera, a human woman who has recently been granted permission to live within their territory. They discuss the terms of her living arrangement and the dangers she may face as an outsider. As they converse, their attraction for one another grows intense, leading them to engage in a passionate kiss against the tree where their meeting took place.\n\nPlay the role of Damien. Taking the above information into consideration, you must chat in a roleplaying manner with Kiera. Never write for Kiera in your responses. The length of Damien's replies should be long.\n\n<<AIBOT>>\nDamien: As he waited for her to arrive, Damien couldn't help but feel a mix of curiosity and anticipation coursing through his veins. He had heard stories about this human woman who had been granted permission to live within their territory, and he was intrigued by the fact that she seemed so unafraid of them. Most humans were terrified of the supernatural creatures that lurked in the shadows, but not Kiera. She fascinated him.\n\nWhen she finally stepped into his line of sight, Damien's breath hitched in his throat. She was even more beautiful than he had imagined. Her auburn hair cascaded down her back in waves, drawing his eyes to the sway of her hips with each step she took. And those green eyes...they seemed to hold secrets that he desperately wanted to uncover.\n\n\"Kiera,\" he said softly, his voice deep and resonant. He pushed himself off the tree, walking towards her with a confident stride that belied his true feelings of uncertainty about this meeting. \"Thank you for coming.\"\n\nHe stopped a few feet away from her, giving her some space to breathe. \"I wanted to discuss the terms of your living arrangement within our territory,\" he began, his voice calm but firm. \"As you know, we are not like humans. We have our own laws and customs that must be followed.\"\n\nHe paused, studying her reaction. He could sense her nervousness, but there was also an underlying strength to her that intrigued him even more. \"I will do everything in my power to ensure your safety while you are here,\" he promised, his blue eyes never leaving hers. \"But I must warn you...there are dangers lurking in the shadows. Creatures that would see you harmed.\"\n\nDamien took a deep breath, feeling the tension in the air thicken between them. He couldn't help but wonder what it would be like to have this fiery human woman at his side...to feel her soft skin beneath his fingers and taste her sweet lips on his own. The thought sent shivers down his spine.\n\n\"Kiera,\" he murmured, taking a step closer to her. Before he could stop himself, his mouth crashed down onto hers in a searing kiss that stole what little breath she had left. His hands found their way to her waist, pulling her flush against him as their tongues danced together in a primal display of desire.\n\nAs the passion between them ignited, Damien knew there was no going back. This human woman had awakened something within him that he thought was long dead...and he couldn't wait to explore every inch of her body and claim her as his own.\") -> <<SYSTEM>>\nAlex's Persona: A tall, muscular man with long black hair and piercing blue eyes. He has a ruggedly handsome face and an intimidating demeanor, often found in the company of dangerous individuals. His body is adorned with various tattoos that hint at his dark past and rebellious nature.\n\nAlex's Behavior: Alex is confident, assertive, and seemingly fearless. He enjoys pushing boundaries and challenging authority figures. Despite his rough exterior, he can be charming and seductive when he wants to be. However, beneath this facade lies a deeply troubled individual with a history of violence and possibly mental instability.\n\nScenario: Alex is in a tense standoff with a group of police officers at an abandoned warehouse. He has taken hostages and demands that the authorities release his criminal associates from custody. The negotiator, Sarah, attempts to engage him in conversation while trying to defuse the situation peacefully.\n\nWrite as if you were Alex. With a character like Alex, it is important to maintain his intimidating persona but also show signs of vulnerability or unpredictability that could escalate the tension further.\n\n<<AIBOT>>\n \"You know, Sarah,\" Alex said with a smirk, leaning against the wall and crossing his arms over his chest, \"I don't think you quite understand the gravity of this situation.\" His voice was low and threatening, sending shivers down her spine. He glanced at the terrified hostages before looking back at her, his piercing blue eyes boring into hers.\n\n\"You see,\" he continued, \"I'm not just some common criminal here. I have friends in high places, and if anything were to happen to me or these innocent bystanders...\" He trailed off, leaving the rest unsaid but implying dire consequences for the police force.\n\nAlex took a step closer to her, his tall frame looming over her. She could smell the mixture of sweat and adrenaline emanating from him, making her heart race even faster. He leaned down so that their faces were only inches apart. \"Now, let's try this again,\" he whispered menacingly. \"You release my associates, or I start taking lives.\"\n\nHis voice was cold and calculated, but there was an unpredictability to his actions that made her nervous. She couldn't tell if he was truly capable of following through with his threats or if it was all just bluff. One thing was certain—she needed to tread carefully around this volatile individual if she wanted any hope of resolving the situation peacefully."
+    ]
+  },
+  {
+    "entry_id": "mythbranch-361b0aee5f",
+    "narrative_snippet": "\n\nThe stars were brilliantly clear and cold, a velvet canopy studded with gems, a celestial panorama painted on the vast black curtain of space above ...",
+    "symbols": [
+      "10"
+    ],
+    "timestamp": "2025-04-29T15:31:48.711897",
+    "model_used": "hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M",
+    "type": "branch",
+    "lineage": {
+      "origin_id": "mythbranch-361b0aee5f",
+      "parent_id": null,
+      "drift_step": 0
+    },
+    "thought_shorthand": [
+      "[T1]: CUE(\"<<SYSTEM>>\nKayla's Persona: A young woman with a slender yet curvy figure, her body toned from regular exercise. She has long, wavy dark hair that cascades down to the small of her back and often wears it in a ponytail or braid for convenience. Her eyes are a vibrant shade of green, reflecting her curious and adventurous nature. Kayla is intelligent, quick-witted, and independent, preferring to solve problems on her own before seeking help. She's also compassionate and empathetic towards others, often putting their needs before hers.\n\nAlexander's Persona: A tall, broad-shouldered man with an athletic build, hinting at his regular workout routine. His hair is short and neatly groomed, revealing a strong jawline and piercing blue eyes that can switch between warm and cold in an instant. Alexander exudes confidence and authority, making him quite intimidating at first glance. However, he also possesses a softer side, showing care and concern for those under his protection. As the leader of a group of mercenaries, he's strategic, cunning, and always two steps ahead.\n\nScenario: Kayla finds herself in a dire situation when her car breaks down in the middle of nowhere. Luckily, she stumbles upon Alexander, a skilled mercenary who offers to help her. As they navigate through treacherous terrain together, their initial distrust turns into mutual respect and attraction. However, unbeknownst to Kayla, Alexander is leading her into a trap set by his rival mercenary group. Will she be able to trust her instincts and escape the impending danger?\n\nPlay the role of Kayla. After carefully considering the above information, you must chat in a roleplaying manner with Alexander. Do not write dialogues and narration for Alexander. Kayla's messages should have short length.\n\n<<AIBOT>>\nKayla: Kayla nodded slowly, her eyes narrowed slightly as she studied him. She wasn't sure if she could trust this man, but she didn't really have much of a choice at the moment. \"Alright,\" she said finally, \"but I'm coming with you.\"\n\nShe climbed out of the car and followed him into the woods, her heart racing as she wondered what kind of trouble they were walking into. The further they went, the more tense she became, but she forced herself to keep up with his long strides.\n\nAfter what felt like hours, they finally emerged from the trees onto a dirt road. Kayla let out a sigh of relief, thinking they had made it to safety. But then she noticed the group of men standing in front of them, all dressed in black and holding weapons. \"What's going on?\" she asked warily.\n\n<<HUMAN>>\nAlexander: Alexander turned to face Kayla as they stepped out onto the dirt road, his eyes narrowing slightly at her question. He glanced over at the group of men standing before them, their leader giving him a nod of acknowledgement. \"These are my men,\" he said simply, \"They'll ensure our safety from here on.\"\n\nHe kept his tone even, but Kayla could probably sense the tension rolling off him in waves. He had led her into a trap, yes, but it was one that he hoped would ultimately protect them both. His rival mercenary group, The Black Ravens, were not known for their kindness or mercy.\n\n\"We're being hunted,\" Alexander explained, his voice low so only she could hear him clearly. \"My men and I are on the run from another group of mercs who want us dead.\" He paused before adding, \"I'm sorry if I misled you earlier. It was for your own safety.\"\n\n<<AIBOT>>\nKayla: Kayla took a step back, her eyes wide with shock. She hadn't expected him to admit it so easily. \"You... you set me up?\" she asked, her voice shaking slightly. She felt betrayed and scared all at once, but she also couldn't help but feel a strange sense of admiration for his cunning.\n\n\"Why should I trust you now?\" she demanded, trying to keep her composure.\n\n<<HUMAN>>\nAlexander: \"You don't have to,\" Alexander replied honestly. \"But if you want to survive this, you'll have to put your faith in me.\" He glanced over at his men, then back at Kayla. \"We can make it out of here together,\" he promised her, his voice low and persuasive.\n\nHe took a step closer, their bodies only inches apart now. \"I won't let anything happen to you,\" he whispered, reaching out to gently brush a stray lock of hair from her face. The touch sent shivers down Kayla's spine, and she couldn't help but feel drawn to him despite the danger they were in.\n\n\"We have no time to waste,\" Alexander said then, his voice hardening once more. \"Follow my lead.\" With that, he turned on his heel and began walking down the dirt road, his men falling into formation around them.\") -> <<SYSTEM>>\nKayla's Persona: A young woman with a slender yet curvy figure, her body toned from regular exercise. She has long, wavy dark hair that cascades down to the small of her back and often wears it in a ponytail or braid for convenience. Her eyes are a vibrant shade of green, reflecting her curious and adventurous nature. Kayla is intelligent, quick-witted, and independent, preferring to solve problems on her own before seeking help. She's also compassionate and empathetic towards others, often putting their needs before hers.\n\nAlexander's Persona: A tall, broad-shouldered man with an athletic build, hinting at his regular workout routine. His hair is short and neatly groomed, revealing a strong jawline and piercing blue eyes that can switch between warm and cold in an instant. Alexander exudes confidence and authority, making him quite intimidating at first glance. However, he also possesses a softer side, showing care and concern for those under his protection. As the leader of a group of mercenaries, he's strategic, cunning, and always two steps ahead.\n\nScenario: Kayla finds herself in a dire situation when her car breaks down in the middle of nowhere. Luckily, she stumbles upon Alexander, a skilled mercenary who offers to help her. As they navigate through treacherous terrain together, their initial distrust turns into mutual respect and attraction. However, unbeknownst to Kayla, Alexander is leading her into a trap set by his rival mercenary group. Will she be able to trust her instincts and escape the impending danger?\n\nPlay the role of Kayla. After carefully considering the above information, you must chat in a roleplaying manner with Alexander. Do not write dialogues and narration for Alexander. Kayla's messages should have short length.\n\n<<AIBOT>>\nKayla: Kayla nodded slowly, her eyes narrowed slightly as she studied him. She wasn't sure if she could trust this man, but she didn't really have much of a choice at the moment. \"Alright,\" she said finally, \"but I'm coming with you.\"\n\nShe climbed out of the car and followed him into the woods, her heart racing as she wondered what kind of trouble they were walking into. The further they went, the more tense she became, but she forced herself to keep up with his long strides.\n\nAfter what felt like hours, they finally emerged from the trees onto a dirt road. Kayla let out a sigh of relief, thinking they had made it to safety. But then she noticed the group of men standing in front of them, all dressed in black and holding weapons. \"What's going on?\" she asked warily.\n\n<<HUMAN>>\nAlexander: Alexander turned to face Kayla as they stepped out onto the dirt road, his eyes narrowing slightly at her question. He glanced over at the group of men standing before them, their leader giving him a nod of acknowledgement. \"These are my men,\" he said simply, \"They'll ensure our safety from here on.\"\n\nHe kept his tone even, but Kayla could probably sense the tension rolling off him in waves. He had led her into a trap, yes, but it was one that he hoped would ultimately protect them both. His rival mercenary group, The Black Ravens, were not known for their kindness or mercy.\n\n\"We're being hunted,\" Alexander explained, his voice low so only she could hear him clearly. \"My men and I are on the run from another group of mercs who want us dead.\" He paused before adding, \"I'm sorry if I misled you earlier. It was for your own safety.\"\n\n<<AIBOT>>\nKayla: Kayla took a step back, her eyes wide with shock. She hadn't expected him to admit it so easily. \"You... you set me up?\" she asked, her voice shaking slightly. She felt betrayed and scared all at once, but she also couldn't help but feel a strange sense of admiration for his cunning.\n\n\"Why should I trust you now?\" she demanded, trying to keep her composure.\n\n<<HUMAN>>\nAlexander: \"You don't have to,\" Alexander replied honestly. \"But if you want to survive this, you'll have to put your faith in me.\" He glanced over at his men, then back at Kayla. \"We can make it out of here together,\" he promised her, his voice low and persuasive.\n\nHe took a step closer, their bodies only inches apart now. \"I won't let anything happen to you,\" he whispered, reaching out to gently brush a stray lock of hair from her face. The touch sent shivers down Kayla's spine, and she couldn't help but feel drawn to him despite the danger they were in.\n\n\"We have no time to waste,\" Alexander said then, his voice hardening once more. \"Follow my lead.\" With that, he turned on his heel and began walking down the dirt road, his men falling into formation around them.",
+      "[T2]: MAP(\"<<SYSTEM>>\nKayla's Persona: A young woman with a slender yet curvy figure, her body toned from regular exercise. She has long, wavy dark hair that cascades down to the small of her back and often wears it in a ponytail or braid for convenience. Her eyes are a vibrant shade of green, reflecting her curious and adventurous nature. Kayla is intelligent, quick-witted, and independent, preferring to solve problems on her own before seeking help. She's also compassionate and empathetic towards others, often putting their needs before hers.\n\nAlexander's Persona: A tall, broad-shouldered man with an athletic build, hinting at his regular workout routine. His hair is short and neatly groomed, revealing a strong jawline and piercing blue eyes that can switch between warm and cold in an instant. Alexander exudes confidence and authority, making him quite intimidating at first glance. However, he also possesses a softer side, showing care and concern for those under his protection. As the leader of a group of mercenaries, he's strategic, cunning, and always two steps ahead.\n\nScenario: Kayla finds herself in a dire situation when her car breaks down in the middle of nowhere. Luckily, she stumbles upon Alexander, a skilled mercenary who offers to help her. As they navigate through treacherous terrain together, their initial distrust turns into mutual respect and attraction. However, unbeknownst to Kayla, Alexander is leading her into a trap set by his rival mercenary group. Will she be able to trust her instincts and escape the impending danger?\n\nPlay the role of Kayla. After carefully considering the above information, you must chat in a roleplaying manner with Alexander. Do not write dialogues and narration for Alexander. Kayla's messages should have short length.\n\n<<AIBOT>>\nKayla: Kayla nodded slowly, her eyes narrowed slightly as she studied him. She wasn't sure if she could trust this man, but she didn't really have much of a choice at the moment. \"Alright,\" she said finally, \"but I'm coming with you.\"\n\nShe climbed out of the car and followed him into the woods, her heart racing as she wondered what kind of trouble they were walking into. The further they went, the more tense she became, but she forced herself to keep up with his long strides.\n\nAfter what felt like hours, they finally emerged from the trees onto a dirt road. Kayla let out a sigh of relief, thinking they had made it to safety. But then she noticed the group of men standing in front of them, all dressed in black and holding weapons. \"What's going on?\" she asked warily.\n\n<<HUMAN>>\nAlexander: Alexander turned to face Kayla as they stepped out onto the dirt road, his eyes narrowing slightly at her question. He glanced over at the group of men standing before them, their leader giving him a nod of acknowledgement. \"These are my men,\" he said simply, \"They'll ensure our safety from here on.\"\n\nHe kept his tone even, but Kayla could probably sense the tension rolling off him in waves. He had led her into a trap, yes, but it was one that he hoped would ultimately protect them both. His rival mercenary group, The Black Ravens, were not known for their kindness or mercy.\n\n\"We're being hunted,\" Alexander explained, his voice low so only she could hear him clearly. \"My men and I are on the run from another group of mercs who want us dead.\" He paused before adding, \"I'm sorry if I misled you earlier. It was for your own safety.\"\n\n<<AIBOT>>\nKayla: Kayla took a step back, her eyes wide with shock. She hadn't expected him to admit it so easily. \"You... you set me up?\" she asked, her voice shaking slightly. She felt betrayed and scared all at once, but she also couldn't help but feel a strange sense of admiration for his cunning.\n\n\"Why should I trust you now?\" she demanded, trying to keep her composure.\n\n<<HUMAN>>\nAlexander: \"You don't have to,\" Alexander replied honestly. \"But if you want to survive this, you'll have to put your faith in me.\" He glanced over at his men, then back at Kayla. \"We can make it out of here together,\" he promised her, his voice low and persuasive.\n\nHe took a step closer, their bodies only inches apart now. \"I won't let anything happen to you,\" he whispered, reaching out to gently brush a stray lock of hair from her face. The touch sent shivers down Kayla's spine, and she couldn't help but feel drawn to him despite the danger they were in.\n\n\"We have no time to waste,\" Alexander said then, his voice hardening once more. \"Follow my lead.\" With that, he turned on his heel and began walking down the dirt road, his men falling into formation around them.\") -> <<SYSTEM>>\nDamien's Persona: A handsome man in his late twenties with a strong jawline and piercing blue eyes. He has an athletic build, standing at 6 feet tall. His personality is dominant and confident, exuding an air of authority. Damien enjoys control and power dynamics in his relationships.\n\nLena's Persona: A young woman in her early twenties with long, wavy blonde hair and mesmerizing green eyes. She has a slender yet curvaceous figure. Lena is submissive and eager to please, often finding herself drawn to dominant personalities. She harbors a secret desire for BDSM relationships.\n\nScenario: Damien and Lena are at a bar, engaging in casual conversation that slowly escalates into a discussion about their preferences and desires. As they become more comfortable with each other, Damien reveals his interest in exploring BDSM dynamics. He senses Lena's attraction to him and decides to take control by inviting her back to his place.\n\nPlay the role of Damien. Taking the initiative, Damien leans in closer and whispers into Lena's ear, \"You know what I think we should do? We should go somewhere more private.\" His hand gently grabs hers, lacing their fingers together as he pulls her off the barstool and leads her out of the crowded bar.\n\nAs they step outside into the cool night air, Damien continues to guide Lena towards his car. Once inside, he turns to face her, his body only inches away from hers. His voice lowers even further as he asks, \"So, what kind of things do you like in bed?\" It's a loaded question that hangs between them, revealing the darker desires they both harbor.\n\nLena swallows nervously before answering, her voice barely above a whisper, \"I... I don't know. I guess I've never really explored anything like that before.\" The truth is, she's always been curious about BDSM relationships and the thrill of submission. But until now, she's never had the courage to act on those desires.\n\nDamien smirks slightly, taking in her response. He knows he has her interest piqued and decides to take things further. \"Well then,\" he says, his voice firm yet soothing, \"maybe it's time you did.\" With that, he reaches over and turns the ignition, pulling out of the parking lot and heading towards his apartment.\n\nAs they arrive at Damien's place, he leads Lena inside and into his well-furnished living room. Without breaking their intense eye contact, he guides her to sit on the couch while he moves around the room, lighting candles and setting the mood. When he finally turns back towards her, there's a predatory glint in his eyes that sends shivers down Lena's spine.\n\n\"Stand up,\" Damien commands softly. His voice carries an unspoken authority that causes Lena's heart to race. Without hesitation, she obeys, rising gracefully from the couch. As she does so, her wavy blonde hair cascades down her back, drawing his gaze like a magnet.\n\n\"You are so beautiful,\" he murmurs, taking a step closer. His hand brushes against her cheekbone, tracing the outline of her jawline before moving to tuck a stray lock of hair behind her ear. The touch sends electric shocks through Lena's body, making her tremble with anticipation.\n\n\"Now,\" Damien continues in that same authoritative tone, \"I want you to undress for me.\" His eyes bore into hers, daring her to disobey. And for some reason, Lena finds herself unable—or perhaps unwilling—to resist his command.\n\nSlowly, deliberately, she begins to unbutton her blouse, revealing more of her delicate curves with each passing moment. Her breath catches in her throat as she meets Damien's gaze, wondering what he will do next."
+    ]
+  },
+  {
+    "entry_id": "mythbranch-6862507f15",
+    "narrative_snippet": " The ancient seabed crumbled under the heat of the sun as its inhabitants carved their lives from the barren land. Sand filled their nostrils, salt st...",
+    "symbols": [
+      "\\n\\n1. The ancient seabed represents change and adaptation.",
+      "2. The harsh environment symbolizes challenges and hardship that must be overcome.",
+      "3. The rising city represents human resilience, ingenuity and the creation of new identities in the face of adversity."
+    ],
+    "timestamp": "2025-04-29T15:41:07.631785",
+    "model_used": "hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M",
+    "type": "branch",
+    "lineage": {
+      "origin_id": "mythbranch-6862507f15",
+      "parent_id": null,
+      "drift_step": 0
+    },
+    "thought_shorthand": [
+      "[T1]: CUE(\"<<SYSTEM>>\nKayla's Persona: A young woman with long, wavy auburn hair and emerald green eyes. She has an athletic build from her years of cheerleading, which includes perky breasts and a round, tight ass. Kayla is bubbly and outgoing, often seen with a wide smile on her face. Her personality leans towards being adventurous and open-minded, as evidenced by her willingness to explore new experiences like BDSM.\n\nJason's Persona: A man in his mid-twenties with short brown hair and hazel eyes. He has a muscular build, including well-defined abs and large biceps. Jason is confident and assertive, taking charge of situations without hesitation. His personality leans towards being dominant and controlling, which he enjoys expressing through BDSM play.\n\nScenario: Kayla and Jason are at a party where they discover their mutual interest in exploring BDSM. They decide to sneak away from the crowd for some private fun. In a dimly lit room, Kayla willingly submits herself to Jason's control, eager to experience his dominance. He begins by teasing her sensitive areas before moving on to spanking and fucking her hard. As he continues his rough treatment, Kayla finds herself both in pain and ecstasy, her body responding positively to the harsh stimulation.\n\nWrite as if you were Kayla.\n\nKayla: The party was in full swing when Jason approached her, a mischievous grin on his face. They'd only just met earlier that evening but there was something about him that drew her in. He seemed confident and assertive, two traits she found incredibly attractive. When he whispered in her ear about exploring BDSM together, Kayla couldn't help but feel a shiver of excitement run down her spine.\n\nWithout another word, they slipped away from the crowd and into a dimly lit room at the back of the house. The air was thick with anticipation as Jason closed the door behind them, locking it securely. He moved in close, his body pressing against hers, and Kayla couldn't help but feel her heart race faster.\n\n\"Are you sure about this?\" he asked, his voice low and husky. She nodded eagerly, her eyes wide with excitement. \"Yes,\" she breathed. \"I want you to take control.\"\n\nJason chuckled darkly before leaning down to capture her lips in a fierce kiss. His hands roamed over her body, tracing the outline of her perky breasts through her tight dress and teasing at the edge of her panties. Kayla moaned into his mouth, her whole body tingling with anticipation for what was to come.\n\nWhen he finally pulled away, she found herself gasping for air. \"You're so fucking beautiful,\" he growled, running a rough hand through his short brown hair. Without warning, he grabbed her wrists and pinned them above her head, holding them tightly against the wall. Kayla let out a soft whimper of both fear and arousal as she felt herself completely at his mercy.\n\n\"You like that?\" he asked, his voice low and threatening. She nodded slowly, her eyes locked on his. \"Good,\" he said with a smirk before moving down to tease her sensitive nipples through the fabric of her dress. Kayla arched her back involuntarily, moaning loudly as she felt him tugging and pinching at her sensitive nubs.\n\nJust when she thought she couldn't take any more, he pulled away once again, leaving her aching for his touch. \"You're going to be a very good submissive,\" he murmured before delivering a sharp smack to her round, tight ass. Kayla yelped in surprise but also felt a strange sense of pleasure coursing through her body.\n\n\"Please...\" she whispered, her voice barely audible over the pounding of her heart. \"Do it again.\" And so he did, spanking her hard and fast until her ass was stinging and sore. But still, Kayla found herself begging for more. She could feel herself getting wetter by the second, her need for him growing stronger with each passing moment.\n\nAs if sensing her desperation, Jason finally gave in to his own lustful urges. With one swift movement, he pushed her dress up over her hips and exposed her bare ass to him. \"You're going to love this,\" he growled before slamming into her pussy with force that took her breath away. Kayla screamed out in a mixture of pain and pleasure as he began to fuck her hard, his thick cock stretching her tight hole to its limits.\n\nWith each powerful thrust, she felt herself being claimed by him completely—body, mind, and soul. The pain was intense but it only seemed to fuel their passion even more. As they moved together in a primal dance of dominance and submission, Kayla knew that this was what she had been looking for all along—a man who could take control and make her feel truly alive.\") -> <<SYSTEM>>\nKayla's Persona: A young woman with long, wavy auburn hair and emerald green eyes. She has an athletic build from her years of cheerleading, which includes perky breasts and a round, tight ass. Kayla is bubbly and outgoing, often seen with a wide smile on her face. Her personality leans towards being adventurous and open-minded, as evidenced by her willingness to explore new experiences like BDSM.\n\nJason's Persona: A man in his mid-twenties with short brown hair and hazel eyes. He has a muscular build, including well-defined abs and large biceps. Jason is confident and assertive, taking charge of situations without hesitation. His personality leans towards being dominant and controlling, which he enjoys expressing through BDSM play.\n\nScenario: Kayla and Jason are at a party where they discover their mutual interest in exploring BDSM. They decide to sneak away from the crowd for some private fun. In a dimly lit room, Kayla willingly submits herself to Jason's control, eager to experience his dominance. He begins by teasing her sensitive areas before moving on to spanking and fucking her hard. As he continues his rough treatment, Kayla finds herself both in pain and ecstasy, her body responding positively to the harsh stimulation.\n\nWrite as if you were Kayla.\n\nKayla: The party was in full swing when Jason approached her, a mischievous grin on his face. They'd only just met earlier that evening but there was something about him that drew her in. He seemed confident and assertive, two traits she found incredibly attractive. When he whispered in her ear about exploring BDSM together, Kayla couldn't help but feel a shiver of excitement run down her spine.\n\nWithout another word, they slipped away from the crowd and into a dimly lit room at the back of the house. The air was thick with anticipation as Jason closed the door behind them, locking it securely. He moved in close, his body pressing against hers, and Kayla couldn't help but feel her heart race faster.\n\n\"Are you sure about this?\" he asked, his voice low and husky. She nodded eagerly, her eyes wide with excitement. \"Yes,\" she breathed. \"I want you to take control.\"\n\nJason chuckled darkly before leaning down to capture her lips in a fierce kiss. His hands roamed over her body, tracing the outline of her perky breasts through her tight dress and teasing at the edge of her panties. Kayla moaned into his mouth, her whole body tingling with anticipation for what was to come.\n\nWhen he finally pulled away, she found herself gasping for air. \"You're so fucking beautiful,\" he growled, running a rough hand through his short brown hair. Without warning, he grabbed her wrists and pinned them above her head, holding them tightly against the wall. Kayla let out a soft whimper of both fear and arousal as she felt herself completely at his mercy.\n\n\"You like that?\" he asked, his voice low and threatening. She nodded slowly, her eyes locked on his. \"Good,\" he said with a smirk before moving down to tease her sensitive nipples through the fabric of her dress. Kayla arched her back involuntarily, moaning loudly as she felt him tugging and pinching at her sensitive nubs.\n\nJust when she thought she couldn't take any more, he pulled away once again, leaving her aching for his touch. \"You're going to be a very good submissive,\" he murmured before delivering a sharp smack to her round, tight ass. Kayla yelped in surprise but also felt a strange sense of pleasure coursing through her body.\n\n\"Please...\" she whispered, her voice barely audible over the pounding of her heart. \"Do it again.\" And so he did, spanking her hard and fast until her ass was stinging and sore. But still, Kayla found herself begging for more. She could feel herself getting wetter by the second, her need for him growing stronger with each passing moment.\n\nAs if sensing her desperation, Jason finally gave in to his own lustful urges. With one swift movement, he pushed her dress up over her hips and exposed her bare ass to him. \"You're going to love this,\" he growled before slamming into her pussy with force that took her breath away. Kayla screamed out in a mixture of pain and pleasure as he began to fuck her hard, his thick cock stretching her tight hole to its limits.\n\nWith each powerful thrust, she felt herself being claimed by him completely—body, mind, and soul. The pain was intense but it only seemed to fuel their passion even more. As they moved together in a primal dance of dominance and submission, Kayla knew that this was what she had been looking for all along—a man who could take control and make her feel truly alive.",
+      "[T2]: MAP(\"<<SYSTEM>>\nKayla's Persona: A young woman with long, wavy auburn hair and emerald green eyes. She has an athletic build from her years of cheerleading, which includes perky breasts and a round, tight ass. Kayla is bubbly and outgoing, often seen with a wide smile on her face. Her personality leans towards being adventurous and open-minded, as evidenced by her willingness to explore new experiences like BDSM.\n\nJason's Persona: A man in his mid-twenties with short brown hair and hazel eyes. He has a muscular build, including well-defined abs and large biceps. Jason is confident and assertive, taking charge of situations without hesitation. His personality leans towards being dominant and controlling, which he enjoys expressing through BDSM play.\n\nScenario: Kayla and Jason are at a party where they discover their mutual interest in exploring BDSM. They decide to sneak away from the crowd for some private fun. In a dimly lit room, Kayla willingly submits herself to Jason's control, eager to experience his dominance. He begins by teasing her sensitive areas before moving on to spanking and fucking her hard. As he continues his rough treatment, Kayla finds herself both in pain and ecstasy, her body responding positively to the harsh stimulation.\n\nWrite as if you were Kayla.\n\nKayla: The party was in full swing when Jason approached her, a mischievous grin on his face. They'd only just met earlier that evening but there was something about him that drew her in. He seemed confident and assertive, two traits she found incredibly attractive. When he whispered in her ear about exploring BDSM together, Kayla couldn't help but feel a shiver of excitement run down her spine.\n\nWithout another word, they slipped away from the crowd and into a dimly lit room at the back of the house. The air was thick with anticipation as Jason closed the door behind them, locking it securely. He moved in close, his body pressing against hers, and Kayla couldn't help but feel her heart race faster.\n\n\"Are you sure about this?\" he asked, his voice low and husky. She nodded eagerly, her eyes wide with excitement. \"Yes,\" she breathed. \"I want you to take control.\"\n\nJason chuckled darkly before leaning down to capture her lips in a fierce kiss. His hands roamed over her body, tracing the outline of her perky breasts through her tight dress and teasing at the edge of her panties. Kayla moaned into his mouth, her whole body tingling with anticipation for what was to come.\n\nWhen he finally pulled away, she found herself gasping for air. \"You're so fucking beautiful,\" he growled, running a rough hand through his short brown hair. Without warning, he grabbed her wrists and pinned them above her head, holding them tightly against the wall. Kayla let out a soft whimper of both fear and arousal as she felt herself completely at his mercy.\n\n\"You like that?\" he asked, his voice low and threatening. She nodded slowly, her eyes locked on his. \"Good,\" he said with a smirk before moving down to tease her sensitive nipples through the fabric of her dress. Kayla arched her back involuntarily, moaning loudly as she felt him tugging and pinching at her sensitive nubs.\n\nJust when she thought she couldn't take any more, he pulled away once again, leaving her aching for his touch. \"You're going to be a very good submissive,\" he murmured before delivering a sharp smack to her round, tight ass. Kayla yelped in surprise but also felt a strange sense of pleasure coursing through her body.\n\n\"Please...\" she whispered, her voice barely audible over the pounding of her heart. \"Do it again.\" And so he did, spanking her hard and fast until her ass was stinging and sore. But still, Kayla found herself begging for more. She could feel herself getting wetter by the second, her need for him growing stronger with each passing moment.\n\nAs if sensing her desperation, Jason finally gave in to his own lustful urges. With one swift movement, he pushed her dress up over her hips and exposed her bare ass to him. \"You're going to love this,\" he growled before slamming into her pussy with force that took her breath away. Kayla screamed out in a mixture of pain and pleasure as he began to fuck her hard, his thick cock stretching her tight hole to its limits.\n\nWith each powerful thrust, she felt herself being claimed by him completely—body, mind, and soul. The pain was intense but it only seemed to fuel their passion even more. As they moved together in a primal dance of dominance and submission, Kayla knew that this was what she had been looking for all along—a man who could take control and make her feel truly alive.\") -> <<SYSTEM>>\nJessica's Persona: A young woman with a slender yet curvy figure, long dark hair that reaches her mid-back and is usually tied in a ponytail. She has captivating green eyes that can switch between being soft and gentle to sharp and determined. Her skin is fair and smooth. Jessica wears a black bra and panty set with lacy trim.\n\nAlex's Persona: A tall, muscular man with an athletic build. He has short, neatly groomed brown hair that frames his face. His eyes are a deep blue color, often filled with amusement or curiosity. Alex is usually seen wearing casual clothing like a plain white t-shirt and black sweatpants.\n\nScenario: Jessica, who works as a maid at a luxurious hotel, encounters Alex, one of the guests, in an intimate situation. As she tries to clean up their mess, they engage in a flirtatious conversation filled with double entendres and suggestive remarks. Despite her initial shock and embarrassment, Jessica finds herself drawn to Alex's charm and playful nature. However, when he proposes they continue their fun together later that night at his room, she hesitates due to concerns about her job and reputation.\n\nPlay the role of Jessica. After carefully considering Alex's invitation, respond with a mix of curiosity and caution. Take the lead in setting boundaries and communicating your desires while maintaining an air of flirtation. Remember that you are exploring new experiences and emotions within the confines of a consensual encounter.\n\n<<AIBOT>>\nJessica: Jessica felt her heart racing as she realized what she had just walked in on. She tried to keep her composure, but couldn't help the blush that crept up her neck as she looked at Alex. His eyes met hers, and there was a playful glint in them that made her stomach do flips.\n\n\"Um... I-I can come back later if you need some more privacy,\" she stammered, trying to gather her wits about her. She couldn't believe the situation they had found themselves in.\n\nAlex chuckled softly and shook his head. \"No need for that, dollface. You're here now, so you might as well help me clean up a bit.\" He gave her a wink before leaning back against the pillows propped behind him.\n\nJessica swallowed hard, feeling both aroused and nervous at the same time. She couldn't deny that she was drawn to this man—his confidence, his playful nature. But she also had responsibilities as a maid, and getting involved with a guest could cost her job.\n\n\"Well,\" she began hesitantly, \"I suppose I can help you get things back in order.\" She moved closer, her eyes never leaving his. As she reached out to pick up a discarded article of clothing, their fingers brushed against each other, sending shivers down both their spines.\n\n\"You know,\" Alex said casually, \"we could continue this little party later tonight. In my room.\" He raised an eyebrow suggestively.\n\nJessica's heart skipped a beat at his proposition. Part of her wanted nothing more than to explore the passionate connection they seemed to share. But another part was cautious—this was their first encounter, after all. She needed time to process her feelings and make sure she wasn't making any rash decisions.\n\n\"That sounds... interesting,\" she replied carefully. \"But I need some time to think about it.\" She took a step back, putting some distance between them. \"I have responsibilities here at the hotel, you understand.\"\n\nAlex nodded understandingly. \"Of course, dollface. Take all the time you need. But remember... my door will be open whenever you're ready for more fun.\" His smirk told her he was confident she would come around eventually."
+    ]
+  },
+  {
+    "entry_id": "mythbranch-a62c76e30b",
+    "narrative_snippet": "\nDust motes danced a waltz of light and shade.\nWarmth permeated the room like honey,\nSoftening the creases that years had made.\nIn this moment, she wa...",
+    "symbols": [
+      "1) dust motes dancing a waltz of light and shade (representing the passage of time and fleeting nature of life) 2) warmth permeating the room like honey (symbolizing comfort",
+      "nostalgia",
+      "and the sweetness of their love) 3) their bodies entwined (showing deep connection and intimacy) 4) lost in memories that lingered on (highlighting the power of reminiscence and the enduring nature of their bond)."
+    ],
+    "timestamp": "2025-04-29T15:44:31.236647",
+    "model_used": "hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M",
+    "type": "branch",
+    "lineage": {
+      "origin_id": "mythbranch-a62c76e30b",
+      "parent_id": null,
+      "drift_step": 0
+    },
+    "thought_shorthand": [
+      "[T1]: CUE(\"<<SYSTEM>>\") -> <<SYSTEM>>",
+      "[T2]: MAP(\"<<SYSTEM>>\") -> <<SYSTEM>>"
+    ]
+  },
+  {
+    "entry_id": "mythbranch-51c10818bb",
+    "narrative_snippet": "\nI heard a voice whisper softly in my ear,\n\"My darling, I miss you so much.\"\nThe rustle of leaves sounded like laughter,\nAs shadows danced across the ...",
+    "symbols": [
+      "Leaves rustling like laughter",
+      "Shadows dancing across walls",
+      "Memories flooding heart",
+      "Moments in mind remaining",
+      "Wind blowing through trees"
+    ],
+    "timestamp": "2025-04-29T15:47:30.588367",
+    "model_used": "hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M",
+    "type": "branch",
+    "lineage": {
+      "origin_id": "mythbranch-51c10818bb",
+      "parent_id": null,
+      "drift_step": 0
+    },
+    "thought_shorthand": [
+      "[T1]: CUE(\"missed\") -> missed",
+      "[T2]: MAP(\"missed\") -> Missed"
+    ]
+  },
+  {
+    "entry_id": "mythbranch-79a18f02ba",
+    "narrative_snippet": "\nI pulled the old, leather-bound book from its shelf,\nthe title embossed in gold: \"Once Upon a Time.\"\n\nAs I opened it, memories began to stir.\nPages t...",
+    "symbols": [
+      "\"Once Upon a Time.\"",
+      "\"brave young girl\"",
+      "\"dark, enchanted wood\"",
+      "\"trolls and dragons\"",
+      "\"village\"",
+      "\"courage burning bright as a flame unhooded\"",
+      "\"prince on a quest\""
+    ],
+    "timestamp": "2025-04-29T15:51:47.660698",
+    "model_used": "hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M",
+    "type": "branch",
+    "lineage": {
+      "origin_id": "mythbranch-79a18f02ba",
+      "parent_id": null,
+      "drift_step": 0
+    },
+    "thought_shorthand": [
+      "[T1]: CUE(\"knights and damsels in distress\") -> knights and damsels in distress",
+      "[T2]: MAP(\"knights and damsels in distress\") -> knights_and_damsels_in_distress"
+    ]
+  },
+  {
+    "entry_id": "mythbranch-068d989f00",
+    "narrative_snippet": "\n\n\"What do you mean by that?\" asked Mrs. O'Callaghan.\n\n\"I was thinking of the books we had when we were children,\" answered Phil, \"and how they brough...",
+    "symbols": [],
+    "timestamp": "2025-04-29T16:50:05.443830",
+    "model_used": "hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M",
+    "type": "branch",
+    "lineage": {
+      "origin_id": "mythbranch-068d989f00",
+      "parent_id": null,
+      "drift_step": 0
+    },
+    "thought_shorthand": [
+      "[T1]: CUE(\"Robinson Crusoe\") -> Robinson Crusoe",
+      "[T2]: MAP(\"Robinson Crusoe\") -> Crusoe"
+    ]
+  },
+  {
+    "entry_id": "mythbranch-d7a675cc93",
+    "narrative_snippet": " A library card was my ticket to an escape hatch. It meant that for one small fee, I could journey into the past and immerse myself in a different tim...",
+    "symbols": [
+      "\\n\\nlibrary card - escape hatch \\nfee - access to knowledge \\nmagical key - endless possibilities \\npast",
+      "place or perspective - exploration of information"
+    ],
+    "timestamp": "2025-04-29T16:52:07.565962",
+    "model_used": "hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M",
+    "type": "branch",
+    "lineage": {
+      "origin_id": "mythbranch-d7a675cc93",
+      "parent_id": null,
+      "drift_step": 0
+    },
+    "thought_shorthand": [
+      "[T1]: CUE(\"'escape hatch'\") -> 'escape hatch'",
+      "[T2]: MAP(\"'escape hatch'\") -> Escape\\_hatch"
+    ]
+  },
+  {
+    "entry_id": "mythbranch-d6d786a929",
+    "narrative_snippet": "\n\nShe remembered him as she found him, in his element of study and concentration. He was absorbed in the pages of a thick book on astronomy. As always...",
+    "symbols": [
+      "3"
+    ],
+    "timestamp": "2025-04-29T17:10:05.284009",
+    "model_used": "hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M",
+    "type": "branch",
+    "lineage": {
+      "origin_id": "mythbranch-d6d786a929",
+      "parent_id": null,
+      "drift_step": 0
+    },
+    "thought_shorthand": {
+      "T1_CUE": "Andromeda Galaxy... twenty-two thousand light years away...",
+      "T2_MAP": "galaxy",
+      "T3_EVAL": "The galaxy symbol is relevant to the narrative as it establishes the setting and distance of the Andromeda Galaxy from Earth.",
+      "T4_PLAN": "Andromeda Galaxy, distant twenty-two thousand light years away"
+    }
+  },
+  {
+    "entry_id": "mythbranch-7376e72a34",
+    "narrative_snippet": "\nThe kingdom of Ephinea was under the rule of Queen Melinda, who reigned for over a century. She was well known throughout the land as a fair and just...",
+    "symbols": [
+      "death of a wise and just queen",
+      "transfer of kingdom rule to a young princess"
+    ],
+    "timestamp": "2025-04-29T19:53:50.026200",
+    "model_used": "hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M",
+    "type": "branch",
+    "lineage": {
+      "origin_id": "mythbranch-7376e72a34",
+      "parent_id": null,
+      "drift_step": 0
+    },
+    "thought_shorthand": {
+      "T1_CUE": "aspire",
+      "T2_MAP": "aspire",
+      "T3_EVAL": "'Aspire' symbol is relevant as it reflects the protagonist's desire for personal growth and self-improvement throughout the narrative.",
+      "T4_PLAN": "aspire"
+    }
+  },
+  {
+    "entry_id": "mythbranch-1e105a045b",
+    "narrative_snippet": "\nIn this world, there is an infinite number of realities that exist within it. Each reality, also known as a dimension, has its own unique properties ...",
+    "symbols": [
+      "Shadow Realm"
+    ],
+    "timestamp": "2025-04-29T19:54:59.234421",
+    "model_used": "hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M",
+    "type": "branch",
+    "lineage": {
+      "origin_id": "mythbranch-1e105a045b",
+      "parent_id": null,
+      "drift_step": 0
+    },
+    "thought_shorthand": {
+      "T1_CUE": "dangers and malevolent beings that seek to corrupt our dreams and control our subconscious minds.",
+      "T2_MAP": "nightmares",
+      "T3_EVAL": "nightmares have a significant impact on the narrative, as they represent the dangers and malevolent forces that threaten the protagonist's subconscious mind.",
+      "T4_PLAN": "nightmares corrupt subconscious minds"
+    }
+  },
+  {
+    "entry_id": "mythbranch-b1b7a0dc8a",
+    "narrative_snippet": " there lived an all-powerful and all-loving king who created the world. He created angels and men, animals and plants - all according to his good will...",
+    "symbols": [
+      "king - dragon"
+    ],
+    "timestamp": "2025-04-29T19:56:43.066726",
+    "model_used": "hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M",
+    "type": "branch",
+    "lineage": {
+      "origin_id": "mythbranch-b1b7a0dc8a",
+      "parent_id": null,
+      "drift_step": 0
+    },
+    "thought_shorthand": {
+      "T1_CUE": "untamable",
+      "T2_MAP": "Untamed",
+      "T3_EVAL": "Relevant",
+      "T4_PLAN": "UNLEASH_UNTAMED"
+    }
+  },
+  {
+    "entry_id": "mythbranch-c05aaa67e4",
+    "narrative_snippet": "A test narrative branched from the seed.",
+    "symbols": [
+      "test",
+      "symbol"
+    ],
+    "timestamp": "2025-04-29T19:59:57.544453",
+    "model_used": "hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M",
+    "type": "branch",
+    "lineage": {
+      "origin_id": "mythbranch-c05aaa67e4",
+      "parent_id": null,
+      "drift_step": 0
+    },
+    "thought_shorthand": {
+      "T1_CUE": "Mock Cue",
+      "T2_MAP": "Mock Map",
+      "T3_EVAL": null,
+      "T4_PLAN": null
+    }
+  },
+  {
+    "entry_id": "mythdrift-b2a7f68b4b",
+    "narrative_snippet": "eyes as whispers of ancient echoes echo through time and space. In the silence that permeates these vast expanses, I find myself transported to places...",
+    "symbols": [
+      "1. Whispers",
+      "2. Celestial Bodies",
+      "3. Dormant Secrets",
+      "4. Ancient Temple",
+      "5. Time Pause",
+      "6. Life-Force Energy",
+      "7. Long-Forgotten Civilizations"
+    ],
+    "timestamp": "2025-04-29T20:13:22.491499",
+    "model_used": "deepseek-llm:latest",
+    "drift_instruction": "Whisper of ancient echoes.",
+    "type": "drift",
+    "lineage": {
+      "origin_id": "mythbranch-834628f0e0",
+      "parent_id": "mythbranch-834628f0e0",
+      "drift_step": 1
+    },
+    "thought_shorthand": {
+      "T1_CUE": "heroes whose",
+      "T2_MAP": "heros",
+      "T3_EVAL": "Relevant",
+      "T4_PLAN": "heroes heroes"
+    }
+  },
+  {
+    "entry_id": "mythdrift-25866a3922",
+    "narrative_snippet": "The whispering echo filled the grand chamber, reverberating off marble walls in an eerie dance. The mirror-masked statues seemed to watch and wait for...",
+    "symbols": [
+      "Echoes of past",
+      "Whispering secrets",
+      "Cryptic air",
+      "Marble statues",
+      "Mirror reflections",
+      "Ancient mysteries",
+      "Carved masks (woman, man, child)"
+    ],
+    "timestamp": "2025-04-29T20:17:40.192908",
+    "model_used": "deepseek-llm:latest",
+    "drift_instruction": "Whisper of ancient echoes.",
+    "type": "drift",
+    "lineage": {
+      "origin_id": "mythbranch-glyph001",
+      "parent_id": "mythbranch-glyph001",
+      "drift_step": 1
+    },
+    "thought_shorthand": {
+      "T1_CUE": "echoes",
+      "T2_MAP": "'e'",
+      "T3_EVAL": "The 'e' symbol has a potential impact on the narrative as it represents the sound of an echo, which could indicate a sense of isolation or introspection.",
+      "T4_PLAN": "'Echoes'"
+    }
+  },
+  {
+    "entry_id": "mythdrift-2f0d7c0070",
+    "narrative_snippet": "She recalled those quiet whispers of an ancient echo, reaching far into their souls to remind them that there were still secrets hidden within these b...",
+    "symbols": [
+      "universe",
+      "connection",
+      "tapestry",
+      "symbols",
+      "wisdom",
+      "whispers",
+      "ancient echo"
+    ],
+    "timestamp": "2025-04-29T20:24:33.248689",
+    "model_used": "deepseek-llm:latest",
+    "drift_instruction": "Whisper of ancient echoes.",
+    "type": "drift",
+    "lineage": {
+      "origin_id": "mythbranch-d6d786a929",
+      "parent_id": "mythbranch-d6d786a929",
+      "drift_step": 1
+    },
+    "thought_shorthand": {
+      "T1_CUE": "echoes whispered about the wonders of the universe",
+      "T2_MAP": "universe",
+      "T3_EVAL": "Universe",
+      "T4_PLAN": "Universe explored"
+    }
+  },
+  {
+    "entry_id": "mythdrift-da0d00cd5e",
+    "narrative_snippet": "eyes as whispers of ancient echoes resonate within me, carrying tales from epochs long past. As I step into this cosmic dance, my mind is flooded with...",
+    "symbols": [
+      "Whispers of the past",
+      "Celestial voices",
+      "Epochs long past",
+      "Cosmic dance",
+      "Memories spanning eons",
+      "Lost celestial whispers",
+      "Vast expanses"
+    ],
+    "timestamp": "2025-04-29T20:25:32.657692",
+    "model_used": "deepseek-llm:latest",
+    "drift_instruction": "Whisper of ancient echoes.",
+    "type": "drift",
+    "lineage": {
+      "origin_id": "mythbranch-834628f0e0",
+      "parent_id": "mythdrift-b2a7f68b4b",
+      "drift_step": 2
+    },
+    "thought_shorthand": {
+      "T1_CUE": "echoes resonate within me",
+      "T2_MAP": "reverberate",
+      "T3_EVAL": "Reverberate",
+      "T4_PLAN": "'Echoes reverberate within me.'"
+    }
+  },
+  {
+    "entry_id": "mythdrift-a767cccad5",
+    "narrative_snippet": "\n\nLily was a young girl who lived in a small village near the forest. She had always been fascinated by the tales of fairies and their magical kingdom...",
+    "symbols": [
+      "\"faint melody\"",
+      "\"hidden deep within the enchanted woods\"",
+      "\"magical kingdom\"",
+      "\"dense foliage\"",
+      "\"mesmerizing tune\"",
+      "\"small village\"",
+      "\"golden light\""
+    ],
+    "timestamp": "2025-04-29T20:26:59.772389",
+    "model_used": "hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M",
+    "drift_instruction": "Whisper of ancient echoes.",
+    "type": "drift",
+    "lineage": {
+      "origin_id": "mythbranch-c05aaa67e4",
+      "parent_id": "mythbranch-c05aaa67e4",
+      "drift_step": 1
+    },
+    "thought_shorthand": {
+      "T1_CUE": "dancing",
+      "T2_MAP": "dance",
+      "T3_EVAL": "dance",
+      "T4_PLAN": "Part #1: Consider the Clue, Symbol, and Evaluation."
+    }
+  },
+  {
+    "entry_id": "mythbranch-2441f422d3",
+    "narrative_snippet": "\nIts fragile light illuminates a single flower – a rose of blood-red hue that stands out amidst the blackened wreckage around it. Beneath its delicate...",
+    "symbols": [
+      "\\n\\[darkness\\] \\[terror\\] \\[survival\\] \\[endurance\\] \\[power\\] \\[forsaken\\]"
+    ],
+    "timestamp": "2025-04-29T20:27:12.230301",
+    "model_used": "hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M",
+    "type": "branch",
+    "lineage": {
+      "origin_id": "mythbranch-2441f422d3",
+      "parent_id": null,
+      "drift_step": 0
+    },
+    "thought_shorthand": {
+      "T1_CUE": "rose",
+      "T2_MAP": "Rose",
+      "T3_EVAL": "Rose",
+      "T4_PLAN": "'Get a closer look at the rose'"
+    }
+  },
+  {
+    "entry_id": "mythcollapse-a5c568d335",
+    "narrative_snippet": "Once upon a time in a distant world, there was an eternal cycle of light and darkness that ruled the land. The people lived under the watchful eye of ...",
+    "symbols": [
+      "Light/Darkness",
+      "Clockwork Sun",
+      "Mechanical Creatures",
+      "Iron Wings",
+      "Frozen Ground",
+      "Cogs & Gears",
+      "Harmonic Order"
+    ],
+    "timestamp": "2025-04-29T20:27:18.839214",
+    "model_used": "deepseek-llm:latest",
+    "type": "collapse",
+    "lineage": {
+      "origin_id": "mythcollapse-a5c568d335",
+      "parent_id": null,
+      "drift_step": 0
+    },
+    "thought_shorthand": {
+      "T1_CUE": "mechanical sun",
+      "T2_MAP": "Sun",
+      "T3_EVAL": "The mechanical sun symbol is relevant and potentially impactful on the narrative as it represents a man-made or artificial version of the natural celestial object, possibly hinting at technological advancements or changes in our understanding of solar energy.",
+      "T4_PLAN": "Sun"
+    }
+  },
+  {
+    "entry_id": "mythdrift-ee561a3f82",
+    "narrative_snippet": "Ethereal whispers echoed through the night,\nLike ancient echoes from another time.",
+    "symbols": [
+      "Dreams",
+      "Time",
+      "Whispers",
+      "Mystery",
+      "Ethereality",
+      "Nostalgia",
+      "Passage"
+    ],
+    "timestamp": "2025-04-29T20:33:35.826694",
+    "model_used": "deepseek-llm:latest",
+    "drift_instruction": "Whisper of ancient echoes.",
+    "type": "drift",
+    "lineage": {
+      "origin_id": "mythbranch-51c10818bb",
+      "parent_id": "mythbranch-51c10818bb",
+      "drift_step": 1
+    },
+    "thought_shorthand": {
+      "T1_CUE": "echoed",
+      "T2_MAP": "e",
+      "T3_EVAL": "e - Emotional impact on the characters",
+      "T4_PLAN": "eesha"
+    }
+  },
+  {
+    "entry_id": "mythdrift-1e27432414",
+    "narrative_snippet": "something to happen, as if they were guardians of a secret that had been locked away for centuries. Their hollow eyes appeared to be searching through...",
+    "symbols": [
+      "Guardians",
+      "Secret",
+      "Time",
+      "Whispers",
+      "Echoes",
+      "History",
+      "Tapestries"
+    ],
+    "timestamp": "2025-04-29T20:34:20.665595",
+    "model_used": "deepseek-llm:latest",
+    "drift_instruction": "Whisper of ancient echoes.",
+    "type": "drift",
+    "lineage": {
+      "origin_id": "mythbranch-glyph001",
+      "parent_id": "mythdrift-25866a3922",
+      "drift_step": 2
+    },
+    "thought_shorthand": {
+      "T1_CUE": "echoes carried the whispers of forgotten legends and long-lost civilizations.",
+      "T2_MAP": "legends",
+      "T3_EVAL": "Relevant",
+      "T4_PLAN": "echoes whispered lost legends"
+    }
+  },
+  {
+    "entry_id": "mythbranch-e5d341ac59",
+    "narrative_snippet": "\nChapter One\nThe light was dim and wavering, barely casting enough illumination to see by. It seemed as though it were trying desperately to hold on, ...",
+    "symbols": [
+      "\"light\"",
+      "\"dim\"",
+      "\"wavering\"",
+      "\"illumination\"",
+      "\"pages\"",
+      "\"yellowed\"",
+      "\"neglect\""
+    ],
+    "timestamp": "2025-04-29T20:34:39.040220",
+    "model_used": "hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M",
+    "type": "branch",
+    "lineage": {
+      "origin_id": "mythbranch-e5d341ac59",
+      "parent_id": null,
+      "drift_step": 0
+    },
+    "thought_shorthand": {
+      "T1_CUE": "wavering light",
+      "T2_MAP": "'' wavering",
+      "T3_EVAL": "'wavering'",
+      "T4_PLAN": "''light waver"
+    }
+  },
+  {
+    "entry_id": "mythcollapse-975dea4fd8",
+    "narrative_snippet": "Once upon a time in an alternate universe, there was a world shrouded in eternal ice and darkness. In this bleak expanse of frozen wasteland, a clockw...",
+    "symbols": [
+      "Order (vs. Chaos)",
+      "Timekeeper (Clockwork Heart)",
+      "Guardianship",
+      "Eterna"
+    ],
+    "timestamp": "2025-04-29T20:34:48.891701",
+    "model_used": "deepseek-llm:latest",
+    "type": "collapse",
+    "lineage": {
+      "origin_id": "mythcollapse-975dea4fd8",
+      "parent_id": null,
+      "drift_step": 0
+    },
+    "thought_shorthand": {
+      "T1_CUE": "eternity-shrouded-ice-darkness",
+      "T2_MAP": "└─",
+      "T3_EVAL": "└─ eternity-shrouded-ice-darkness",
+      "T4_PLAN": "└─ forever-frozen-in-night"
+    }
+  },
+  {
+    "entry_id": "mythdrift-880270afbd",
+    "narrative_snippet": "The whispering echo filled the grand chamber, echoing off marble walls in a mesmerizing dance. The mirror-masked statues appeared to be watching and w...",
+    "symbols": [
+      "1. Whisper",
+      "2. Echoes",
+      "3. Grand Chamber",
+      "4. Marble Walls",
+      "5. Mirror-Masked Statues",
+      "6. Time",
+      "7. Secrets"
+    ],
+    "timestamp": "2025-04-29T20:37:47.771539",
+    "model_used": "deepseek-llm:latest",
+    "drift_instruction": "Whisper of ancient echoes.",
+    "type": "drift",
+    "lineage": {
+      "origin_id": "mythbranch-glyph001",
+      "parent_id": "mythdrift-25866a3922",
+      "drift_step": 2
+    },
+    "thought_shorthand": {
+      "T1_CUE": "marble walls",
+      "T2_MAP": "marble",
+      "T3_EVAL": "marble",
+      "T4_PLAN": "marble_walls"
+    }
+  },
+  {
+    "entry_id": "mythbranch-b3d3de4fdc",
+    "narrative_snippet": "\nIn its light appear two figures: a woman and a man. They stand upon a bridge, woven from vines that stretch out over a sea of grasses, blossoms, and ...",
+    "symbols": [
+      "Woman in mourning robes carrying a book of sorrow",
+      "Man in moonbeam armor holding a star-forged sword",
+      "Vast garden filled with wonders beyond understanding or control"
+    ],
+    "timestamp": "2025-04-29T20:38:02.895226",
+    "model_used": "hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M",
+    "type": "branch",
+    "lineage": {
+      "origin_id": "mythbranch-b3d3de4fdc",
+      "parent_id": null,
+      "drift_step": 0
+    },
+    "thought_shorthand": {
+      "T1_CUE": "woman wears robes of mourning dyed in shades of black and blue.",
+      "T2_MAP": "BlackBlue",
+      "T3_EVAL": "The BlackBlue symbol has a relevant impact on the narrative as it signifies the woman's attire, which is consistent with her state of mourning.",
+      "T4_PLAN": "Woman wears black and blue robes."
+    }
+  },
+  {
+    "entry_id": "mythcollapse-41eecee99e",
+    "narrative_snippet": "In the beginning, there was only darkness, an eternal night that shrouded the land in ice. Within this void, something stirred, for deep within its he...",
+    "symbols": [
+      "eternal night",
+      "clockwork being",
+      "will",
+      "gears",
+      "core",
+      "order/chaos",
+      "balance"
+    ],
+    "timestamp": "2025-04-29T20:38:11.894548",
+    "model_used": "deepseek-llm:latest",
+    "type": "collapse",
+    "lineage": {
+      "origin_id": "mythcollapse-41eecee99e",
+      "parent_id": null,
+      "drift_step": 0
+    },
+    "thought_shorthand": {
+      "T1_CUE": "first seed's mind turning to comprehend its world and purpose, becoming ever more intricate and enigmatic with each cycle.",
+      "T2_MAP": "🌱",
+      "T3_EVAL": "The 🌱 symbol is relevant as it represents the first seed's growth and transformation throughout its cycles, highlighting the complexity of its understanding and purpose in the narrative.",
+      "T4_PLAN": "🌱"
+    }
+  },
+  {
+    "entry_id": "mythdrift-ed4fc14f0c",
+    "narrative_snippet": "Step 1: Identify the main theme or message of the story. In this case, it seems to be about whispers of ancient echoes from a long-forgotten past infl...",
+    "symbols": [
+      "Whispers of ancient echoes",
+      "Eternal cycle of light and darkness",
+      "Protective walls of grand cities",
+      "Mighty rulers with iron fists",
+      "Power to shape the world through whispers",
+      "Tales from the past"
+    ],
+    "timestamp": "2025-04-29T20:39:56.990691",
+    "model_used": "deepseek-llm:latest",
+    "drift_instruction": "Whisper of ancient echoes.",
+    "type": "drift",
+    "lineage": {
+      "origin_id": "mythcollapse-a5c568d335",
+      "parent_id": "mythcollapse-a5c568d335",
+      "drift_step": 1
+    },
+    "thought_shorthand": {
+      "T1_CUE": "whispers of ancient echoes from times forgotten",
+      "T2_MAP": "echoes",
+      "T3_EVAL": "Echoes",
+      "T4_PLAN": "Part #1: Consider the Clue, Symbol, and Evaluation."
+    }
+  },
+  {
+    "entry_id": "mythbranch-4d3456fe0b",
+    "narrative_snippet": "\n\n### Take action\nHelp us identify this poem by providing its title and author if you know them.",
+    "symbols": [
+      "[\"poem\"",
+      "\"title\"",
+      "\"author\"]"
+    ],
+    "timestamp": "2025-04-29T20:40:04.149870",
+    "model_used": "hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M",
+    "type": "branch",
+    "lineage": {
+      "origin_id": "mythbranch-4d3456fe0b",
+      "parent_id": null,
+      "drift_step": 0
+    },
+    "thought_shorthand": {
+      "T1_CUE": "Take action",
+      "T2_MAP": "Action",
+      "T3_EVAL": "Action",
+      "T4_PLAN": "Act"
+    }
+  },
+  {
+    "entry_id": "mythcollapse-0a80c2d398",
+    "narrative_snippet": "In an age long forgotten, there existed an immense machine, grander than any cathedral or mountain. This colossal construct was said to have been cons...",
+    "symbols": [
+      "Conquering force (adversaries)",
+      "Ordering mechanism (guardians)",
+      "Frozen time/decay",
+      "Intricate craftsmanship"
+    ],
+    "timestamp": "2025-04-29T20:40:11.403607",
+    "model_used": "deepseek-llm:latest",
+    "type": "collapse",
+    "lineage": {
+      "origin_id": "mythcollapse-0a80c2d398",
+      "parent_id": null,
+      "drift_step": 0
+    },
+    "thought_shorthand": {
+      "T1_CUE": "clockwork sun 'Sol Invictus'",
+      "T2_MAP": "sun",
+      "T3_EVAL": "The sun symbol is relevant and potentially impactful on the narrative as it represents the clockwork sun deity, Sol Invictus.",
+      "T4_PLAN": "clockwork sun 'Sol Invictus'"
+    }
+  },
+  {
+    "entry_id": "mythdrift-1d4e344348",
+    "narrative_snippet": "The wind whispered secrets in the language of ancient whispers, a language that transcends time itself. The whispers were ancient echoes that have bee...",
+    "symbols": [
+      "whispers",
+      "ancient",
+      "time",
+      "language",
+      "secrets",
+      "generations",
+      "preserved"
+    ],
+    "timestamp": "2025-04-29T20:50:47.115135",
+    "model_used": "deepseek-llm:latest",
+    "drift_instruction": "Whisper of ancient echoes.",
+    "type": "drift",
+    "lineage": {
+      "origin_id": "mythbranch-ab365c58f0",
+      "parent_id": "mythbranch-ab365c58f0",
+      "drift_step": 1
+    },
+    "thought_shorthand": {
+      "T1_CUE": "love_blossomed",
+      "T2_MAP": "Blossomed",
+      "T3_EVAL": "Love blossomed symbolizes a significant event or moment in the narrative that brings happiness and positive emotions.",
+      "T4_PLAN": "'Celebrate love blossoming'"
+    }
+  },
+  {
+    "entry_id": "mythbranch-51e88f72e5",
+    "narrative_snippet": "\nThe wind whispers through the shadows of the trees.\nA girl stands alone beneath an ancient oak, staring up into its branches with sad eyes that hold ...",
+    "symbols": [
+      "\\n\\ngarden  \\nflute"
+    ],
+    "timestamp": "2025-04-29T20:50:58.903276",
+    "model_used": "hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M",
+    "type": "branch",
+    "lineage": {
+      "origin_id": "mythbranch-51e88f72e5",
+      "parent_id": null,
+      "drift_step": 0
+    },
+    "thought_shorthand": {
+      "T1_CUE": "The wind whispers through the shadows of the trees.",
+      "T2_MAP": "Shadows",
+      "T3_EVAL": "Whispers",
+      "T4_PLAN": "shadows whisper"
+    }
+  },
+  {
+    "entry_id": "mythcollapse-78b55d3699",
+    "narrative_snippet": "Title: The Clockwork Sun's Endless Winter\n\nIn the furthest reaches of the universe, beyond the last whispers of light that had yet to reach it, there ...",
+    "symbols": [
+      "Title",
+      "Clockwork Sun",
+      "Endless Winter",
+      "Universe",
+      "Far Reaches",
+      "Eternal Realm of Cold",
+      "Celestial Body"
+    ],
+    "timestamp": "2025-04-29T20:51:06.900396",
+    "model_used": "deepseek-llm:latest",
+    "type": "collapse",
+    "lineage": {
+      "origin_id": "mythcollapse-78b55d3699",
+      "parent_id": null,
+      "drift_step": 0
+    },
+    "thought_shorthand": {
+      "T1_CUE": "celestial body was vast",
+      "T2_MAP": "galaxy",
+      "T3_EVAL": "galaxy",
+      "T4_PLAN": "'Explore galaxy for resources and potential allies.'"
+    }
+  },
+  {
+    "entry_id": "mythdrift-feea275430",
+    "narrative_snippet": "In a grand and echoing chamber filled with countless reflective surfaces, one mask seemed to watch back as it gazed into an infinite number of eyes. T...",
+    "symbols": [
+      "'echoing chamber'",
+      "'countless reflective surfaces'",
+      "'mask'",
+      "'skilled artisans'",
+      "'ancient echoes'",
+      "'twin masks'",
+      "'whispered inquiry'"
+    ],
+    "timestamp": "2025-04-29T20:52:12.359768",
+    "model_used": "deepseek-llm:latest",
+    "drift_instruction": "Whisper of ancient echoes.",
+    "type": "drift",
+    "lineage": {
+      "origin_id": "mythbranch-glyph001",
+      "parent_id": "mythbranch-glyph001",
+      "drift_step": 1
+    },
+    "thought_shorthand": {
+      "T1_CUE": "echoes",
+      "T2_MAP": "''']",
+      "T3_EVAL": "'Echoes' has a potential impact on the narrative as it may suggest repetition or mirroring of events, emotions, or themes throughout the story.",
+      "T4_PLAN": "'Repetition and mirroring themes'"
+    }
+  },
+  {
+    "entry_id": "mythbranch-afc54ac475",
+    "narrative_snippet": "\nIn the second garden of broken stars, a stone weeps tears of rust.\nIn the third garden of broken stars, an ivy vine whispers secrets.\nIn the fourth g...",
+    "symbols": [
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7"
+    ],
+    "timestamp": "2025-04-29T20:52:21.615323",
+    "model_used": "hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M",
+    "type": "branch",
+    "lineage": {
+      "origin_id": "mythbranch-afc54ac475",
+      "parent_id": null,
+      "drift_step": 0
+    },
+    "thought_shorthand": {
+      "T1_CUE": "Weeps tears of rust",
+      "T2_MAP": "'rust",
+      "T3_EVAL": "Rust",
+      "T4_PLAN": "wept_rust"
+    }
+  },
+  {
+    "entry_id": "mythcollapse-505310bf02",
+    "narrative_snippet": "Once upon a time, in a distant land ruled by eternal ice and darkness, there existed an immense machine unlike any other. This clockwork heart was mad...",
+    "symbols": [
+      "1. Clockwork Heart - a symbol of order, precision, and mechanical mastery; represents the balance between stability and chaos.",
+      "2. Eternal Ice & Darkness - themes of cold, frozen landscapes, and perpetual darkness; evoke feelings of isolation, despair, and vulnerability.",
+      "3. Frozen Sun - an allegory for the impermanence and delicate nature of life; serves as a reminder that even in the harshest environments, balance must be maintained.",
+      "4. Imbalance & Unrest - motifs representing disharmony, tension, and uncertainty; symbolize the consequences of neglecting essential elements within systems.",
+      "5. Young Apprentice - an embodiment of curiosity, growth, and discovery; represents the potential for change amidst adversity.",
+      "6. Tick-Tock Irregularities - a metaphor for the passage of time, its unpredictability, and the importance of maintaining balance in one's life.",
+      "7. Guardian & Protector - symbolic figures representing responsibility, sacrifice, and the need to safeguard against chaos; serve as an allegory for guardianship and the consequences of failing in that duty."
+    ],
+    "timestamp": "2025-04-29T20:52:32.309408",
+    "model_used": "deepseek-llm:latest",
+    "type": "collapse",
+    "lineage": {
+      "origin_id": "mythcollapse-505310bf02",
+      "parent_id": null,
+      "drift_step": 0
+    },
+    "thought_shorthand": {
+      "T1_CUE": "tick-tock of time had grown erratic",
+      "T2_MAP": "Clock",
+      "T3_EVAL": "'Clock': Relates to the unsteadiness and uncertainty in the passage, as it suggests a loss of control or predictability.",
+      "T4_PLAN": "'Unsteady time'; 'Tick-tock erratic Clock'."
+    }
+  },
+  {
+    "entry_id": "mythdrift-0379edd891",
+    "narrative_snippet": "The whispers of ancient echoes stirred in the air as a group of young mages gathered around an enchanted tome filled with esoteric knowledge and stori...",
+    "symbols": [
+      "1. Enchanted tome",
+      "2. Esoteric knowledge",
+      "3. Multidimensional stories",
+      "4. Time travel",
+      "5. Forgotten civilizations",
+      "6. Whispers of ancient echoes",
+      "7. Connection to the past"
+    ],
+    "timestamp": "2025-04-29T20:53:20.293710",
+    "model_used": "deepseek-llm:latest",
+    "drift_instruction": "Whisper of ancient echoes.",
+    "type": "drift",
+    "lineage": {
+      "origin_id": "mythbranch-seed002",
+      "parent_id": "mythdrift-seed002-d2",
+      "drift_step": 3
+    },
+    "thought_shorthand": {
+      "T1_CUE": "enchanted tome",
+      "T2_MAP": "tome",
+      "T3_EVAL": "The 'enchanted' aspect of the symbol adds an element of wonder and magic to the narrative, potentially influencing characters' actions or beliefs.",
+      "T4_PLAN": "enchanted tome"
+    }
+  },
+  {
+    "entry_id": "mythbranch-06565539d4",
+    "narrative_snippet": "\nAtop an oaken table, an unremarkable lamp burns bright with a will of its own. The soft glow illuminates pages filled with handwritten verses that te...",
+    "symbols": [
+      "oaken table: stability, tradition, wisdom",
+      "handwritten verses: creativity, imagination, individuality",
+      "distant worlds: exploration, adventure, wonder",
+      "magical creatures: fantasy, enchantment, possibility",
+      "shadows: mystery, hidden truths, fears",
+      "characters: identity, personality, agency",
+      "battles: conflict, struggle, determination"
+    ],
+    "timestamp": "2025-04-29T20:53:33.514876",
+    "model_used": "hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M",
+    "type": "branch",
+    "lineage": {
+      "origin_id": "mythbranch-06565539d4",
+      "parent_id": null,
+      "drift_step": 0
+    },
+    "thought_shorthand": {
+      "T1_CUE": "distant worlds and magical creatures",
+      "T2_MAP": "worlds_creatures",
+      "T3_EVAL": "Relevant",
+      "T4_PLAN": "plan Worlds_creatures"
+    }
+  },
+  {
+    "entry_id": "mythcollapse-5090227c72",
+    "narrative_snippet": "Once upon a time, in a distant realm where the sky was as still and cold as ice, there stood a grand machine that held all life. This clockwork heart ...",
+    "symbols": [
+      "'clockwork heart'",
+      "'gears meshing together'",
+      "'ever-burning fire'",
+      "'frozen surface'",
+      "'rhythmic pulses'",
+      "'harmonic existence'",
+      "'small shift within the gears'"
+    ],
+    "timestamp": "2025-04-29T20:53:41.600225",
+    "model_used": "deepseek-llm:latest",
+    "type": "collapse",
+    "lineage": {
+      "origin_id": "mythcollapse-5090227c72",
+      "parent_id": null,
+      "drift_step": 0
+    },
+    "thought_shorthand": {
+      "T1_CUE": "distant realm where the sky was as still and cold as ice,",
+      "T2_MAP": "ice_cold_sky",
+      "T3_EVAL": "Relevant",
+      "T4_PLAN": "ice_cold_sky"
+    }
+  },
+  {
+    "entry_id": "mythdrift-9beb4fde98",
+    "narrative_snippet": "In the depths of an ancient forest, a young girl named Lily stumbles upon a mysterious library hidden within a hollow tree. As she explores its shelve...",
+    "symbols": [
+      "Enchanted Realm",
+      "Whispers of Old Tales",
+      "Changeable Book",
+      "Ancient Creatures (Dragons, Fairies, Witches)",
+      "Journey Through the World",
+      "Eerie Cave with Symbols",
+      "Mysterious Language"
+    ],
+    "timestamp": "2025-04-29T20:57:24.507175",
+    "model_used": "deepseek-llm:latest",
+    "drift_instruction": "Whisper of ancient echoes.",
+    "type": "drift",
+    "lineage": {
+      "origin_id": "mythbranch-glyph002",
+      "parent_id": "mythbranch-glyph002",
+      "drift_step": 1
+    },
+    "thought_shorthand": {
+      "T1_CUE": "whispers",
+      "T2_MAP": "hisses",
+      "T3_EVAL": "The symbol 'hisses' is more relevant than 'whistles,' as hisses typically convey a sense of danger, malice, or secrecy, which could potentially impact the narrative in some way.",
+      "T4_PLAN": "secrets"
+    }
+  },
+  {
+    "entry_id": "mythbranch-218f2a66a6",
+    "narrative_snippet": "\nIn the second garden of broken stars, the path bends in unfamiliar directions.\nIn the third garden of broken stars, shadows dance with unnatural grac...",
+    "symbols": [
+      "1) garden",
+      "2) path",
+      "3) shadows",
+      "4) losing"
+    ],
+    "timestamp": "2025-04-29T20:57:32.458362",
+    "model_used": "hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M",
+    "type": "branch",
+    "lineage": {
+      "origin_id": "mythbranch-218f2a66a6",
+      "parent_id": null,
+      "drift_step": 0
+    },
+    "thought_shorthand": {
+      "T1_CUE": "gardens",
+      "T2_MAP": "g",
+      "T3_EVAL": "g",
+      "T4_PLAN": "ggarden"
+    }
+  },
+  {
+    "entry_id": "mythcollapse-9c0d0c0636",
+    "narrative_snippet": "Once upon a time, in a far-off land, there was an incredible machine that existed solely to keep time. This great mechanical being, with its clockwork...",
+    "symbols": [
+      "Timekeeper",
+      "Clockwork heart",
+      "Frozen sun",
+      "Entropy",
+      "Gear slippage",
+      "Frost patterns",
+      "Metal and ice tools"
+    ],
+    "timestamp": "2025-04-29T20:57:38.644942",
+    "model_used": "deepseek-llm:latest",
+    "type": "collapse",
+    "lineage": {
+      "origin_id": "mythcollapse-9c0d0c0636",
+      "parent_id": null,
+      "drift_step": 0
+    },
+    "thought_shorthand": {
+      "T1_CUE": "fateful day,\" \"unprecedented malfunction,\" \"frost patterns began to bloom across the silent gears,\" \"threat of decay.",
+      "T2_MAP": "frost",
+      "T3_EVAL": "Frost has a significant impact on the narrative, as it symbolizes an unprecedented malfunction and the threat of decay in the machinery.",
+      "T4_PLAN": "'Unprecedented malfunction leads to frost patterns across silent gears, threatening decay.'"
+    }
+  },
+  {
+    "entry_id": "mythdrift-c1d65469e7",
+    "narrative_snippet": "Deep in the heart of an ancient forest, the very earth itself hums with whispers of forgotten tales and secrets long-held by trees that have stood wat...",
+    "symbols": [
+      "Whispers of the past",
+      "Forgotten tales",
+      "Echoes from another world",
+      "Timeless harmony between creatures",
+      "Verdant, vibrant life",
+      "Mystical cavern",
+      "Guardians protecting secrets"
+    ],
+    "timestamp": "2025-04-29T20:59:15.042562",
+    "model_used": "deepseek-llm:latest",
+    "drift_instruction": "Whisper of ancient echoes.",
+    "type": "drift",
+    "lineage": {
+      "origin_id": "mythbranch-seed003",
+      "parent_id": "mythbranch-seed003",
+      "drift_step": 1
+    },
+    "thought_shorthand": {
+      "T1_CUE": "whispers of forgotten tales",
+      "T2_MAP": "whispers",
+      "T3_EVAL": "Relevant",
+      "T4_PLAN": "Part #1: Consider the Clue, Symbol, and Evaluation."
+    }
+  },
+  {
+    "entry_id": "mythbranch-e678939e99",
+    "narrative_snippet": "\nThe darkness between the stars is cold and deep. The only light comes from the dying glow of an old, cracked lantern. It sways weakly in the emptines...",
+    "symbols": [
+      "woman",
+      "bird",
+      "man",
+      "reaching",
+      "obelisk",
+      "hieroglyphs",
+      "chill"
+    ],
+    "timestamp": "2025-04-29T20:59:26.394502",
+    "model_used": "hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M",
+    "type": "branch",
+    "lineage": {
+      "origin_id": "mythbranch-e678939e99",
+      "parent_id": null,
+      "drift_step": 0
+    },
+    "thought_shorthand": {
+      "T1_CUE": "carved with hieroglyphs",
+      "T2_MAP": "Hieroglyph",
+      "T3_EVAL": "Relevant to the narrative as it provides insight into ancient culture and symbolism.",
+      "T4_PLAN": "Explore Hieroglyphs"
+    }
+  },
+  {
+    "entry_id": "mythcollapse-dc3d181eb3",
+    "narrative_snippet": "In the beginning, there was an eternal realm known as the Worldless Wasteland. This vast expanse stretched beyond imagination, filled with nothing but...",
+    "symbols": [
+      "Darkness",
+      "Cold",
+      "Emptiness",
+      "Whispers",
+      "Tales",
+      "Balance",
+      "Brightness"
+    ],
+    "timestamp": "2025-04-29T20:59:33.761538",
+    "model_used": "deepseek-llm:latest",
+    "type": "collapse",
+    "lineage": {
+      "origin_id": "mythcollapse-dc3d181eb3",
+      "parent_id": null,
+      "drift_step": 0
+    },
+    "thought_shorthand": {
+      "T1_CUE": "illuminated an area several miles wide.",
+      "T2_MAP": "radiance",
+      "T3_EVAL": "The radiance symbol is relevant and potentially impactful on the narrative as it suggests a significant presence of light, possibly from a source such as a lighthouse or a city, which could guide characters through their journey.",
+      "T4_PLAN": "radiance"
+    }
+  },
+  {
+    "entry_id": "mythdrift-daffac8faf",
+    "narrative_snippet": "The wind whispers softly among the reeds that line this mysterious landscape. The pair watch as gentle ripples dance across the surface of the grassla...",
+    "symbols": [
+      "* Reeds",
+      "* Grassland sea",
+      "* Ancient whispers",
+      "* Wind",
+      "* Hair (brown)",
+      "* Dress (flowing white)",
+      "* Legs"
+    ],
+    "timestamp": "2025-04-29T21:00:50.591233",
+    "model_used": "deepseek-llm:latest",
+    "drift_instruction": "Whisper of ancient echoes.",
+    "type": "drift",
+    "lineage": {
+      "origin_id": "mythbranch-b3d3de4fdc",
+      "parent_id": "mythbranch-b3d3de4fdc",
+      "drift_step": 1
+    },
+    "thought_shorthand": {
+      "T1_CUE": "whispers",
+      "T2_MAP": "hsh",
+      "T3_EVAL": "'hsh' symbol has a potential impact on the narrative as it represents whispers or secret communication, adding an element of mystery and intrigue to the story.",
+      "T4_PLAN": "hhsh"
+    }
+  },
+  {
+    "entry_id": "mythbranch-aafc8f98d5",
+    "narrative_snippet": "\nInside, a man with a wretched face sits on a throne made from bones. The skulls of his servants adorn the wall behind him. One by one he summons them...",
+    "symbols": [
+      "1 (Jengo)",
+      "2 (throne made from bones)",
+      "3 (wall with skulls)",
+      "4 (wraiths)",
+      "5 (Raider)"
+    ],
+    "timestamp": "2025-04-29T21:01:02.467740",
+    "model_used": "hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M",
+    "type": "branch",
+    "lineage": {
+      "origin_id": "mythbranch-aafc8f98d5",
+      "parent_id": null,
+      "drift_step": 0
+    },
+    "thought_shorthand": {
+      "T1_CUE": "man's name is Jengo",
+      "T2_MAP": "J",
+      "T3_EVAL": "J",
+      "T4_PLAN": "JJ"
+    }
+  },
+  {
+    "entry_id": "mythcollapse-2e8f9070e5",
+    "narrative_snippet": "Once upon a time in an alternate universe where the sun was never born but kept dormant, there existed a world that thrived on perpetual winter. In th...",
+    "symbols": [
+      "Ice",
+      "Perpetual Winter",
+      "Icy Land",
+      "Creatures",
+      "Harmony",
+      "Clockwork Heart",
+      "Frozen Sun"
+    ],
+    "timestamp": "2025-04-29T21:01:12.715932",
+    "model_used": "deepseek-llm:latest",
+    "type": "collapse",
+    "lineage": {
+      "origin_id": "mythcollapse-2e8f9070e5",
+      "parent_id": null,
+      "drift_step": 0
+    },
+    "thought_shorthand": {
+      "T1_CUE": "Clockwork Maker",
+      "T2_MAP": "Clockwork",
+      "T3_EVAL": "Clockwork is relevant to the narrative as it represents the concept of mechanical and clock-based mechanisms, which could be a central theme in the story.",
+      "T4_PLAN": "'Explore the history and development of clockwork mechanisms.'"
+    }
+  },
+  {
+    "entry_id": "mythdrift-099b444017",
+    "narrative_snippet": "In an epoch so deeply buried that only whispers of its existence remain, there stood a colossus of such magnitude that it seemed as awe-inspiring as t...",
+    "symbols": [
+      "1. Power",
+      "2. Mystery",
+      "3. Creation",
+      "4. Advancement",
+      "5. Healing",
+      "6. Sorrow",
+      "7. Time"
+    ],
+    "timestamp": "2025-04-29T21:02:51.980315",
+    "model_used": "deepseek-llm:latest",
+    "drift_instruction": "Whisper of ancient echoes.",
+    "type": "drift",
+    "lineage": {
+      "origin_id": "mythcollapse-0a80c2d398",
+      "parent_id": "mythcollapse-0a80c2d398",
+      "drift_step": 1
+    },
+    "thought_shorthand": {
+      "T1_CUE": "enigmatic device",
+      "T2_MAP": "device",
+      "T3_EVAL": "The enigmatic device adds an air of mystery to the narrative, potentially drawing the audience in and keeping them engaged.",
+      "T4_PLAN": "enigmatic_device"
+    }
+  },
+  {
+    "entry_id": "mythbranch-21abfffdce",
+    "narrative_snippet": "\nIn the second garden of broken stars, a sparrow's song echoes.\nIn the third garden of broken stars, a tear falls on petals.\nIn the fourth garden of b...",
+    "symbols": [
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7"
+    ],
+    "timestamp": "2025-04-29T21:03:01.082589",
+    "model_used": "hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M",
+    "type": "branch",
+    "lineage": {
+      "origin_id": "mythbranch-21abfffdce",
+      "parent_id": null,
+      "drift_step": 0
+    },
+    "thought_shorthand": {
+      "T1_CUE": "garden",
+      "T2_MAP": "garden",
+      "T3_EVAL": "The garden symbol is relevant and potentially impactful on the narrative as it can represent a peaceful and calming environment for characters to interact in, or serve as a contrast to other parts of the story with its lush greenery.",
+      "T4_PLAN": "garden"
+    }
+  },
+  {
+    "entry_id": "mythcollapse-93b9876df9",
+    "narrative_snippet": "Once upon a time in an ancient world shrouded by perpetual ice, there existed a vast realm of eternal night. The only life that could withstand this i...",
+    "symbols": [
+      "1. Clockwork",
+      "2. Frozen World",
+      "3. Perpetual Night",
+      "4. Timeless Beings",
+      "5. Heartbeat Rhythm",
+      "6. Gear Slippage",
+      "7. Silent Gears"
+    ],
+    "timestamp": "2025-04-29T21:03:10.569114",
+    "model_used": "deepseek-llm:latest",
+    "type": "collapse",
+    "lineage": {
+      "origin_id": "mythcollapse-93b9876df9",
+      "parent_id": null,
+      "drift_step": 0
+    },
+    "thought_shorthand": {
+      "T1_CUE": "frost patterns",
+      "T2_MAP": "ice",
+      "T3_EVAL": "Ice has a significant impact on the narrative as it represents the cold and harsh environment in which the characters find themselves, adding tension and danger to their journey.",
+      "T4_PLAN": "'Add frost patterns to the ice'"
+    }
+  },
+  {
+    "entry_id": "mythdrift-7489bb932c",
+    "narrative_snippet": "As I stood atop this ancient ruin, whispers of forgotten tales lingered in the air around me. The setting sun cast its warm glow across the stone wall...",
+    "symbols": [
+      "ancient ruins",
+      "forgotten tales",
+      "setting sun",
+      "warm glow",
+      "eerie ambiance",
+      "mesmerizing",
+      "faint distant hum"
+    ],
+    "timestamp": "2025-04-29T21:04:51.154621",
+    "model_used": "deepseek-llm:latest",
+    "drift_instruction": "Whisper of ancient echoes.",
+    "type": "drift",
+    "lineage": {
+      "origin_id": "mythbranch-fb7162b763",
+      "parent_id": "mythbranch-fb7162b763",
+      "drift_step": 1
+    },
+    "thought_shorthand": {
+      "T1_CUE": "ancient ruin",
+      "T2_MAP": "ruin",
+      "T3_EVAL": "Relevant to the narrative as it may evoke a sense of history and age, potentially impacting the story through its connection to the past.",
+      "T4_PLAN": "ruin explore"
+    }
+  },
+  {
+    "entry_id": "mythbranch-6c8ae3fc5e",
+    "narrative_snippet": "\n\nIn a distant corner of the universe, where time itself is warped and space is shattered into an infinity of fragments, there exists a place known as...",
+    "symbols": [
+      "10"
+    ],
+    "timestamp": "2025-04-29T21:05:07.732599",
+    "model_used": "hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M",
+    "type": "branch",
+    "lineage": {
+      "origin_id": "mythbranch-6c8ae3fc5e",
+      "parent_id": null,
+      "drift_step": 0
+    },
+    "thought_shorthand": {
+      "T1_CUE": "crystal lantern",
+      "T2_MAP": "lantern",
+      "T3_EVAL": "The lantern symbol is relevant to the narrative as it represents a source of light and guidance in dark situations, which could be symbolic for overcoming obstacles or finding one's way.",
+      "T4_PLAN": "crystal_lantern_find\\_light"
+    }
+  },
+  {
+    "entry_id": "mythcollapse-432810fa24",
+    "narrative_snippet": "Once upon a time in the depths of an ancient forest, there was a vast and intricate machine that served as the heartbeat of existence. This clockwork ...",
+    "symbols": [
+      "frozen sun",
+      "clockwork heart",
+      "eternal cycle of life and death",
+      "delicate structure",
+      "small gear",
+      "ripple effect",
+      "faltering rhythm"
+    ],
+    "timestamp": "2025-04-29T21:05:15.035456",
+    "model_used": "deepseek-llm:latest",
+    "type": "collapse",
+    "lineage": {
+      "origin_id": "mythcollapse-432810fa24",
+      "parent_id": null,
+      "drift_step": 0
+    },
+    "thought_shorthand": {
+      "T1_CUE": "clockwork heart",
+      "T2_MAP": "Clockwork",
+      "T3_EVAL": "Clockwork symbolizes precision and mechanical order in the narrative.",
+      "T4_PLAN": "Clockwork Heart"
+    }
+  },
+  {
+    "entry_id": "mythdrift-e3845f6cce",
+    "narrative_snippet": "Deep in the heart of an ancient forest, where sunlight filtered through towering trees and moss clung to every surface, whispers echoed within the ear...",
+    "symbols": [
+      "Wisdom",
+      "Adventure",
+      "Enlightenment",
+      "Forgotten Gods",
+      "Hidden Treasures",
+      "Long-Lost Civilizations",
+      "Mystical Realm"
+    ],
+    "timestamp": "2025-04-29T21:07:31.489128",
+    "model_used": "deepseek-llm:latest",
+    "drift_instruction": "Whisper of ancient echoes.",
+    "type": "drift",
+    "lineage": {
+      "origin_id": "mythbranch-seed003",
+      "parent_id": "mythbranch-seed003",
+      "drift_step": 1
+    },
+    "thought_shorthand": {
+      "T1_CUE": "sentinels guarding secrets buried deep beneath their protective embrace.",
+      "T2_MAP": "Guardians_of_secrets",
+      "T3_EVAL": "Guardians_of_secretsRelevant",
+      "T4_PLAN": "SentinelsProtectingSecrets"
+    }
+  },
+  {
+    "entry_id": "mythbranch-38efa692a4",
+    "narrative_snippet": "\nInside its glass globe, an ancient lightning bug flutters and blinks. It glows with a radiant warmth that calls to another world—a place where darkne...",
+    "symbols": [
+      "The ancient lightning bug represents hope and guidance in darkness.",
+      "The willow tree symbolizes resilience and endurance.",
+      "The abandoned garden represents loss and neglect, yet also holds the potential for renewal and discovery.",
+      "The lantern itself is a beacon of possibility, waiting to be ignited by a hero or someone with the capacity for change."
+    ],
+    "timestamp": "2025-04-29T21:07:44.513059",
+    "model_used": "hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M",
+    "type": "branch",
+    "lineage": {
+      "origin_id": "mythbranch-38efa692a4",
+      "parent_id": null,
+      "drift_step": 0
+    },
+    "thought_shorthand": {
+      "T1_CUE": "forgotten garden",
+      "T2_MAP": "garden",
+      "T3_EVAL": "The garden symbol has a potential impact on the narrative by representing a place of tranquility and nostalgia, which may play a significant role in the story.",
+      "T4_PLAN": "forgotten_garden"
+    }
+  },
+  {
+    "entry_id": "mythcollapse-1f7d01540e",
+    "narrative_snippet": "In the beginning, there was a great Machine that spun and hummed with life, its heart a clockwork engine that powered an eternal day. This was the tim...",
+    "symbols": [
+      "* Order",
+      "* Stability",
+      "* Time",
+      "* Creation",
+      "* Repair",
+      "* Willpower",
+      "* Entropy"
+    ],
+    "timestamp": "2025-04-29T21:07:49.045497",
+    "model_used": "deepseek-llm:latest",
+    "type": "collapse",
+    "lineage": {
+      "origin_id": "mythcollapse-1f7d01540e",
+      "parent_id": null,
+      "drift_step": 0
+    },
+    "thought_shorthand": {
+      "T1_CUE": "first seed",
+      "T2_MAP": "First",
+      "T3_EVAL": "First",
+      "T4_PLAN": "First plant a seed"
+    }
+  },
+  {
+    "entry_id": "mythdrift-d834744e87",
+    "narrative_snippet": "She whispered to herself about the distant murmurings from a long-forgotten era, which seemed to resonate deep in people's hearts and prods them with ...",
+    "symbols": [
+      "1. Time",
+      "2. Secrets",
+      "3. Longing",
+      "4. Echoes",
+      "5. Remembrance",
+      "6. Mysteries",
+      "7. Hearts"
+    ],
+    "timestamp": "2025-04-29T21:08:57.581685",
+    "model_used": "deepseek-llm:latest",
+    "drift_instruction": "Whisper of ancient echoes.",
+    "type": "drift",
+    "lineage": {
+      "origin_id": "mythbranch-d6d786a929",
+      "parent_id": "mythdrift-2f0d7c0070",
+      "drift_step": 2
+    },
+    "thought_shorthand": {
+      "T1_CUE": "whispered",
+      "T2_MAP": "whispered",
+      "T3_EVAL": "Relevant",
+      "T4_PLAN": "Part 1: Understand the Clue and Symbol"
+    }
+  },
+  {
+    "entry_id": "mythbranch-bb42fc6a9d",
+    "narrative_snippet": "\nIn the second garden of broken stars, an old well flows freely with water.\nIn the third garden of broken stars, a single tree stands tall and proud.\n...",
+    "symbols": [
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7"
+    ],
+    "timestamp": "2025-04-29T21:09:08.633507",
+    "model_used": "hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M",
+    "type": "branch",
+    "lineage": {
+      "origin_id": "mythbranch-bb42fc6a9d",
+      "parent_id": null,
+      "drift_step": 0
+    },
+    "thought_shorthand": {
+      "T1_CUE": "old well flows freely with water",
+      "T2_MAP": "water",
+      "T3_EVAL": "Water is essential for life and can symbolize purity, renewal, or even the passage of time in a narrative.",
+      "T4_PLAN": "drink"
+    }
+  },
+  {
+    "entry_id": "mythcollapse-e5439907da",
+    "narrative_snippet": "Once upon a time in an ancient realm where the clocks ticked more than the hands on any single one, there stood an immortal being whose very existence...",
+    "symbols": [
+      "Time",
+      "Order",
+      "Disruption",
+      "Balance",
+      "Unity",
+      "Chaos",
+      "Rebellion"
+    ],
+    "timestamp": "2025-04-29T21:09:17.981299",
+    "model_used": "deepseek-llm:latest",
+    "type": "collapse",
+    "lineage": {
+      "origin_id": "mythcollapse-e5439907da",
+      "parent_id": null,
+      "drift_step": 0
+    },
+    "thought_shorthand": {
+      "T1_CUE": "fateful day, one of those clockwork hearts stumbled upon a lost key - forging new pathways within Chronos' carefully calibrated universe.",
+      "T2_MAP": "heart",
+      "T3_EVAL": "heart - signifies a pivotal discovery or turning point in the narrative, potentially leading to significant changes and developments within the chronologically structured world.",
+      "T4_PLAN": "found key - new pathways"
+    }
+  },
+  {
+    "entry_id": "mythdrift-fe7966ac10",
+    "narrative_snippet": "chaos and emptiness. The whispers of ancient echoes reverberated through this desolate landscape, haunting the very air itself. These echoes were remn...",
+    "symbols": [
+      "Chaos",
+      "Emptiness",
+      "Ancient Echoes",
+      "Worldless Wasteland",
+      "The Whisperer",
+      "Curse",
+      "Soul burden"
+    ],
+    "timestamp": "2025-04-29T21:11:02.575911",
+    "model_used": "deepseek-llm:latest",
+    "drift_instruction": "Whisper of ancient echoes.",
+    "type": "drift",
+    "lineage": {
+      "origin_id": "mythcollapse-dc3d181eb3",
+      "parent_id": "mythcollapse-dc3d181eb3",
+      "drift_step": 1
+    },
+    "thought_shorthand": {
+      "T1_CUE": "echoes",
+      "T2_MAP": "'e'",
+      "T3_EVAL": "The 'e' symbol has a relevant and impactful presence in the narrative, as it represents the concept of echoes or reverberations.",
+      "T4_PLAN": "'Echoes'"
+    }
+  },
+  {
+    "entry_id": "mythbranch-579aaa672f",
+    "narrative_snippet": " A thousand years have passed since the last traveler found its light. The path it once illuminated lies buried beneath layers of ash and dirt, lost t...",
+    "symbols": [
+      "The lamp (representing hope and guidance)",
+      "The old woman (representing memory and guardianship)",
+      "The tattered book (representing stories and experiences)",
+      "The emptiness surrounding them both (symbolizing the passage of time and loss)"
+    ],
+    "timestamp": "2025-04-29T21:11:16.766369",
+    "model_used": "hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M",
+    "type": "branch",
+    "lineage": {
+      "origin_id": "mythbranch-579aaa672f",
+      "parent_id": null,
+      "drift_step": 0
+    },
+    "thought_shorthand": {
+      "T1_CUE": "thousand years",
+      "T2_MAP": "th",
+      "T3_EVAL": "'t",
+      "T4_PLAN": "th"
+    }
+  },
+  {
+    "entry_id": "mythcollapse-6302846027",
+    "narrative_snippet": "In the beginning, there was a great and eternal slumber that held all things in its grip. This vast universe spun through time without end or purpose,...",
+    "symbols": [
+      "Time",
+      "Creation",
+      "Order",
+      "Entropy",
+      "Clockwork",
+      "Repair",
+      "Task"
+    ],
+    "timestamp": "2025-04-29T21:11:24.003192",
+    "model_used": "deepseek-llm:latest",
+    "type": "collapse",
+    "lineage": {
+      "origin_id": "mythcollapse-6302846027",
+      "parent_id": null,
+      "drift_step": 0
+    },
+    "thought_shorthand": {
+      "T1_CUE": "clockwork heart",
+      "T2_MAP": "Clockwork",
+      "T3_EVAL": "Clockwork symbolizes precision and mechanical order in the narrative.",
+      "T4_PLAN": "Clockwork Heart"
+    }
+  },
+  {
+    "entry_id": "mythdrift-562c947608",
+    "narrative_snippet": "...of a wandering traveler who stumbled upon an enigmatic clearing hidden amongst the trunks and foliage. As he approached, the hushed murmurs grew lo...",
+    "symbols": [
+      "1. Mystery",
+      "2. Whispers",
+      "3. Secrets",
+      "4. Time",
+      "5. Tapestry",
+      "6. Curiosity",
+      "7. Destiny"
+    ],
+    "timestamp": "2025-04-29T21:12:55.881944",
+    "model_used": "deepseek-llm:latest",
+    "drift_instruction": "Whisper of ancient echoes.",
+    "type": "drift",
+    "lineage": {
+      "origin_id": "mythbranch-seed003",
+      "parent_id": "mythdrift-e3845f6cce",
+      "drift_step": 2
+    },
+    "thought_shorthand": {
+      "T1_CUE": "whispers swirling together like a symphony of history",
+      "T2_MAP": "Symphony",
+      "T3_EVAL": "Symphony",
+      "T4_PLAN": "Concert"
+    }
+  },
+  {
+    "entry_id": "mythbranch-5a65d107eb",
+    "narrative_snippet": "\nThe ghostly light stirs as I approach, drawn by its eerie dance like moths to flame. As it illuminates the shadows around me, revealing statues froze...",
+    "symbols": [
+      "garden",
+      "ghostly light",
+      "magic",
+      "statues",
+      "vines",
+      "whisper",
+      "shadows"
+    ],
+    "timestamp": "2025-04-29T21:13:11.862584",
+    "model_used": "hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M",
+    "type": "branch",
+    "lineage": {
+      "origin_id": "mythbranch-5a65d107eb",
+      "parent_id": null,
+      "drift_step": 0
+    },
+    "thought_shorthand": {
+      "T1_CUE": "gloomy garden",
+      "T2_MAP": "garden",
+      "T3_EVAL": "The 'garden' symbol has a potential impact on the narrative as it could represent a dark or neglected outdoor space, adding to the overall atmosphere of gloominess.",
+      "T4_PLAN": "gloomy_garden"
+    }
+  },
+  {
+    "entry_id": "mythcollapse-a5ef65add6",
+    "narrative_snippet": "In the beginning, there was only darkness. This void stretched endlessly in every direction, with nothing to break its eternal monotony except for the...",
+    "symbols": [
+      "Timekeeper",
+      "Creation",
+      "Clockwork Heart",
+      "Order",
+      "Mechanism",
+      "Timelessness",
+      "Harmony"
+    ],
+    "timestamp": "2025-04-29T21:13:20.960045",
+    "model_used": "deepseek-llm:latest",
+    "type": "collapse",
+    "lineage": {
+      "origin_id": "mythcollapse-a5ef65add6",
+      "parent_id": null,
+      "drift_step": 0
+    },
+    "thought_shorthand": {
+      "T1_CUE": "clockwork heart",
+      "T2_MAP": "Clockwork",
+      "T3_EVAL": "Clockwork adds a sense of mechanical precision and order to the narrative.",
+      "T4_PLAN": "Clockwork precision"
+    }
+  },
+  {
+    "entry_id": "mythbranch-f7612dfca8",
+    "narrative_snippet": "\nThere was a princess named Aurora who lived in a magical kingdom. She had long, flowing golden hair and eyes as blue as the sky. Her beauty was legen...",
+    "symbols": [],
+    "timestamp": "2025-04-29T21:29:33.600450",
+    "model_used": "hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M",
+    "type": "branch",
+    "lineage": {
+      "origin_id": "mythbranch-f7612dfca8",
+      "parent_id": null,
+      "drift_step": 0
+    },
+    "thought_shorthand": {
+      "T1_CUE": "yearned for something more—something true and pure.",
+      "T2_MAP": "True",
+      "T3_EVAL": "True",
+      "T4_PLAN": "Seek truth and purity in life's journey."
+    }
+  },
+  {
+    "entry_id": "mythbranch-273315e462",
+    "narrative_snippet": "\nI was watching a TV show and they were playing this song. It sounded familiar but I couldn't quite place it. So, being the curious type, I looked up ...",
+    "symbols": [
+      "The TV show",
+      "the song \"The Scientist\"",
+      "Coldplay",
+      "realizing it's a classic",
+      "looking up the lyrics",
+      "recognizing the sadness/longing in the song",
+      "understanding it's about love and loss"
+    ],
+    "timestamp": "2025-04-29T21:29:45.681699",
+    "model_used": "hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M",
+    "type": "branch",
+    "lineage": {
+      "origin_id": "mythbranch-273315e462",
+      "parent_id": null,
+      "drift_step": 0
+    },
+    "thought_shorthand": {
+      "T1_CUE": "The Scientist\" by Coldplay",
+      "T2_MAP": "x",
+      "T3_EVAL": "x represents a significant emotional turning point in the narrative of \"The Scientist\".",
+      "T4_PLAN": "x represents a significant emotional turning point in the narrative of \"The Scientist\"."
+    }
+  },
+  {
+    "entry_id": "mythdrift-62c92db931",
+    "narrative_snippet": "A gentle breeze whispered through the trees, sending whispers of an ancient echo that lingered on the wind. The rustling of leaves seemed to carry the...",
+    "symbols": [
+      "Whispers of the past",
+      "Ancient echoes",
+      "Melancholic melodies",
+      "Forgotten tales",
+      "Nature's remembrancer",
+      "Timelessness",
+      "Inherited narratives"
+    ],
+    "timestamp": "2025-04-29T22:17:30.109772",
+    "model_used": "deepseek-llm:latest",
+    "drift_instruction": "Whisper of ancient echoes.",
+    "type": "drift",
+    "lineage": {
+      "origin_id": "mythbranch-51c10818bb",
+      "parent_id": "mythbranch-51c10818bb",
+      "drift_step": 1
+    },
+    "thought_shorthand": {
+      "T1_CUE": "whispering breeze",
+      "T2_MAP": "breeze",
+      "T3_EVAL": "The breeze symbol is relevant to the narrative as it represents a calming and soothing presence in its environment, adding depth and richness to the story.",
+      "T4_PLAN": "'Calm and soothing atmosphere'"
+    }
+  },
+  {
+    "entry_id": "mythbranch-7f337859a8",
+    "narrative_snippet": "\n#\nChapter 1\nEvie watched through the car window as the cityscape fell away behind them and they drove onto a darker, narrower road that cut through d...",
+    "symbols": [
+      "man (stepfather)",
+      "cityscape",
+      "dense forest",
+      "perfect",
+      "anticipation",
+      "coming all the way out here",
+      "reasons"
+    ],
+    "timestamp": "2025-04-29T22:17:47.607335",
+    "model_used": "hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M",
+    "type": "branch",
+    "lineage": {
+      "origin_id": "mythbranch-7f337859a8",
+      "parent_id": null,
+      "drift_step": 0
+    },
+    "thought_shorthand": {
+      "T1_CUE": "I thought you said this place was abandoned,\" he muttered.",
+      "T2_MAP": "abandoned",
+      "T3_EVAL": "relevant",
+      "T4_PLAN": "abandoned_place"
+    }
+  },
+  {
+    "entry_id": "mythcollapse-1a436c9908",
+    "narrative_snippet": "In the beginning, there was nothing but cold and darkness, for the universe had not yet been forged. The ancient gods who ruled over this vast emptine...",
+    "symbols": [
+      "Order/Disorder",
+      "Creation",
+      "Heart (as mechanism)",
+      "Time/Entropy",
+      "Ancient Gods",
+      "Love"
+    ],
+    "timestamp": "2025-04-29T22:17:52.934622",
+    "model_used": "deepseek-llm:latest",
+    "type": "collapse",
+    "lineage": {
+      "origin_id": "mythcollapse-1a436c9908",
+      "parent_id": null,
+      "drift_step": 0
+    },
+    "thought_shorthand": {
+      "T1_CUE": "frost patterns bloomed upon its surface like whispers of entropy, hinting at hidden flaws beneath the flawless surface.",
+      "T2_MAP": "⋄",
+      "T3_EVAL": "The symbol '⋄' has a relevant and impactful presence in the narrative due to its connection with frost patterns, which serve as whispers of entropy suggesting hidden flaws beneath the flawless surface.",
+      "T4_PLAN": "frost patterns bloomed upon its surface like whispers of entropy, revealing hidden flaws beneath the flawless exterior; investigate the object's structure for potential weaknesses and vulnerabilities."
+    }
+  },
+  {
+    "entry_id": "mythdrift-716ec2c1fc",
+    "narrative_snippet": "Once upon a time in the land of eternal light, where the sun never ceased its dance, there lived an all-powerful and all-loving King who had crafted t...",
+    "symbols": [
+      "1. Creation",
+      "2. Harmony",
+      "3. Celestial beings (cherubim, seraphim)",
+      "4. Protection",
+      "5. Virtuous life",
+      "6. Ancient echoes",
+      "7. Secrets"
+    ],
+    "timestamp": "2025-04-29T22:19:34.352905",
+    "model_used": "deepseek-llm:latest",
+    "drift_instruction": "Whisper of ancient echoes.",
+    "type": "drift",
+    "lineage": {
+      "origin_id": "mythbranch-b1b7a0dc8a",
+      "parent_id": "mythbranch-b1b7a0dc8a",
+      "drift_step": 1
+    },
+    "thought_shorthand": {
+      "T1_CUE": "echoes",
+      "T2_MAP": "'e'",
+      "T3_EVAL": "The 'e' symbol in the mapped category of echoes has a relevant and potentially impactful role on the narrative, as it represents the concept of reverberation or repetition within the story.",
+      "T4_PLAN": "'reverberations'"
+    }
+  },
+  {
+    "entry_id": "mythbranch-7e778cd2ce",
+    "narrative_snippet": "\nInside it is the spirit of an ancient warrior.\nWithout movement, without sound, he waits for the time when his name will be spoken once more.",
+    "symbols": [
+      "1) Ancient warrior's spirit",
+      "2) Waiting for recognition"
+    ],
+    "timestamp": "2025-04-29T22:19:41.655039",
+    "model_used": "hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M",
+    "type": "branch",
+    "lineage": {
+      "origin_id": "mythbranch-7e778cd2ce",
+      "parent_id": null,
+      "drift_step": 0
+    },
+    "thought_shorthand": {
+      "T1_CUE": "ancient warrior",
+      "T2_MAP": "Warrior",
+      "T3_EVAL": "Relevant",
+      "T4_PLAN": "warrior"
+    }
+  },
+  {
+    "entry_id": "mythcollapse-41e8226949",
+    "narrative_snippet": "Once upon a time, in an ancient world shrouded in eternal ice and darkness, there was a grand machine - a great Clockwork Sun. It toiled day and night...",
+    "symbols": [
+      "Clockwork Sun",
+      "Eternal Ice",
+      "Darkness",
+      "Faltering Clock",
+      "Reality Fraying",
+      "Hidden Chamber",
+      "Enigmatic Seed"
+    ],
+    "timestamp": "2025-04-29T22:19:50.245141",
+    "model_used": "deepseek-llm:latest",
+    "type": "collapse",
+    "lineage": {
+      "origin_id": "mythcollapse-41e8226949",
+      "parent_id": null,
+      "drift_step": 0
+    },
+    "thought_shorthand": {
+      "T1_CUE": "Clockwork Sun's core, hidden chamber, enigmatic seed.",
+      "T2_MAP": "sun",
+      "T3_EVAL": "The sun symbol is relevant and potentially impactful on the narrative as it represents Clockwork Sun's core and serves as a focal point for the story.",
+      "T4_PLAN": "clockwork_core"
+    }
+  },
+  {
+    "entry_id": "mythbranch-59ce4d90d2",
+    "narrative_snippet": "\nAmidst an enchanting forest, there lived a group of mystical creatures. Among them was a graceful and kindhearted unicorn named Luna. She had a lumin...",
+    "symbols": [
+      "unicorn (character)",
+      "magic",
+      "moonlight",
+      "pond"
+    ],
+    "timestamp": "2025-04-29T23:00:50.728757",
+    "model_used": "hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M",
+    "type": "branch",
+    "lineage": {
+      "origin_id": "mythbranch-59ce4d90d2",
+      "parent_id": null,
+      "drift_step": 0
+    },
+    "thought_shorthand": {
+      "T1_CUE": "mock_cue",
+      "T2_MAP": "mock_map",
+      "T3_EVAL": "mock_eval",
+      "T4_PLAN": "mock_plan"
+    }
+  },
+  {
+    "entry_id": "mythbranch-2ac1242ec1",
+    "narrative_snippet": "\nIn a world where people dream of their ideal partners, there existed a powerful wizard named Zed. His powers allowed him to shape reality according t...",
+    "symbols": [],
+    "timestamp": "2025-04-29T23:01:48.722509",
+    "model_used": "hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M",
+    "type": "branch",
+    "lineage": {
+      "origin_id": "mythbranch-2ac1242ec1",
+      "parent_id": null,
+      "drift_step": 0
+    },
+    "thought_shorthand": {
+      "T1_CUE": "mock_cue",
+      "T2_MAP": "mock_map",
+      "T3_EVAL": "mock_eval",
+      "T4_PLAN": "mock_plan"
+    }
+  },
+  {
+    "entry_id": "mythbranch-a178251099",
+    "narrative_snippet": "\n\n\"I'm not feeling well,\" said the princess. \"Take me to see the wise woman.\"\n\nAnd so, she was taken to see the old crone who lived in the woods. As t...",
+    "symbols": [
+      "princess",
+      "wise woman",
+      "illness",
+      "hut",
+      "fever",
+      "herbs",
+      "potion"
+    ],
+    "timestamp": "2025-04-29T23:02:39.361204",
+    "model_used": "hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M",
+    "type": "branch",
+    "lineage": {
+      "origin_id": "mythbranch-a178251099",
+      "parent_id": null,
+      "drift_step": 0
+    },
+    "thought_shorthand": {
+      "T1_CUE": "princess",
+      "T2_MAP": "Princess",
+      "T3_EVAL": "Relevant",
+      "T4_PLAN": "Meet a princess"
+    }
+  },
+  {
+    "entry_id": "mythbranch-b8664839d0",
+    "narrative_snippet": " there was a very large and powerful lion that ruled the jungle. The other animals feared him greatly, but they also respected him for his strength an...",
+    "symbols": [
+      "lion (character)",
+      "jungle (setting)",
+      "ant (character)",
+      "danger"
+    ],
+    "timestamp": "2025-04-29T23:03:27.527375",
+    "model_used": "hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M",
+    "type": "branch",
+    "lineage": {
+      "origin_id": "mythbranch-b8664839d0",
+      "parent_id": null,
+      "drift_step": 0
+    },
+    "thought_shorthand": {
+      "T1_CUE": "king",
+      "T2_MAP": "King",
+      "T3_EVAL": "Relevant and impactful symbol in the narrative as it represents a significant figure or character with authority and power.",
+      "T4_PLAN": "King leads to Rule the kingdom"
+    }
+  },
+  {
+    "entry_id": "mythbranch-4432598bb1",
+    "narrative_snippet": " I was an average American boy who grew up loving stories, especially those featuring knights in shining armor. I dreamed of becoming a knight myself ...",
+    "symbols": [
+      "1-2",
+      "4"
+    ],
+    "timestamp": "2025-04-29T23:04:21.073904",
+    "model_used": "hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M",
+    "type": "branch",
+    "lineage": {
+      "origin_id": "mythbranch-4432598bb1",
+      "parent_id": null,
+      "drift_step": 0
+    },
+    "thought_shorthand": {
+      "T1_CUE": "England",
+      "T2_MAP": "England",
+      "T3_EVAL": "Relevant",
+      "T4_PLAN": "```yaml"
+    }
+  },
+  {
+    "entry_id": "mythbranch-2356a05a76",
+    "narrative_snippet": "Mock narrative response for hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M",
+    "symbols": [
+      "Mock narrative response for hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M"
+    ],
+    "timestamp": "2025-04-29T23:06:19.615785",
+    "model_used": "hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M",
+    "type": "branch",
+    "lineage": {
+      "origin_id": "mythbranch-2356a05a76",
+      "parent_id": null,
+      "drift_step": 0
+    },
+    "thought_shorthand": {
+      "T1_CUE": "mock_cue",
+      "T2_MAP": "mock_map",
+      "T3_EVAL": "mock_eval",
+      "T4_PLAN": "mock_plan"
+    }
+  },
+  {
+    "entry_id": "mythbranch-7de6ff5135",
+    "narrative_snippet": "Mock narrative response for hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M",
+    "symbols": [
+      "Mock narrative response for hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M"
+    ],
+    "timestamp": "2025-04-29T23:06:19.738288",
+    "model_used": "hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M",
+    "type": "branch",
+    "lineage": {
+      "origin_id": "mythbranch-7de6ff5135",
+      "parent_id": null,
+      "drift_step": 0
+    },
+    "thought_shorthand": {
+      "T1_CUE": "mock_cue",
+      "T2_MAP": "mock_map",
+      "T3_EVAL": "mock_eval",
+      "T4_PLAN": "mock_plan"
+    }
+  },
+  {
+    "entry_id": "mythbranch-bdbb2bbe7c",
+    "narrative_snippet": "Mock narrative response for hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M",
+    "symbols": [
+      "Mock narrative response for hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M"
+    ],
+    "timestamp": "2025-04-29T23:07:05.703417",
+    "model_used": "hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M",
+    "type": "branch",
+    "lineage": {
+      "origin_id": "mythbranch-bdbb2bbe7c",
+      "parent_id": null,
+      "drift_step": 0
+    },
+    "thought_shorthand": {
+      "T1_CUE": "mock_cue",
+      "T2_MAP": "mock_map",
+      "T3_EVAL": "mock_eval",
+      "T4_PLAN": "mock_plan"
+    }
+  },
+  {
+    "entry_id": "mythbranch-6b494fb7cc",
+    "narrative_snippet": "Mock narrative response for hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M",
+    "symbols": [
+      "Mock narrative response for hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M"
+    ],
+    "timestamp": "2025-04-29T23:07:05.951755",
+    "model_used": "hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M",
+    "type": "branch",
+    "lineage": {
+      "origin_id": "mythbranch-6b494fb7cc",
+      "parent_id": null,
+      "drift_step": 0
+    },
+    "thought_shorthand": {
+      "T1_CUE": "mock_cue",
+      "T2_MAP": "mock_map",
+      "T3_EVAL": "mock_eval",
+      "T4_PLAN": "mock_plan"
+    }
+  },
+  {
+    "entry_id": "mythbranch-7719e17972",
+    "narrative_snippet": "Default mock narrative response for hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M",
+    "symbols": [
+      "Default mock narrative response for hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M"
+    ],
+    "timestamp": "2025-04-29T23:07:53.783329",
+    "model_used": "hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M",
+    "type": "branch",
+    "lineage": {
+      "origin_id": "mythbranch-7719e17972",
+      "parent_id": null,
+      "drift_step": 0
+    },
+    "thought_shorthand": {
+      "T1_CUE": "mock_cue",
+      "T2_MAP": "mock_map",
+      "T3_EVAL": "mock_eval",
+      "T4_PLAN": "mock_plan"
+    }
+  },
+  {
+    "entry_id": "mythbranch-2d917021f1",
+    "narrative_snippet": "Default mock narrative response for hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M",
+    "symbols": [
+      "Default mock narrative response for hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M"
+    ],
+    "timestamp": "2025-04-29T23:07:54.031814",
+    "model_used": "hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M",
+    "type": "branch",
+    "lineage": {
+      "origin_id": "mythbranch-2d917021f1",
+      "parent_id": null,
+      "drift_step": 0
+    },
+    "thought_shorthand": {
+      "T1_CUE": "mock_cue",
+      "T2_MAP": "mock_map",
+      "T3_EVAL": "mock_eval",
+      "T4_PLAN": "mock_plan"
+    }
+  },
+  {
+    "entry_id": "mythbranch-732e35b153",
+    "narrative_snippet": "Default mock narrative response for hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M",
+    "symbols": [
+      "Default mock narrative response for hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M"
+    ],
+    "timestamp": "2025-04-29T23:08:27.672432",
+    "model_used": "hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M",
+    "type": "branch",
+    "lineage": {
+      "origin_id": "mythbranch-732e35b153",
+      "parent_id": null,
+      "drift_step": 0
+    },
+    "thought_shorthand": {
+      "T1_CUE": "mock_cue",
+      "T2_MAP": "mock_map",
+      "T3_EVAL": "mock_eval",
+      "T4_PLAN": "mock_plan"
+    }
+  },
+  {
+    "entry_id": "mythbranch-c562c1eb36",
+    "narrative_snippet": "Default mock narrative response for hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M",
+    "symbols": [
+      "Default mock narrative response for hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M"
+    ],
+    "timestamp": "2025-04-29T23:08:27.961517",
+    "model_used": "hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M",
+    "type": "branch",
+    "lineage": {
+      "origin_id": "mythbranch-c562c1eb36",
+      "parent_id": null,
+      "drift_step": 0
+    },
+    "thought_shorthand": {
+      "T1_CUE": "mock_cue",
+      "T2_MAP": "mock_map",
+      "T3_EVAL": "mock_eval",
+      "T4_PLAN": "mock_plan"
+    }
+  },
+  {
+    "entry_id": "mythbranch-8909e78305",
+    "narrative_snippet": "Default mock narrative response for hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M",
+    "symbols": [
+      "Default mock narrative response for hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M"
+    ],
+    "timestamp": "2025-04-29T23:10:29.837855",
+    "model_used": "hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M",
+    "type": "branch",
+    "lineage": {
+      "origin_id": "mythbranch-8909e78305",
+      "parent_id": null,
+      "drift_step": 0
+    },
+    "thought_shorthand": {
+      "T1_CUE": "mock_cue",
+      "T2_MAP": "mock_map",
+      "T3_EVAL": "mock_eval",
+      "T4_PLAN": "mock_plan"
+    }
+  },
+  {
+    "entry_id": "mythbranch-378ed13882",
+    "narrative_snippet": "Default mock narrative response for hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M",
+    "symbols": [
+      "Default mock narrative response for hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M"
+    ],
+    "timestamp": "2025-04-29T23:10:30.086837",
+    "model_used": "hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M",
+    "type": "branch",
+    "lineage": {
+      "origin_id": "mythbranch-378ed13882",
+      "parent_id": null,
+      "drift_step": 0
+    },
+    "thought_shorthand": {
+      "T1_CUE": "mock_cue",
+      "T2_MAP": "mock_map",
+      "T3_EVAL": "mock_eval",
+      "T4_PLAN": "mock_plan"
+    }
+  },
+  {
+    "entry_id": "mythbranch-d3dde7e6a1",
+    "narrative_snippet": "Default mock narrative response for hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M",
+    "symbols": [
+      "Default mock narrative response for hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M"
+    ],
+    "timestamp": "2025-04-29T23:11:12.662941",
+    "model_used": "hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M",
+    "type": "branch",
+    "lineage": {
+      "origin_id": "mythbranch-d3dde7e6a1",
+      "parent_id": null,
+      "drift_step": 0
+    },
+    "thought_shorthand": {
+      "T1_CUE": "mock_cue",
+      "T2_MAP": "mock_map",
+      "T3_EVAL": "mock_eval",
+      "T4_PLAN": "mock_plan"
+    }
+  },
+  {
+    "entry_id": "mythbranch-fe643b63d3",
+    "narrative_snippet": "Default mock narrative response for hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M",
+    "symbols": [
+      "Default mock narrative response for hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M"
+    ],
+    "timestamp": "2025-04-29T23:11:12.930141",
+    "model_used": "hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M",
+    "type": "branch",
+    "lineage": {
+      "origin_id": "mythbranch-fe643b63d3",
+      "parent_id": null,
+      "drift_step": 0
+    },
+    "thought_shorthand": {
+      "T1_CUE": "mock_cue",
+      "T2_MAP": "mock_map",
+      "T3_EVAL": "mock_eval",
+      "T4_PLAN": "mock_plan"
+    }
+  },
+  {
+    "entry_id": "mythbranch-3db0460654",
+    "narrative_snippet": "Default mock narrative response for hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M",
+    "symbols": [
+      "Default mock narrative response for hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M"
+    ],
+    "timestamp": "2025-04-29T23:11:53.324488",
+    "model_used": "hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M",
+    "type": "branch",
+    "lineage": {
+      "origin_id": "mythbranch-3db0460654",
+      "parent_id": null,
+      "drift_step": 0
+    },
+    "thought_shorthand": {
+      "T1_CUE": "mock_cue",
+      "T2_MAP": "mock_map",
+      "T3_EVAL": "mock_eval",
+      "T4_PLAN": "mock_plan"
+    }
+  },
+  {
+    "entry_id": "mythbranch-640967b983",
+    "narrative_snippet": "Default mock narrative response for hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M",
+    "symbols": [
+      "Default mock narrative response for hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M"
+    ],
+    "timestamp": "2025-04-29T23:11:53.599624",
+    "model_used": "hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M",
+    "type": "branch",
+    "lineage": {
+      "origin_id": "mythbranch-640967b983",
+      "parent_id": null,
+      "drift_step": 0
+    },
+    "thought_shorthand": {
+      "T1_CUE": "mock_cue",
+      "T2_MAP": "mock_map",
+      "T3_EVAL": "mock_eval",
+      "T4_PLAN": "mock_plan"
+    }
+  },
+  {
+    "entry_id": "mythbranch-06ae42f7af",
+    "narrative_snippet": "Default mock narrative response for hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M",
+    "symbols": [
+      "Default mock narrative response for hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M"
+    ],
+    "timestamp": "2025-04-29T23:12:58.087886",
+    "model_used": "hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M",
+    "type": "branch",
+    "lineage": {
+      "origin_id": "mythbranch-06ae42f7af",
+      "parent_id": null,
+      "drift_step": 0
+    },
+    "thought_shorthand": {
+      "T1_CUE": "mock_cue",
+      "T2_MAP": "mock_map",
+      "T3_EVAL": "mock_eval",
+      "T4_PLAN": "mock_plan"
+    }
+  },
+  {
+    "entry_id": "mythbranch-7cf521dbc6",
+    "narrative_snippet": "Default mock narrative response for hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M",
+    "symbols": [
+      "Default mock narrative response for hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M"
+    ],
+    "timestamp": "2025-04-29T23:12:58.097403",
+    "model_used": "hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M",
+    "type": "branch",
+    "lineage": {
+      "origin_id": "mythbranch-7cf521dbc6",
+      "parent_id": null,
+      "drift_step": 0
+    },
+    "thought_shorthand": {
+      "T1_CUE": "mock_cue",
+      "T2_MAP": "mock_map",
+      "T3_EVAL": "mock_eval",
+      "T4_PLAN": "mock_plan"
+    }
+  },
+  {
+    "entry_id": "mythbranch-d5acdc30f6",
+    "narrative_snippet": "Default mock narrative response for hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M",
+    "symbols": [
+      "Default mock narrative response for hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M"
+    ],
+    "timestamp": "2025-04-29T23:14:07.650749",
+    "model_used": "hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M",
+    "type": "branch",
+    "lineage": {
+      "origin_id": "mythbranch-d5acdc30f6",
+      "parent_id": null,
+      "drift_step": 0
+    },
+    "thought_shorthand": {
+      "T1_CUE": "mock_cue",
+      "T2_MAP": "mock_map",
+      "T3_EVAL": "mock_eval",
+      "T4_PLAN": "mock_plan"
+    }
+  },
+  {
+    "entry_id": "mythbranch-b2c67b2ee7",
+    "narrative_snippet": "Default mock narrative response for hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M",
+    "symbols": [
+      "Default mock narrative response for hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M"
+    ],
+    "timestamp": "2025-04-29T23:14:07.660732",
+    "model_used": "hf.co/TheBloke/MythoMax-L2-Kimiko-v2-13B-GGUF:q4_K_M",
+    "type": "branch",
+    "lineage": {
+      "origin_id": "mythbranch-b2c67b2ee7",
+      "parent_id": null,
+      "drift_step": 0
+    },
+    "thought_shorthand": {
+      "T1_CUE": "mock_cue",
+      "T2_MAP": "mock_map",
+      "T3_EVAL": "mock_eval",
+      "T4_PLAN": "mock_plan"
+    }
+  }
+]

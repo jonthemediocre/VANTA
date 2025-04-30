@@ -1,0 +1,49 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# RULE TYPE: Always
+# FILE PATTERNS: **/*.py
+
+## External API Resilience
+- All HTTP calls must read API credentials from environment variables (e.g., `os.getenv`).
+- Implement retry logic with exponential backoff and jitter for 5xx server errors.
+- Do not retry on 4xx client errors; handle them gracefully with error-specific logic.
+- Include a `timeout` parameter on all requests to prevent hangs.
+- Catch exceptions (`requests.Timeout`, `requests.RequestException`) and provide fallback behavior (e.g., cached data, default values).
+
+## Examples
+✅ Good:
+```python
+import os, time, random
+import requests
+
+API_KEY = os.getenv("MY_API_KEY")
+headers = {"Authorization": f"Bearer {API_KEY}"}
+for attempt in range(3):
+    try:
+        resp = requests.get(
+            "https://api.example.com/data",
+            headers=headers,
+            timeout=5
+        )
+        if 500 <= resp.status_code < 600:
+            raise requests.HTTPError(f"Server error: {resp.status_code}")
+        data = resp.json()
+        break
+    except requests.HTTPError:
+        wait = (2 ** attempt) + random.uniform(0, 1)
+        time.sleep(wait)
+    except (requests.Timeout, requests.RequestException):
+        # fallback or default
+        data = {}
+        break
+```
+
+❌ Bad:
+```python
+# No credential handling, no timeout, no retries
+resp = requests.get("https://api.example.com/data")
+data = resp.json()
+```

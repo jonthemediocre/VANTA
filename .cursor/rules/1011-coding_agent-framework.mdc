@@ -1,0 +1,63 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# RULE TYPE: Always
+# FILE PATTERNS: **/vanta_nextgen.py, **/scripts/*.py, **/agents/*.py
+
+## Agent Framework Scaffold
+- Implement an **AgentRegistry** that:
+  - Scans the `agents/` directory for agent definition files (e.g., JSON schema, YAML, or Python modules).
+  - Validates agent config against the shared `agent.schema.json`.
+  - Dynamically loads agent classes and instantiates them with their config.
+  - Registers their triggers (`onUserQuery`, `onFileChange`, `onMessage`, `onAPIRequest`).
+
+- Provide an **OrchestratorAgent** that:
+  - Receives A2A (agent-to-agent) messages and user queries.
+  - Routes tasks to the appropriate agent based on `intents`, triggers, and context.
+  - Manages agent lifecycle and hot-swap of core vs. domain agents.
+
+- Ensure **FeedbackCollectorAgent** logs user feedback events to `memory_store/episodes.jsonl`.
+
+- Implement **AutoTrainerAgent** using scheduled tasks (via APScheduler, Celery beat, or CI/CD cron). It should:
+  - Ingest feedback episodes.
+  - Call `SelfTuner.tune()` to optimize reward models.
+  - Invoke fine-tuning or adapter training processes.
+
+- Expose code-level HTTP API endpoints for **core** agents (if `core: true` in their schema) to:
+  - Hot-swap agent implementations.
+  - Inspect agent status, triggers, and config.
+
+- Use JSON Schema for agent config validation and enforce type-safety with dataclasses or Pydantic models.
+
+## Examples
+✅ Good:
+```python
+# registry.py
+from importlib import import_module
+from jsonschema import validate
+from pathlib import Path
+import json
+
+class AgentRegistry:
+    def __init__(self, schema_path: str, agents_dir: str):
+        self.schema = json.load(open(schema_path))
+        self.agents_dir = Path(agents_dir)
+        self.agents = []
+
+    def discover(self):
+        for file in self.agents_dir.glob("*.py"):
+            config = load_agent_config(file.with_suffix('.json'))
+            validate(config, self.schema)
+            mod = import_module(f"agents.{file.stem}")
+            cls = getattr(mod, config['class_name'])
+            self.agents.append(cls(config=config))
+```
+
+❌ Bad:
+```python
+# Hardcoded agent list and no validation
+from agents import CodeAssistant, TestAgent
+agents = [CodeAssistant(), TestAgent()]
+```

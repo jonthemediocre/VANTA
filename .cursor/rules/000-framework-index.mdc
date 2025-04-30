@@ -1,0 +1,228 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Framework Rules Index and Trigger System
+# FILE PATTERNS: **/*
+# RULE TYPE: Always
+# PRIORITY: 1000
+
+## Overview
+This rule serves as the central index and trigger system for all framework rules. It ensures that relevant rules are always in context and properly cross-referenced.
+
+## Rule Categories and Triggers
+
+### Core Framework Rules
+```yaml
+rules:
+  - id: memory_retention
+    path: rules/memory_retention.mdc
+    triggers:
+      - pattern: "**/*.py"
+      - pattern: "**/agents/*.py"
+      - pattern: "**/memory/**/*"
+    dependencies:
+      - strategic_planning
+      - output_traceability
+    autoApply: true
+
+  - id: strategic_planning
+    path: rules/strategic_planning.mdc
+    triggers:
+      - pattern: "**/*.py"
+      - pattern: "**/orchestrator.py"
+      - pattern: "**/agents/*.py"
+    dependencies:
+      - memory_retention
+      - agent_health
+    autoApply: true
+
+  - id: output_traceability
+    path: rules/output_traceability.mdc
+    triggers:
+      - pattern: "**/*.py"
+      - pattern: "**/*.log"
+      - pattern: "**/logs/**/*"
+    dependencies:
+      - memory_retention
+      - agent_health
+    autoApply: true
+
+  - id: agent_health
+    path: rules/agent_health.mdc
+    triggers:
+      - pattern: "**/*.py"
+      - pattern: "**/health/**/*"
+      - pattern: "**/monitoring/**/*"
+    dependencies:
+      - memory_retention
+      - output_traceability
+    autoApply: true
+```
+
+## Implementation Requirements
+
+### 1. Rule Loading
+```python
+class RuleLoader:
+    def __init__(self):
+        self.rules: Dict[str, Rule] = {}
+        self.dependencies: Dict[str, List[str]] = {}
+        self.triggers: Dict[str, List[Pattern]] = {}
+
+    async def load_rules(self) -> None:
+        """Load all framework rules and their relationships."""
+        pass
+
+    async def validate_rules(self) -> None:
+        """Validate rule dependencies and triggers."""
+        pass
+
+    async def apply_rules(self, context: Context) -> None:
+        """Apply relevant rules based on context."""
+        pass
+```
+
+### 2. Trigger System
+```python
+class TriggerSystem:
+    def __init__(self):
+        self.patterns: Dict[str, List[Pattern]] = {}
+        self.active_rules: Set[str] = set()
+
+    async def check_triggers(
+        self,
+        file_path: str,
+        context: Context
+    ) -> List[str]:
+        """Check which rules should be triggered."""
+        pass
+
+    async def activate_rules(
+        self,
+        triggered_rules: List[str]
+    ) -> None:
+        """Activate triggered rules and their dependencies."""
+        pass
+```
+
+## Cross-Reference System
+
+### 1. Rule Dependencies
+- Automatically load dependent rules
+- Maintain dependency graph
+- Validate circular dependencies
+- Track rule activation chain
+
+### 2. Context Sharing
+- Share relevant context between rules
+- Maintain context hierarchy
+- Handle context conflicts
+- Preserve context chain
+
+## Integration Points
+
+### 1. IDE Integration
+```python
+class IDEIntegration:
+    def __init__(self):
+        self.rule_loader = RuleLoader()
+        self.trigger_system = TriggerSystem()
+        self.context_manager = ContextManager()
+
+    async def on_file_change(
+        self,
+        file_path: str
+    ) -> None:
+        """Handle file change events."""
+        triggered_rules = await self.trigger_system.check_triggers(
+            file_path,
+            self.context_manager.current_context
+        )
+        await self.trigger_system.activate_rules(triggered_rules)
+
+    async def on_command(
+        self,
+        command: str
+    ) -> None:
+        """Handle command execution events."""
+        pass
+```
+
+### 2. Framework Integration
+```python
+class FrameworkIntegration:
+    def __init__(self):
+        self.rule_engine = RuleEngine()
+        self.context_tracker = ContextTracker()
+
+    async def apply_framework_rules(
+        self,
+        context: Context
+    ) -> None:
+        """Apply framework rules to current context."""
+        pass
+
+    async def track_rule_impact(
+        self,
+        rule_id: str,
+        impact: RuleImpact
+    ) -> None:
+        """Track the impact of applied rules."""
+        pass
+```
+
+## Monitoring and Feedback
+
+### 1. Rule Performance
+- Track rule activation frequency
+- Measure rule impact
+- Monitor dependency chains
+- Analyze rule conflicts
+
+### 2. System Health
+- Monitor trigger system performance
+- Track rule loading times
+- Measure context switch overhead
+- Report system status
+
+## Best Practices
+
+### 1. Rule Management
+- Keep rules focused and atomic
+- Maintain clear dependencies
+- Document trigger patterns
+- Version control rules
+
+### 2. Performance
+- Optimize trigger patterns
+- Cache frequent contexts
+- Batch rule applications
+- Monitor resource usage
+
+## Implementation Notes
+
+1. **Rule Loading**
+   - Load rules on startup
+   - Validate dependencies
+   - Initialize trigger patterns
+   - Prepare context handlers
+
+2. **Trigger Processing**
+   - Use efficient pattern matching
+   - Handle multiple triggers
+   - Process in priority order
+   - Maintain trigger history
+
+3. **Context Management**
+   - Track active contexts
+   - Handle context switches
+   - Manage context lifetime
+   - Clean up stale contexts
+
+4. **Health Monitoring**
+   - Monitor rule performance
+   - Track system resources
+   - Log rule activities
+   - Generate health reports

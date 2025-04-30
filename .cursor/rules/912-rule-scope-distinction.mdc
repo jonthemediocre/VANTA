@@ -1,0 +1,60 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# RULE TYPE: Always
+# FILE PATTERNS: Not applicable for Always rules
+
+# Rule Scope Distinction (.cursor/rules/ vs. Project-Specific Rules)
+
+## Purpose
+
+This rule clarifies the distinct purposes and scopes of the two primary locations where rules and protocols are defined within this development framework:
+
+1.  **`.cursor/rules/`**: Governs **AI Assistant behavior** within the Cursor IDE across projects.
+2.  **Project-Specific Rule Directories** (e.g., `FrAMEWORK RULES/`, `DESIGN_PRINCIPLES/`): Governs the **internal workings, protocols, and standards of the specific project/framework** being developed (e.g., VANTA).
+
+## `.cursor/rules/*.mdc` Rules
+
+*   **Scope:** Global to the Cursor IDE environment or specific file types within any project opened in Cursor (based on `globs`).
+*   **Audience:** Primarily the **AI Assistant** (e.g., Cursor AI).
+*   **Content:** Instructions on how the AI should:
+    *   Interpret user requests.
+    *   Format code and responses.
+    *   Apply coding standards during generation/editing.
+    *   Use available tools.
+    *   Adhere to general development best practices (linting, testing approaches).
+    *   Prioritize tasks or information sources.
+    *   Emulate specific agent personas (if configured).
+*   **Activation:** Triggered automatically based on file globs, `alwaysApply: true`, or explicit `@` mentions in prompts.
+*   **Example Files:** `000-base.mdc`, `100-next-components.mdc`, `910-assistant-autonomy.mdc`.
+
+## Project-Specific Rule Directories (e.g., `FrAMEWORK RULES/`)
+
+*   **Scope:** Specific to the **internal architecture, logic, and processes of the project** being developed (e.g., the VANTA Python framework).
+*   **Audience:** Primarily **Human Developers** and potentially **Runtime Agents** within the framework itself.
+*   **Content:** Definitions of:
+    *   Core framework protocols (e.g., Theory Integration Protocol).
+    *   Architectural patterns specific to the framework.
+    *   Data handling procedures.
+    *   Internal API contracts.
+    *   Specific algorithms or theoretical implementations.
+    *   Operational procedures or rituals.
+*   **Activation:** Consulted by developers and the AI assistant *contextually* when working on or reasoning about the specific project's internal logic. The AI uses tools like `read_file` to access these rules when relevant to the task.
+*   **Example Files:** `FrAMEWORK RULES/001-theory-integration-protocol.md`.
+
+## Interaction
+
+*   The AI Assistant (governed by `.cursor/rules/`) is expected to be *aware* of and *consult* project-specific rules (like those in `FrAMEWORK RULES/`) when its task involves the internal logic or protocols of that project.
+*   Key principles from project-specific rules *might* be summarized or referenced within `.cursor/rules/` files (e.g., in `000-base.mdc`) to ensure the AI consistently applies high-level project standards, but the full detail resides in the project-specific directory.
+
+## Summary Table
+
+| Feature                  | `.cursor/rules/*.mdc`                  | Project-Specific (e.g., `FrAMEWORK RULES/`) |
+| :----------------------- | :------------------------------------- | :------------------------------------------- |
+| **Primary Governs**      | AI Assistant Behavior (in IDE)         | Project/Framework Internals                |
+| **Primary Audience**     | AI Assistant                           | Developers, Runtime Agents                 |
+| **Scope**                | Cross-Project (IDE) / File Types       | Single Project/Framework                   |
+| **Activation**           | Auto (Globs/Always), Explicit (`@`)    | Contextual Consultation (Manual/AI Read)   |
+| **Typical Content**      | AI Interaction, Formatting, Tool Use | Internal Protocols, Architecture, Logic      |

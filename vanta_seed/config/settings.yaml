@@ -1,0 +1,37 @@
+# settings.yaml
+# Tunable parameters for VANTA-SEED behavior
+
+# Example settings:
+
+memory:
+  retrieval_results: 5       # Number of memories to retrieve on query
+  # persistence_path: "./memory/vector_store.db" # Example path for persistent ChromaDB
+
+growth:
+  base_mutation_chance: 0.1  # Base probability of mutation check per cycle (e.g., 10%)
+  # Can be overridden by ritual_triggers.yaml
+
+reasoning:
+  default_mode: "CoT"        # Default reasoning mode if random choice fails
+  cot_step_limit: 10         # Safety limit for Chain of Thought steps
+  tot_branches: 3            # Number of branches for Tree of Thought
+  lot_ideas: 5               # Number of ideas for List of Thought
+
+whispermode:
+  # Settings for whispermode, if any (e.g., enabling/disabling specific phrase sets)
+  load_external_dictionary: true
+
+logging:
+  log_level: "INFO" # INFO, DEBUG, WARNING, ERROR
+  console_log_level: "INFO"
+
+# Adjust how many breaths complete a full cycle, triggering expansion checks
+breaths_per_cycle: 10
+
+# Make VANTA-SEED reflect on memories more often
+echo_reflex_interval: 10
+
+# --- NEW SETTING --- 
+# Specify the memory backend to use.
+# Options: "jsonl" (simple file storage), "vector" (requires ChromaDB/embeddings - not fully implemented)
+memory_backend: "jsonl" 
