@@ -1,0 +1,8 @@
+# Config for instance A
+identity:
+  name: instance_a
+  token: vanta_shared_token # CHANGE THIS!
+
+# Paths relative to instance_a root
+log_file: mutations.yaml 
+archive_dir: ../archive # Store backups outside instance dir 

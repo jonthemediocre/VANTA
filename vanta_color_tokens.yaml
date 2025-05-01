@@ -1,0 +1,18 @@
+
+vanta_colors:
+  base:
+    void_black: "#0A0A0A"
+    steel_gray: "#2E2E33"
+
+  gold_spectrum:
+    sigil_gold: "#F6C90E"
+    metallic_gold: "#D4AF37"
+    amber_pulse: "#FFB300"
+
+  recursion_light:
+    cyan_spark: "#00E7FF"
+    ionic_blue: "#12A6CC"
+
+  accent_thread:
+    flame_drop_red: "#C1121F"
+    violet_ritual: "#9B5DE5"

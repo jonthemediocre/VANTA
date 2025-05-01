@@ -15,14 +15,19 @@ orjson
 
 # LLM Integration
 ollama
+openai
+requests
+
+# Self-Mutation / Janus System
+redis
+rq # Redis Queue for task management
+watchdog # For file system monitoring
+GitPython # For programmatic Git interaction
 
 # Optional Vector DB (uncomment if needed)
 # chromadb 
 
-# Add other direct dependencies below
-ollama
-openai
-requests
+# Other direct dependencies
 transformers
 tokenizers
 torch

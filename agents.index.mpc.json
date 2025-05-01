@@ -251,6 +251,23 @@
           }
         ]
       }
+    },
+    "CodeMutatorAgent": {
+      "description": "Applies code modifications to a target instance (potentially another instance). REQUIRES CAREFUL CONFIGURATION AND SECURITY.",
+      "type": "utility",
+      "status": "active",
+      "module": "vanta_seed.agents.code_mutator_agent",
+      "class": "CodeMutatorAgent",
+      "capabilities": ["code_modification", "file_writing", "backup_trigger", "git_commit"],
+      "dependencies": ["MutationManager"],
+      "config": {
+        "target_instance_name": "instance_b",
+        "target_instance_path": "../instance_b",
+        "target_log_filename": "mutations.yaml",
+        "archive_directory": "../archive",
+        "auto_commit_changes": true,
+        "require_approval": true 
+      }
     }
   }
 } 

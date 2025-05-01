@@ -1,0 +1,14 @@
+# Config for instance B
+identity:
+  name: instance_b
+  token: vanta_shared_token # CHANGE THIS!
+
+# Paths relative to instance_b root
+log_file: mutations.yaml 
+archive_dir: ../archive # Store backups outside instance dir
+
+# Configuration for CodeMutatorAgent (if run from B targeting A)
+# code_mutator_agent_config: 
+#   target_instance_name: instance_a
+#   target_instance_path: ../instance_a 
+#   archive_directory: ../archive 
