@@ -1,5 +1,6 @@
-from pydantic import BaseModel, Field, validator
-from typing import List, Dict, Tuple, Optional, Literal, Union
+from pydantic import BaseModel, Field, field_validator
+from pydantic_core.core_schema import ValidationInfo
+from typing import List, Dict, Tuple, Optional, Literal, Union, Any
 import time
 import uuid
 
@@ -96,12 +97,14 @@ class NodeStateModel(BaseModel):
     swarm_params: NodeSwarmParams = Field(default_factory=NodeSwarmParams)
     last_trail_signature: Optional[TrailSignature] = None # Stores the last signature emitted
 
-    @validator('position', 'velocity', pre=True, always=True)
-    def check_vector_length(cls, v, field):
+    # Updated validator for Pydantic V2 using @field_validator
+    @field_validator('position', 'velocity', mode='before') # mode='before' is similar to pre=True
+    def check_vector_length(cls, v, info: ValidationInfo):
         # Example validator: Ensure position/velocity are 3D vectors
         # Adjust dimensionality based on swarm_config if needed
         if not isinstance(v, list) or len(v) != 3:
-            raise ValueError(f"{field.name} must be a list of 3 floats")
+            # Use info.field_name to get the field name in V2
+            raise ValueError(f"{info.field_name} must be a list of 3 floats")
         return v
 
 # --- Stigmergic Field Point ---

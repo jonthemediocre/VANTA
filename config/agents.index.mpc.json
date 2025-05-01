@@ -1,11 +1,13 @@
 {
   "agents": {
-    "AgentOrchestrator": {
-      "description": "The main VANTA orchestrator (placeholder entry, loaded directly).",
-      "module": "vanta_seed.core.seed_orchestrator",
-      "class": "AgentOrchestrator",
-      "config": {},
-      "status": "system"
+    "VantaMasterCore": {
+      "description": "Core orchestrator managing agents and tasks.",
+      "version": "1.0",
+      "class": "VantaMasterCore",
+      "enabled": true,
+      "settings": {
+        "default_agent": "EchoAgent"
+      }
     },
     "ImageGeneratorAgent": {
       "description": "Generates images based on prompts using external APIs.",

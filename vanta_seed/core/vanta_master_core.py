@@ -5,6 +5,12 @@ import uuid # Needed for example
 import json # Added for printing maps
 import importlib # Needed for agent loading
 from pathlib import Path # Needed for potential path ops
+import os # <<< Added import os
+# --- Add typing imports --- 
+from typing import Optional, Dict, List, Tuple, Any, Type # Added Optional and others
+# --- Import Pydantic ValidationError --- 
+from pydantic import ValidationError
+# --------------------------
 from .memory_weave import MemoryWeave
 # --- Import SymbolicCompressor --- 
 from .symbolic_compression import SymbolicCompressor 
@@ -21,10 +27,37 @@ from .vitals_layer import VitalsLayer
 # --- Import BaseAgent if needed for type hinting or creation --- 
 from ..agents.base_agent import BaseAgent # Assuming a base class exists
 # --- Import Data Models --- 
-from .data_models import AgentInput, AgentResponse, ToolCall, ToolResponse, AgentMessage
+from .data_models import AgentInput, AgentResponse, ToolCall, ToolResponse, AgentMessage, CoreConfiguration # <<< Added CoreConfiguration
 # --- Import AgentMessageBus --- 
 from .agent_message_bus import AgentMessageBus
+# --- Import PluginManager (Assuming location) --- 
+# Try importing from utils
+from ..utils.plugin_manager import PluginManager 
+# from ..runtime.plugin_manager import PluginManager # Previous attempt
+# --- Import necessary types from swarm_types --- # Added this line
+from .swarm_types import NodeStateModel, PurposeVectorModel, SwarmHealthMetricsModel, GlobalBestNodeInfo, TrailSignature, Position, round_position, StigmergicFieldPoint # <<< Added more types
 # ---
+
+# --- Utility Imports (Changed to absolute) ---
+from vanta_seed.utils.file_utils import load_json_file # <<< Changed to absolute import
+from vanta_seed.logging.setup import get_vanta_logger # <<< Changed to absolute import
+
+# --- Check if Swarm Types are actually available (for conditional logic) ---
+SWARM_TYPES_AVAILABLE = True # Assume available for now, adjust if imports fail
+# try:
+#     from .swarm_types import NodeStateModel, PurposeVectorModel, SwarmHealthMetricsModel, GlobalBestNodeInfo, TrailSignature, Position, round_position, StigmergicFieldPoint
+#     SWARM_TYPES_AVAILABLE = True
+# except ImportError:
+#     logging.warning("Swarm types not found, some swarm functionality may be disabled.")
+#     SWARM_TYPES_AVAILABLE = False
+#     # Define placeholders if needed
+#     NodeStateModel = Dict
+#     PurposeVectorModel = Dict
+#     SwarmHealthMetricsModel = Dict
+#     GlobalBestNodeInfo = Dict
+#     TrailSignature = Dict
+#     Position = List[float]
+# -----------------------------------------------------------------------------
 
 # --- Singleton Pattern for MemoryWeave --- 
 # While a true singleton might be complex with async/multiprocessing,
@@ -64,7 +97,7 @@ class VantaMasterCore:
         self.plugin_manager = plugin_manager
         self.logger = get_vanta_logger(self.__class__.__name__)
         self.core_config: Optional[CoreConfiguration] = None
-        self._agents: Dict[str, AgentInterface] = {} # Dictionary of active Pilgrims
+        self._agents: Dict[str, BaseAgent] = {} # <<< Changed AgentInterface to BaseAgent
         self._agent_states: Dict[str, NodeStateModel] = {} # Placeholder for Pilgrim Trinity states
 
         # --- Placeholder Crown Attributes (from BreathLayer_v1) ---
@@ -155,7 +188,7 @@ class VantaMasterCore:
 
             try:
                 self.logger.debug(f"Crown: Attempting to load Pilgrim '{agent_name}' (Class: '{agent_class_str}')")
-                AgentClass: Optional[Type[AgentInterface]] = self.plugin_manager.get_plugin_class(agent_class_str, AgentInterface) # type: ignore
+                AgentClass: Optional[Type[BaseAgent]] = self.plugin_manager.get_plugin_class(agent_class_str, BaseAgent) # type: ignore
 
                 if AgentClass is None:
                     self.logger.error(f"Crown: Pilgrim class '{agent_class_str}' not found for '{agent_name}'.")
@@ -202,7 +235,7 @@ class VantaMasterCore:
 
         self.logger.info(f"Crown: Finished loading Pilgrims. Total alive: {len(self._agents)}")
 
-    def _get_pilgrim(self, agent_name: str) -> Optional[AgentInterface]: # Renamed from _get_agent
+    def _get_pilgrim(self, agent_name: str) -> Optional[BaseAgent]: # Renamed from _get_agent, corrected type hint to BaseAgent
         """Retrieves a loaded Pilgrim instance by name."""
         pilgrim = self._agents.get(agent_name)
         if not pilgrim:
@@ -287,7 +320,7 @@ class VantaMasterCore:
              self.logger.error("Crown: Task routing logic error: No Pilgrim selected.")
              return {"error": "Internal task routing error."}
 
-    async def _run_task_on_pilgrim(self, pilgrim: AgentInterface, task_data: Dict[str, Any]) -> Any: # Renamed from _run_task
+    async def _run_task_on_pilgrim(self, pilgrim: BaseAgent, task_data: Dict[str, Any]) -> Any: # Renamed from _run_task, corrected type hint to BaseAgent
         """Executes a task using the specified Pilgrim agent."""
         self.logger.info(f"Crown: Executing task with Pilgrim: '{pilgrim.name}'")
         pilgrim_state = self._get_pilgrim_state(pilgrim.name)

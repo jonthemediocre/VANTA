@@ -12,4 +12,4 @@ triggers:
 outputs:
   - OKR maps
   - Revised task queue
-  - Inputs to AgentOrchestrator and MemoryWeaver
+  - Inputs to VantaMasterCore and MemoryWeaver

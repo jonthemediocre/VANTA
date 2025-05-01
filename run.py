@@ -28,11 +28,15 @@ from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 import config # This will load .env, set up logging, define paths, and ALLOWED_API_KEYS
 # ---------------------------------------
 
-# --- Import the NEW Seed Orchestrator --- 
-from vanta_seed.core.seed_orchestrator import AgentOrchestrator 
-# --- Comment out OLD orchestrator import ---
+# --- Import the correct Vanta Master Core ---
+from vanta_seed.core.vanta_master_core import VantaMasterCore 
+# --- Comment out OLD/Incorrect orchestrator imports ---
+# from vanta_seed.core.seed_orchestrator import AgentOrchestrator 
 # from orchestrator import AgentOrchestrator 
 # ----------------------------------------
+# --- Import PluginManager (Assuming location) ---
+from vanta_seed.utils.plugin_manager import PluginManager # Try utils
+# -------------------------------------------
 
 # --- Configuration Loading (Now handled by config.py) ---
 
@@ -52,9 +56,14 @@ from vanta_seed.core.seed_orchestrator import AgentOrchestrator
 # -----------------------------------
 
 # Configuration Loading
-CONFIG_DIR = Path(__file__).parent / "config"
-BLUEPRINT_FILE = CONFIG_DIR / "BLUEPRINT.yaml"
-AGENT_INDEX_FILE = CONFIG_DIR / "agents.index.mpc.json"
+# --- REMOVE incorrect path construction ---
+# CONFIG_DIR = Path(__file__).parent / "config"
+# BLUEPRINT_FILE = CONFIG_DIR / "BLUEPRINT.yaml"
+# AGENT_INDEX_FILE = CONFIG_DIR / "agents.index.mpc.json"
+# --- Use paths from config module --- 
+BLUEPRINT_PATH = config.BLUEPRINT_PATH # Use the path defined in config.py
+AGENT_INDEX_PATH = config.AGENT_INDEX_PATH # Use the path defined in config.py
+# -----------------------------------
 
 # Setup Logging
 logging.basicConfig(
@@ -90,46 +99,6 @@ def load_json_config(file_path: Path) -> dict | None:
         logger.error(f"Error loading JSON file {file_path}: {e}", exc_info=True)
         return None
 
-# --- OLD Agent Orchestrator Logic (Commented Out/Replaced) ---
-# from orchestrator import AgentOrchestrator # Old orchestrator
-# 
-# def initialize_framework(blueprint: dict, agent_definitions: dict) -> AgentOrchestrator:
-#     """Initializes the agent framework."""
-#     logger.info("Initializing Agent Framework...")
-#     orchestrator = AgentOrchestrator(blueprint, agent_definitions)
-#     logger.info("Agent Framework Initialized.")
-#     return orchestrator
-# 
-# async def run_framework(orchestrator: AgentOrchestrator):
-#     """Runs the main processing loop of the agent framework."""
-#     logger.info("Starting Agent Framework Processing Loop...")
-#     await orchestrator.run_processing_loop()
-#     logger.info("Agent Framework Processing Loop Finished.")
-# --- END OLD Logic ---
-
-def initialize_seed_orchestrator(blueprint: dict, agent_definitions: dict) -> AgentOrchestrator:
-    """Initializes the VANTA Seed Core Orchestrator."""
-    logger.info("Initializing VANTA Seed Core (Unified AgentOrchestrator)...")
-    # Pass both blueprint and agent definitions to the unified orchestrator
-    orchestrator = AgentOrchestrator(blueprint=blueprint, all_agent_definitions=agent_definitions, config=blueprint)
-    logger.info("VANTA Seed Core Initialized.")
-    return orchestrator
-
-async def run_seed_core(orchestrator: AgentOrchestrator):
-    """Runs the main loops of the VANTA Seed Core."""
-    logger.info("Starting VANTA Seed Core Loops...")
-    try:
-        # Start the orchestrator's main loops (task processing and breath cycle)
-        await orchestrator.start()
-    except asyncio.CancelledError:
-        logger.info("Main seed core run task cancelled.")
-    except Exception as e:
-        logger.error(f"Unhandled exception in run_seed_core: {e}", exc_info=True)
-    finally:
-        logger.info("VANTA Seed Core run loop finishing.")
-        # Ensure orchestrator stops gracefully even on error
-        await orchestrator.stop()
-
 # --- FastAPI Lifespan Management ---
 async def lifespan(app: FastAPI):
     global orchestrator_instance, plugin_manager_instance
@@ -145,7 +114,7 @@ async def lifespan(app: FastAPI):
 
     # --- Load Configurations ---
     # Assuming blueprint is the core config needed by VantaMasterCore
-    core_config = load_yaml_config(BLUEPRINT_FILE) 
+    core_config = load_yaml_config(BLUEPRINT_PATH) 
     # Agent definitions are loaded inside VantaMasterCore via core_config path now?
     # Let's adjust VantaMasterCore init if needed, or load here if separate.
     # Assuming VantaMasterCore's _load_core_config handles loading agent defs too.
@@ -159,7 +128,7 @@ async def lifespan(app: FastAPI):
     try:
         # Pass the PATH to the core config, VantaMasterCore loads it internally
         orchestrator_instance = VantaMasterCore(
-            core_config_path=str(BLUEPRINT_FILE), # Pass path
+            core_config_path=str(BLUEPRINT_PATH), # Pass path
             plugin_manager=plugin_manager_instance
         )
         logger.info("VantaMasterCore initialized.")
@@ -198,18 +167,21 @@ async def lifespan_manager(app: FastAPI):
     plugin_manager_instance.load_plugins()
     logger.info(f"Plugins loaded: {plugin_manager_instance.list_plugins()}")
 
-    core_config = load_yaml_config(BLUEPRINT_FILE) 
+    # --- Use the correct path variable --- 
+    core_config = load_yaml_config(BLUEPRINT_PATH) # Use variable from config
+    # -------------------------------------
     if core_config is None:
         logger.critical("Failed to load core configuration (blueprint). Halting startup.")
         raise RuntimeError("Failed to load core configuration.")
 
     try:
         # Pass the path to the core config file
-        # Assuming VantaMasterCore init takes path and plugin manager
+        # --- Use the correct path variable --- 
         orchestrator_instance = VantaMasterCore(
-            core_config_path=str(BLUEPRINT_FILE), 
+            core_config_path=str(BLUEPRINT_PATH), # Use variable from config
             plugin_manager=plugin_manager_instance
         )
+        # -------------------------------------
         logger.info("VantaMasterCore initialized.")
         await orchestrator_instance.startup()
         logger.info("VantaMasterCore startup tasks complete.")
@@ -278,6 +250,32 @@ async def get_orchestrator() -> VantaMasterCore:
         logger.error("Orchestrator not initialized!")
         raise HTTPException(status_code=503, detail="Service Unavailable: Orchestrator not ready.")
     return orchestrator_instance
+
+# --- Security Scheme Definition ---
+api_key_scheme = HTTPBearer()
+
+# --- API Key Verification Function ---
+async def verify_api_key(credentials: HTTPAuthorizationCredentials = Depends(api_key_scheme)):
+    """Dependency function to verify the provided API key."""
+    # Only enforce key check if ALLOWED_API_KEYS is populated
+    if config.ALLOWED_API_KEYS:
+        if credentials.scheme != "Bearer":
+            raise HTTPException(
+                status_code=403,
+                detail="Invalid authentication scheme. Use Bearer token.",
+            )
+        if credentials.credentials not in config.ALLOWED_API_KEYS:
+            raise HTTPException(
+                status_code=403,
+                detail="Invalid API Key",
+            )
+        # Key is valid
+        return credentials.credentials
+    else:
+        # No keys configured, allow access
+        logger.warning("API key check skipped: VANTA_ALLOWED_API_KEYS is not set.")
+        return None # Indicate no key was checked/needed
+# --------------------------------- 
 
 # --- API Endpoints ---
 @app.get("/")
@@ -397,8 +395,6 @@ async def openai_chat_completions(
         raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
 # ------------------------------
 
-# --- Remove old main execution block ---
-
 # --- Add Uvicorn runner block ---
 if __name__ == "__main__":
     port = int(os.getenv("PORT", 8000)) # Default to port 8000
@@ -490,27 +486,28 @@ if __name__ == "__main__":
 #     # else:
 #     #     print("Exiting due to missing or invalid blueprint.") 
 
-# --- Security Scheme Definition ---
-api_key_scheme = HTTPBearer()
+# --- REMOVED Security Scheme Definition from here --- 
+# api_key_scheme = HTTPBearer()
 
-async def verify_api_key(credentials: HTTPAuthorizationCredentials = Depends(api_key_scheme)):
-    """Dependency function to verify the provided API key."""
-    # Only enforce key check if ALLOWED_API_KEYS is populated
-    if config.ALLOWED_API_KEYS:
-        if credentials.scheme != "Bearer":
-            raise HTTPException(
-                status_code=403,
-                detail="Invalid authentication scheme. Use Bearer token.",
-            )
-        if credentials.credentials not in config.ALLOWED_API_KEYS:
-            raise HTTPException(
-                status_code=403,
-                detail="Invalid API Key",
-            )
-        # Key is valid
-        return credentials.credentials
-    else:
-        # No keys configured, allow access
-        logger.warning("API key check skipped: VANTA_ALLOWED_API_KEYS is not set.")
-        return None # Indicate no key was checked/needed
+# --- REMOVED API Key Verification Function from here ---
+# async def verify_api_key(credentials: HTTPAuthorizationCredentials = Depends(api_key_scheme)):
+#     """Dependency function to verify the provided API key."""
+#     # Only enforce key check if ALLOWED_API_KEYS is populated
+#     if config.ALLOWED_API_KEYS:
+#         if credentials.scheme != "Bearer":
+#             raise HTTPException(
+#                 status_code=403,
+#                 detail="Invalid authentication scheme. Use Bearer token.",
+#             )
+#         if credentials.credentials not in config.ALLOWED_API_KEYS:
+#             raise HTTPException(
+#                 status_code=403,
+#                 detail="Invalid API Key",
+#             )
+#         # Key is valid
+#         return credentials.credentials
+#     else:
+#         # No keys configured, allow access
+#         logger.warning("API key check skipped: VANTA_ALLOWED_API_KEYS is not set.")
+#         return None # Indicate no key was checked/needed
 # --------------------------------- 

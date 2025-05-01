@@ -194,7 +194,8 @@ class IdentityTrees:
                 safe_node_id = node.replace("::", "_")
                 safe_node_id = safe_node_id.replace("-", "_")
                 safe_node_id = safe_node_id.replace(" ", "_")
-                lines.append(f"        {safe_node_id}["{node}"]") # Use safe ID for linking, display original
+                # Use triple quotes for the f-string to allow inner double quotes
+                lines.append(f"""        {safe_node_id}["{node}"]""") # Use safe ID for linking, display original
                 nodes_added.add(node)
             
             # Sanitize parent ID separately

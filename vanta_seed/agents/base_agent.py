@@ -6,46 +6,10 @@ import time
 from abc import ABC, abstractmethod
 from typing import Optional, List, Any, Dict, Type, Union, Tuple
 from vanta_seed.core.data_models import AgentInput, AgentResponse, AgentMessage # Use absolute import
-
-# --- Import Core Swarm Types ---
-# Assuming swarm_types.py is in vanta_seed.core
-# Adjust path if necessary based on actual project structure
-try:
-    from vanta_seed.core.swarm_types import (
-        NodeStateModel, TrailSignature, PurposeVectorModel, NodeMode, NodeRole,
-        TrinityCoreState, NodeMetaBalancer, NodeSwarmParams, GlobalBestNodeInfo, Position # Added Position
-        # Note: MemoryRelic and TrinityState were mentioned in the user's version but not defined in swarm_types.py.
-        # Will use conceptual placeholders or base types within NodeStateModel instead.
-    )
-    # Alias TrinityCoreState if TrinityState concept was intended to map here
-    TrinityState = TrinityCoreState 
-    from pydantic import ValidationError
-    SWARM_TYPES_AVAILABLE = True
-    NodeState = NodeStateModel # Alias
-except ImportError:
-    print("Warning: Could not import precise types from vanta_seed.core.swarm_types. Using generic types.")
-    # Define fallbacks if import fails
-    NodeStateModel = Dict[str, Any]
-    TrailSignature = Dict[str, Any]
-    PurposeVectorModel = Dict[str, Any]
-    NodeMode = str
-    NodeRole = str
-    TrinityCoreState = Dict[str, Any]
-    NodeMetaBalancer = Dict[str, Any]
-    NodeSwarmParams = Dict[str, Any]
-    TrinityState = Dict[str, Any]
-    GlobalBestNodeInfo = Dict[str, Any] # Fallback type
-    ValidationError = Exception # Fallback type
-    SWARM_TYPES_AVAILABLE = False
-    NodeState = Dict[str, Any] # Fallback type
-    Position = List[float] # Fallback type
-
-# --- Import Base Interface if defined ---
-try:
-    from vanta_seed.interfaces.agent import AgentInterface # Assuming this interface exists
-except ImportError:
-    print("Warning: AgentInterface not found. Defining BaseAgent without explicit interface inheritance.")
-    AgentInterface = ABC # Fallback to ABC
+from vanta_seed.core.swarm_types import (
+    NodeStateModel, TrailSignature, Position, PurposeVectorModel,
+    GlobalBestNodeInfo, NodeRole
+) # Use actual types if available
 
 # --- Constants (Defaults) --- # ADDED Defaults block
 DEFAULT_MAX_SPEED = 1.0
@@ -55,7 +19,8 @@ DEFAULT_SOCIAL_WEIGHT = 1.5
 DEFAULT_STIGMERGIC_WEIGHT = 1.0 # Weight for trail influence
 DEFAULT_ROLE_SWITCH_THRESHOLD = 0.6 # Example threshold
 
-class BaseAgent(AgentInterface, ABC): # Inherit from AgentInterface if it exists and is ABC
+# --- Inherit directly from ABC --- 
+class BaseAgent(ABC):
     """
     BaseAgent defines the minimal interface and core structure for all Trinity Pilgrim agents
     operating within the Breath Kingdom swarm. (Incorporating user's provided structure)
@@ -88,7 +53,7 @@ class BaseAgent(AgentInterface, ABC): # Inherit from AgentInterface if it exists
         # Ensure pBest is set initially if not provided
         if isinstance(self.state, dict) and self.state.get('personal_best_position') is None:
              self.state['personal_best_position'] = self.state.get('position', [0.0]*3)[:]
-        elif SWARM_TYPES_AVAILABLE and isinstance(self.state, NodeStateModel) and self.state.personal_best_position is None:
+        elif isinstance(self.state, NodeStateModel) and self.state.personal_best_position is None:
              # Pydantic models might handle defaults, but explicit check is safer
              if self.state.position:
                  self.state.personal_best_position = self.state.position[:]
@@ -193,7 +158,7 @@ class BaseAgent(AgentInterface, ABC): # Inherit from AgentInterface if it exists
         # Ensure trail signature is a dictionary for JSON serialization if needed
         trail_signature_data_for_crown = None
         if trail_signature:
-            if SWARM_TYPES_AVAILABLE and isinstance(trail_signature, TrailSignature):
+            if isinstance(trail_signature, TrailSignature):
                 try:
                      if hasattr(trail_signature, 'model_dump'):
                           trail_signature_data_for_crown = trail_signature.model_dump(mode='json')
@@ -221,39 +186,15 @@ class BaseAgent(AgentInterface, ABC): # Inherit from AgentInterface if it exists
              return
 
         try:
-             if SWARM_TYPES_AVAILABLE and NodeStateModel is not Dict: # Check if Pydantic model is truly available
-                 # Get current state as dict for merging
-                 current_state_dict = self.current_state
-
-                 # Merge dictionaries, prioritizing new_state_data
-                 updated_data = {**current_state_dict, **new_state_data}
-
-                 # --- Deep Merge for nested dictionaries (like swarm_params, trinity_core) --- 
-                 for key in ['swarm_params', 'trinity_core', 'meta_balancer']:
-                      if key in new_state_data and isinstance(new_state_data[key], dict):
-                           current_nested = current_state_dict.get(key, {})
-                           if isinstance(current_nested, dict): # Ensure current is also a dict
-                                updated_data[key] = {**current_nested, **new_state_data[key]}
-                           else:
-                                updated_data[key] = new_state_data[key] # Overwrite if current wasn't dict
-                 # --- End Deep Merge --- 
-
-                 # Attempt to create a new NodeStateModel instance
-                 # This validates the entire structure based on the merged data
-                 self.state = NodeStateModel(**updated_data)
-                 self.logger.debug(f"Pilgrim '{self.name}': Internal state updated and validated via Pydantic.")
-
+             if isinstance(self.state, dict):
+                 self.state.update(new_state_data)
+                 self.logger.debug(f"Pilgrim '{self.name}': Internal state updated as dictionary.")
              else:
                  # Simple dictionary update if Pydantic types are not available/used
                  # This performs a shallow update, potentially overwriting nested dicts
                  self.state.update(new_state_data)
                  self.logger.debug(f"Pilgrim '{self.name}': Internal state updated as dictionary.")
 
-        except ValidationError as e:
-            self.logger.error(f"Pilgrim '{self.name}': Pydantic validation error updating state. Changes potentially not fully applied. Error: {e}", exc_info=False)
-            # Optionally: Fallback to dict update even on validation error?
-            # self.state.update(new_state_data)
-            # self.logger.warning(f"Pilgrim '{self.name}': State update failed Pydantic validation, performed shallow dict update as fallback.")
         except Exception as e:
             self.logger.error(f"Pilgrim '{self.name}': Unexpected error updating internal state: {e}", exc_info=True)
             # Fallback: Try a simple dict update if Pydantic failed unexpectedly
@@ -272,7 +213,7 @@ class BaseAgent(AgentInterface, ABC): # Inherit from AgentInterface if it exists
         if isinstance(current_state_dict.get('swarm_params'), dict):
              swarm_params = current_state_dict['swarm_params']
         # Handle case where state is Pydantic model directly (less common now with property)
-        elif SWARM_TYPES_AVAILABLE and isinstance(self.state, NodeStateModel) and hasattr(self.state, 'swarm_params'):
+        elif isinstance(self.state, NodeStateModel) and hasattr(self.state, 'swarm_params'):
              # Check if swarm_params is a Pydantic model or dict within the model
              if isinstance(self.state.swarm_params, SwarmParams):
                  # If it's the Pydantic model, check attribute existence
@@ -403,7 +344,7 @@ class BaseAgent(AgentInterface, ABC): # Inherit from AgentInterface if it exists
         if global_best_node:
             # Safely extract position from Pydantic or dict
             gbest_pos_candidate = None
-            if SWARM_TYPES_AVAILABLE and isinstance(global_best_node, GlobalBestNodeInfo):
+            if isinstance(global_best_node, GlobalBestNodeInfo):
                  gbest_pos_candidate = global_best_node.position
             elif isinstance(global_best_node, dict):
                  gbest_pos_candidate = global_best_node.get('position')
@@ -425,7 +366,7 @@ class BaseAgent(AgentInterface, ABC): # Inherit from AgentInterface if it exists
 
             for trail_info in stigmergic_trails:
                 # Ensure trail_info is a dict (handles Pydantic model case)
-                trail = trail_info.model_dump(mode='json') if SWARM_TYPES_AVAILABLE and isinstance(trail_info, TrailSignature) else (trail_info if isinstance(trail_info, dict) else {})
+                trail = trail_info.model_dump(mode='json') if isinstance(trail_info, TrailSignature) else (trail_info if isinstance(trail_info, dict) else {})
 
                 trail_pos = trail.get('position_at_emission')
                 # Example weighting: Use relevance score * value proposition, decay with distance
@@ -479,7 +420,7 @@ class BaseAgent(AgentInterface, ABC): # Inherit from AgentInterface if it exists
         """Determines the agent's next role based on context and internal state."""
         # Get current state safely
         current_state_dict = self.current_state
-        current_role = current_state_dict.get('current_role', NodeRole.PILGRIM if SWARM_TYPES_AVAILABLE else "PILGRIM")
+        current_role = current_state_dict.get('current_role', NodeRole.PILGRIM)
 
         # --- Role Switching Logic --- 
 
@@ -514,7 +455,7 @@ class BaseAgent(AgentInterface, ABC): # Inherit from AgentInterface if it exists
              # Exclude SHADE unless forced by energy
              available_roles = [
                  role for role in (NodeRole.PILGRIM, NodeRole.SCRIBE, NodeRole.HERALD) 
-                 if SWARM_TYPES_AVAILABLE or isinstance(role, str) # Handle fallback types
+                 if isinstance(role, str) # Handle fallback types
              ]
              if not available_roles: # Fallback if NodeRole enum isn't working
                   available_roles = ["PILGRIM", "SCRIBE", "HERALD"]
@@ -537,7 +478,7 @@ class BaseAgent(AgentInterface, ABC): # Inherit from AgentInterface if it exists
         # Extract common info
         node_id = current_state_dict.get('id', self.node_id)
         position = current_state_dict.get('position', [0.0]*3)
-        role = current_state_dict.get('current_role', NodeRole.PILGRIM if SWARM_TYPES_AVAILABLE else "PILGRIM")
+        role = current_state_dict.get('current_role', NodeRole.PILGRIM)
         energy = current_state_dict.get('energy_level', 0.0)
         task_success = not task_result.get("error")
 
@@ -569,7 +510,7 @@ class BaseAgent(AgentInterface, ABC): # Inherit from AgentInterface if it exists
         }
 
         # Attempt to validate/create Pydantic model if possible
-        if SWARM_TYPES_AVAILABLE and TrailSignature is not Dict:
+        if isinstance(self.state, NodeStateModel):
             try:
                 # Clean data: remove keys not in the model if necessary, or ensure defaults
                 # Example: If TrailSignature doesn't have 'direction_vector', remove it
@@ -577,10 +518,6 @@ class BaseAgent(AgentInterface, ABC): # Inherit from AgentInterface if it exists
                 # cleaned_signature_data = {k: v for k, v in signature_data.items() if k in model_fields}
                 # Or rely on Pydantic's default handling
                 return TrailSignature(**signature_data)
-            except ValidationError as e:
-                self.logger.error(f"Pilgrim '{self.name}': Pydantic validation error generating trail signature: {e}. Data: {signature_data}", exc_info=False)
-                # Fallback to returning the raw dict on validation failure
-                return signature_data
             except Exception as e:
                 self.logger.error(f"Pilgrim '{self.name}': Unexpected error generating Pydantic TrailSignature: {e}", exc_info=True)
                 return signature_data # Fallback to raw dict
@@ -795,7 +732,7 @@ class BaseAgent(AgentInterface, ABC): # Inherit from AgentInterface if it exists
              'name': self.name,
              'position': [random.uniform(-10, 10) for _ in range(3)], # Random 3D position
              'velocity': [0.0, 0.0, 0.0],
-             'current_role': NodeRole.PILGRIM if SWARM_TYPES_AVAILABLE else "PILGRIM",
+             'current_role': NodeRole.PILGRIM,
              'personal_best_position': None, # Will be set to initial position
              'personal_best_value': float('-inf'),
              'energy_level': 1.0,
@@ -812,7 +749,7 @@ class BaseAgent(AgentInterface, ABC): # Inherit from AgentInterface if it exists
          # Set pBest to initial position
          default_state_data['personal_best_position'] = default_state_data['position'][:]
 
-         if SWARM_TYPES_AVAILABLE:
+         if isinstance(self.state, NodeStateModel):
              try:
                  # Ensure all required fields for NodeStateModel are present or have defaults
                  # Add any missing fields with default values if necessary
@@ -831,9 +768,6 @@ class BaseAgent(AgentInterface, ABC): # Inherit from AgentInterface if it exists
                       }
 
                  self.state = NodeStateModel(**default_state_data)
-             except ValidationError as e:
-                 self.logger.error(f"Pilgrim '{self.name}': Validation error initializing default state with Pydantic: {e}. Falling back to dict.", exc_info=False) # Less verbose
-                 self.state = default_state_data # Fallback to dict
              except Exception as e:
                   self.logger.error(f"Pilgrim '{self.name}': Unexpected error initializing default Pydantic state: {e}. Falling back to dict.", exc_info=True)
                   self.state = default_state_data # Fallback to dict
@@ -845,7 +779,7 @@ class BaseAgent(AgentInterface, ABC): # Inherit from AgentInterface if it exists
     @property
     def current_state(self) -> Dict[str, Any]:
          """Returns the current state as a dictionary."""
-         if SWARM_TYPES_AVAILABLE and isinstance(self.state, NodeStateModel):
+         if isinstance(self.state, NodeStateModel):
              try:
                  # Use Pydantic's method to convert to dict, handling potential serialization issues
                  # Use model_dump for Pydantic v2+

@@ -3,6 +3,26 @@ from typing import Optional, Dict, Any, Literal, List
 import uuid
 from datetime import datetime
 
+# --- Define ToolCall and ToolResponse FIRST --- 
+@dataclass
+class ToolCall:
+    """Represents a request from an agent to call a specific tool."""
+    id: str # Unique ID for this specific tool call request
+    function: Dict[str, Any] # Describes the function to call
+    type: Literal["function"] = "function" # Type of tool, currently only function (has default)
+    # Example function dict: {"name": "memory_weave_lookup", "arguments": "{\"query\": \"user_prefs\"}"} 
+    # Arguments are often JSON strings
+
+@dataclass
+class ToolResponse:
+    """Represents the result of executing a tool call."""
+    tool_call_id: str # The ID of the ToolCall this response corresponds to
+    name: str # The name of the function that was called
+    content: str # The result of the function call, typically as a string (e.g., JSON)
+    status: Literal['success', 'error'] = 'success'
+    error_message: Optional[str] = None
+# ------------------------------------------
+
 @dataclass
 class AgentInput:
     """Standard input structure for agent tasks, especially chat."""
@@ -43,36 +63,28 @@ class AgentResponse:
 #     generation_time_ms: Optional[int] = None 
 
 # --- NEW: MCP-Inspired Tool Dataclasses --- 
-@dataclass
-class ToolCall:
-    """Represents a request from an agent to call a specific tool."""
-    id: str # Unique ID for this specific tool call request
-    type: Literal["function"] = "function" # Type of tool, currently only function
-    function: Dict[str, Any] # Describes the function to call
-    # Example function dict: {"name": "memory_weave_lookup", "arguments": "{\"query\": \"user_prefs\"}"} 
-    # Arguments are often JSON strings
-
-@dataclass
-class ToolResponse:
-    """Represents the result of executing a tool call."""
-    tool_call_id: str # The ID of the ToolCall this response corresponds to
-    name: str # The name of the function that was called
-    content: str # The result of the function call, typically as a string (e.g., JSON)
-    status: Literal['success', 'error'] = 'success'
-    error_message: Optional[str] = None
+# MOVED EARLIER
+# @dataclass
+# class ToolCall:
+# ...
+# @dataclass
+# class ToolResponse:
+# ...
 # ----------------------------------------- 
 
 # --- NEW: A2A-Inspired Message Dataclass --- 
 @dataclass
 class AgentMessage:
     """Represents a message sent directly between agents."""
-    message_id: str = field(default_factory=lambda: f"msg_{uuid.uuid4().hex[:8]}")
+    # Non-default fields first:
     sender_id: str
     receiver_id: str 
     intent: str # What is the purpose of the message (e.g., 'query', 'request_help', 'inform', 'negotiate')
+    
+    # Fields with defaults or Optional:
+    message_id: str = field(default_factory=lambda: f"msg_{uuid.uuid4().hex[:8]}")
     payload: Dict[str, Any] = field(default_factory=dict) # The actual content of the message
     timestamp: str = field(default_factory=lambda: datetime.utcnow().isoformat())
-    # Optional fields for more complex interactions
     correlation_id: Optional[str] = None # To link related messages (e.g., request/response)
     requires_response: bool = False
 # ------------------------------------------

@@ -2,18 +2,16 @@
   "description": "Central registry for all agents within the VANTA framework.",
   "version": "1.0",
   "agents": {
-    "AgentOrchestrator": {
-      "description": "Core agent responsible for task routing, agent management, and workflow execution.",
+    "VantaMasterCore": {
+      "description": "Core orchestrator managing agents and tasks (entry for reference, loaded directly).",
       "type": "core",
-      "status": "active",
-      "module": "orchestrator",
-      "class": "AgentOrchestrator",
+      "status": "system",
+      "module": "vanta_seed.core.vanta_master_core",
+      "class": "VantaMasterCore",
       "capabilities": ["task_routing", "agent_management", "workflow_execution", "context_management"],
       "dependencies": ["CrossModalMemory", "RuleSmith", "ValidatorAgent", "OutcomeLogger", "MoERouter"],
-      "config": {
-        "max_concurrent_tasks": 10,
-        "default_agent": "PromptEngineer"
-      }
+      "config": {},
+      "enabled": true
     },
     "RuleSmith": {
       "description": "Manages and enforces framework rules (e.g., from FrAMEWORK RULES/ and .cursor/rules/).",
@@ -49,7 +47,7 @@
       "module": "vanta_nextgen",
       "class": "VantaNextGen",
       "capabilities": ["advanced_reasoning", "self_improvement", "meta_learning"],
-      "dependencies": ["AgentOrchestrator", "CrossModalMemory", "RLAgent"],
+      "dependencies": ["VantaMasterCore", "CrossModalMemory", "RLAgent"],
       "config": {}
     },
     "EmbeddingManager": {
@@ -72,7 +70,7 @@
         "module": "learning",
         "class": "RLAgent",
         "capabilities": ["policy_learning", "reward_calculation", "experience_replay", "model_training"],
-        "dependencies": ["AgentOrchestrator", "CrossModalMemory"],
+        "dependencies": ["VantaMasterCore", "CrossModalMemory"],
         "config": {
             "learning_rate": 0.001,
             "discount_factor": 0.99,
@@ -219,7 +217,7 @@
       "module": "vanta_seed.agents.scheduler_agent",
       "class": "SchedulerAgent",
       "capabilities": ["task_scheduling", "periodic_execution", "ritual_management"],
-      "dependencies": ["AgentOrchestrator"],
+      "dependencies": ["VantaMasterCore"],
       "config": {
         "check_interval_seconds": 60,
         "schedule": [
@@ -228,7 +226,7 @@
             "interval_seconds": 3600,
             "intent": "internal_issue_purpose_pulse",
             "payload": {},
-            "target_agent": "AgentOrchestrator",
+            "target_agent": "VantaMasterCore",
             "run_on_startup": true
           },
           {
@@ -236,7 +234,7 @@
             "interval_seconds": 300,
             "intent": "internal_monitor_swarm_health",
             "payload": {},
-            "target_agent": "AgentOrchestrator",
+            "target_agent": "VantaMasterCore",
             "run_on_startup": false
           },
           {
@@ -267,6 +265,34 @@
         "archive_directory": "../archive",
         "auto_commit_changes": true,
         "require_approval": true 
+      }
+    },
+    "ReflectorAgent": {
+      "description": "Agent capable of analyzing and suggesting improvements to code or text based on learned patterns and rules.",
+      "type": "reasoning",
+      "status": "active",
+      "module": "vanta_seed.agents.cognitive.reflector_agent",
+      "class": "ReflectorAgent",
+      "capabilities": ["analyze_code", "suggest_improvements"],
+      "dependencies": ["VantaMasterCore", "CrossModalMemory", "RLAgent"],
+      "enabled": true,
+      "config": {
+        "learning_rate": 0.001,
+        "discount_factor": 0.99,
+        "exploration_rate": 0.1
+      }
+    },
+    "RetrievalAgent": {
+      "description": "Agent for retrieving information from the Memory Weave based on queries.",
+      "type": "reasoning",
+      "status": "active",
+      "module": "vanta_seed.agents.memory.retrieval_agent",
+      "class": "RetrievalAgent",
+      "capabilities": ["retrieve_information"],
+      "dependencies": ["VantaMasterCore", "CrossModalMemory"],
+      "enabled": true,
+      "config": {
+        "max_results": 10
       }
     }
   }
