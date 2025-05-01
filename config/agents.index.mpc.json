@@ -40,6 +40,17 @@
             "system_prompt": "You are VANTA, a helpful AI assistant within a complex evolving system."
         },
         "status": "active"
+    },
+    "DataUnifierAgent": {
+        "description": "AI-powered master data management: deduplication & merging.",
+        "module": "vanta_seed.agents.data_unifier_agent",
+        "class": "DataUnifierAgent",
+        "config": {
+            "deduplication_model": "sentence-transformers/all-MiniLM-L6-v2",
+            "matching_threshold": 0.85,
+            "master_data_store": "placeholder_db_connection_string"
+        },
+        "status": "active"
     }
     // Add more agents here
   }

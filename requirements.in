@@ -18,3 +18,12 @@ ollama
 
 # Optional Vector DB (uncomment if needed)
 # chromadb 
+
+# Add other direct dependencies below
+ollama
+openai
+requests
+transformers
+tokenizers
+torch
+outlines 

@@ -211,6 +211,46 @@
         "audio_save_directory": "./generated_audio_dia",
         "use_torch_compile": false
       }
+    },
+    "SchedulerAgent": {
+      "description": "Manages scheduled tasks and rituals within the framework.",
+      "type": "core",
+      "status": "active",
+      "module": "vanta_seed.agents.scheduler_agent",
+      "class": "SchedulerAgent",
+      "capabilities": ["task_scheduling", "periodic_execution", "ritual_management"],
+      "dependencies": ["AgentOrchestrator"],
+      "config": {
+        "check_interval_seconds": 60,
+        "schedule": [
+          {
+            "name": "issue_purpose_pulse_task",
+            "interval_seconds": 3600,
+            "intent": "internal_issue_purpose_pulse",
+            "payload": {},
+            "target_agent": "AgentOrchestrator",
+            "run_on_startup": true
+          },
+          {
+            "name": "monitor_swarm_health_task",
+            "interval_seconds": 300,
+            "intent": "internal_monitor_swarm_health",
+            "payload": {},
+            "target_agent": "AgentOrchestrator",
+            "run_on_startup": false
+          },
+          {
+            "name": "daily_reflection_prompt",
+            "interval_seconds": 86400,
+            "intent": "generate_reflection",
+            "payload": {
+              "prompt_template_id": "daily_reflection_v1",
+              "context": "Scheduled daily reflection trigger"
+            },
+            "target_agent": "PromptEngineer"
+          }
+        ]
+      }
     }
   }
 } 

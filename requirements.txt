@@ -459,3 +459,17 @@ chromadb>=0.4.24
     # via vanta_seed
 # pyyaml>=6.0 is already included
 # ==============================
+
+# Added by previous test mocking, keep for now
+watchdog
+
+# Added by previous test mocking, keep for now
+httpx
+
+# For DataUnifierAgent
+sentence-transformers
+
+# For DataUnifierAgent similarity calculations
+scikit-learn
+
+# Add other dependencies below

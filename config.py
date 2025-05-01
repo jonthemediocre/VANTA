@@ -35,9 +35,24 @@ if "VANTA_LOG_DIR" not in os.environ:
 LOG_LEVEL = os.getenv("VANTA_LOG_LEVEL", "INFO").upper()
 logging.basicConfig(
     level=LOG_LEVEL,
-    format='%(asctime)s - %(levelname)s - %(name)s - %(message)s'
+    format='%(asctime)s - %(levelname)s - %(name)s - [%(filename)s:%(lineno)d] - %(message)s', # Enhanced format
+    handlers=[ # Explicitly define handlers
+        logging.StreamHandler()
+    ]
 )
-# Optionally configure file logging here too if desired system-wide
+
+# --- Add File Handler ---
+log_file_path = LOG_DIR / "vanta_core.log"
+try:
+    file_handler = logging.FileHandler(log_file_path)
+    file_handler.setLevel(LOG_LEVEL)
+    file_formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(name)s - [%(filename)s:%(lineno)d] - %(message)s')
+    file_handler.setFormatter(file_formatter)
+    logging.getLogger().addHandler(file_handler) # Add handler to the root logger
+    print(f"Configured file logging to: {log_file_path}")
+except Exception as e:
+    print(f"[WARN] Could not configure file logging to {log_file_path}: {e}")
+# ----------------------
 
 # --- Path Definitions ---
 BLUEPRINT_PATH = BASE_DIR / os.getenv("VANTA_BLUEPRINT_FILE", "blueprint.yaml")
@@ -47,6 +62,16 @@ AGENT_INDEX_PATH = BASE_DIR / os.getenv("VANTA_AGENT_INDEX_FILE", "agents.index.
 # Example: Load API keys safely
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 # Add other environment variables or derived configurations here
+
+# --- Allowed API Keys for VANTA API ---
+# Load comma-separated keys from env var, default to empty list if not set
+ALLOWED_API_KEYS_STR = os.getenv("VANTA_ALLOWED_API_KEYS", "")
+ALLOWED_API_KEYS = set(key.strip() for key in ALLOWED_API_KEYS_STR.split(',') if key.strip())
+if not ALLOWED_API_KEYS:
+    print("[WARN] VANTA_ALLOWED_API_KEYS environment variable not set or empty. API will be accessible without authentication.")
+else:
+    print(f"Loaded {len(ALLOWED_API_KEYS)} allowed API keys.")
+# ------------------------------------
 
 # --- Print loaded config for verification --- 
 print("--- Configuration Loaded ---")

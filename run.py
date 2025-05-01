@@ -14,9 +14,18 @@ import yaml # Keep yaml for blueprint loading
 from pathlib import Path # Keep Path
 import json # <-- Add json import back
 import logging # Added for detailed logging
+from typing import Dict, Any, Optional
+
+# --- FastAPI Imports ---
+from fastapi import FastAPI, HTTPException, Request, Depends
+from pydantic import BaseModel, Field # For request body validation
+import uvicorn # To run the server
+# --- Security Imports ---
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+# -----------------------
 
 # --- Import centralized config FIRST --- 
-import config # This will load .env, set up logging, define paths
+import config # This will load .env, set up logging, define paths, and ALLOWED_API_KEYS
 # ---------------------------------------
 
 # --- Import the NEW Seed Orchestrator --- 
@@ -121,113 +130,285 @@ async def run_seed_core(orchestrator: AgentOrchestrator):
         # Ensure orchestrator stops gracefully even on error
         await orchestrator.stop()
 
-async def main():
-    """Main entry point."""
-    logger.info("Starting VANTA Application...")
+# --- FastAPI Lifespan Management ---
+async def lifespan(app: FastAPI):
+    global orchestrator_instance, plugin_manager_instance
+    logger.info("Application startup...")
     
-    # Load configurations
-    blueprint = load_yaml_config(BLUEPRINT_FILE)
-    agent_definitions = load_json_config(AGENT_INDEX_FILE)
+    # --- Initialize Plugin Manager ---
+    # Assuming plugins are in vanta_seed/agents
+    plugin_dir = config.BASE_DIR / "vanta_seed" / "agents" 
+    plugin_manager_instance = PluginManager(plugin_directory=str(plugin_dir))
+    plugin_manager_instance.load_plugins()
+    logger.info(f"Plugins loaded: {plugin_manager_instance.list_plugins()}")
+    # -------------------------------
+
+    # --- Load Configurations ---
+    # Assuming blueprint is the core config needed by VantaMasterCore
+    core_config = load_yaml_config(BLUEPRINT_FILE) 
+    # Agent definitions are loaded inside VantaMasterCore via core_config path now?
+    # Let's adjust VantaMasterCore init if needed, or load here if separate.
+    # Assuming VantaMasterCore's _load_core_config handles loading agent defs too.
     
-    if blueprint is None or agent_definitions is None:
-        logger.critical("Failed to load essential configuration. Exiting.")
-        return
+    if core_config is None:
+        logger.critical("Failed to load core configuration (blueprint). Exiting.")
+        # In a real app, maybe raise an exception or handle differently
+        return 
 
-    # Initialize the Unified Orchestrator
-    orchestrator = initialize_seed_orchestrator(blueprint, agent_definitions)
-
-    # --- Agent Registration (Now handled INSIDE orchestrator._load_agents) ---
-    # No longer need to manually register agents here
-    # active_agents = { 
-    #     agent_id: details 
-    #     for agent_id, details in agent_definitions.items() 
-    #     if details.get('status') == 'active'
-    # }
-    # logger.info(f"Registering {len(active_agents)} active agents for SwarmWeave...")
-    # for agent_id in active_agents:
-    #     orchestrator.register_agent_for_swarm(agent_id) # Only register for swarm
-    # ---------------------------------------------------------------------
-
-    # Run the main Seed Core loops
-    main_task = asyncio.create_task(run_seed_core(orchestrator))
-
-    # Handle graceful shutdown (e.g., on Ctrl+C)
+    # --- Initialize VantaMasterCore ---
     try:
-        await main_task
-    except asyncio.CancelledError:
-        logger.info("Main application task cancelled.")
-    finally:
-        logger.info("VANTA Application Shutting Down...")
-        if not main_task.done():
-             main_task.cancel()
-             await main_task # Allow cancellation to propagate
-        await orchestrator.stop() # Ensure stop is called if not already
-        logger.info("VANTA Application Shutdown Complete.")
+        # Pass the PATH to the core config, VantaMasterCore loads it internally
+        orchestrator_instance = VantaMasterCore(
+            core_config_path=str(BLUEPRINT_FILE), # Pass path
+            plugin_manager=plugin_manager_instance
+        )
+        logger.info("VantaMasterCore initialized.")
+        # Start the orchestrator's background tasks
+        await orchestrator_instance.startup()
+        logger.info("VantaMasterCore startup complete.")
+    except Exception as e:
+         logger.critical(f"Failed to initialize or start VantaMasterCore: {e}", exc_info=True)
+         # Prevent app from starting if core fails
+         raise RuntimeError("VantaMasterCore failed to start.") from e
 
+    yield # Application runs here
+
+    # --- Shutdown Logic ---
+    logger.info("Application shutting down...")
+    if orchestrator_instance:
+        try:
+            await orchestrator_instance.shutdown()
+            logger.info("VantaMasterCore shutdown complete.")
+        except Exception as e:
+            logger.error(f"Error during VantaMasterCore shutdown: {e}", exc_info=True)
+    logger.info("Application shutdown complete.")
+
+# --- FastAPI App Instance ---
+# Use context manager for lifespan with FastAPI 0.100+
+from contextlib import asynccontextmanager
+
+@asynccontextmanager
+async def lifespan_manager(app: FastAPI):
+    # Code to run on startup
+    global orchestrator_instance, plugin_manager_instance
+    logger.info("Application startup...")
+    
+    plugin_dir = config.BASE_DIR / "vanta_seed" / "agents" 
+    plugin_manager_instance = PluginManager(plugin_directory=str(plugin_dir))
+    plugin_manager_instance.load_plugins()
+    logger.info(f"Plugins loaded: {plugin_manager_instance.list_plugins()}")
+
+    core_config = load_yaml_config(BLUEPRINT_FILE) 
+    if core_config is None:
+        logger.critical("Failed to load core configuration (blueprint). Halting startup.")
+        raise RuntimeError("Failed to load core configuration.")
+
+    try:
+        # Pass the path to the core config file
+        # Assuming VantaMasterCore init takes path and plugin manager
+        orchestrator_instance = VantaMasterCore(
+            core_config_path=str(BLUEPRINT_FILE), 
+            plugin_manager=plugin_manager_instance
+        )
+        logger.info("VantaMasterCore initialized.")
+        await orchestrator_instance.startup()
+        logger.info("VantaMasterCore startup tasks complete.")
+    except Exception as e:
+         logger.critical(f"Failed to initialize or start VantaMasterCore: {e}", exc_info=True)
+         raise RuntimeError("VantaMasterCore failed to start.") from e
+
+    yield # Application runs
+
+    # Code to run on shutdown
+    logger.info("Application shutting down...")
+    if orchestrator_instance:
+        try:
+            await orchestrator_instance.shutdown()
+            logger.info("VantaMasterCore shutdown complete.")
+        except Exception as e:
+            logger.error(f"Error during VantaMasterCore shutdown: {e}", exc_info=True)
+    logger.info("Application shutdown complete.")
+
+app = FastAPI(title="VANTA Framework API", lifespan=lifespan_manager)
+
+# --- Request Models ---
+class TaskRequest(BaseModel):
+    intent: str
+    payload: Optional[Dict[str, Any]] = Field(default_factory=dict)
+    target_agent: Optional[str] = None
+    context: Optional[Dict[str, Any]] = Field(default_factory=dict)
+
+# --- OpenAI-Compatible Models ---
+class ChatMessage(BaseModel):
+    role: str # Typically "system", "user", or "assistant"
+    content: str
+
+class ChatCompletionRequest(BaseModel):
+    model: str # Although VANTA handles routing, OpenAI clients expect this
+    messages: list[ChatMessage]
+    # Add other common OpenAI params if needed later (temperature, max_tokens, etc.)
+    # temperature: Optional[float] = 1.0 
+    # max_tokens: Optional[int] = None
+    # stream: Optional[bool] = False # Streaming not implemented here
+
+class ChatCompletionChoice(BaseModel):
+    index: int
+    message: ChatMessage
+    finish_reason: str = "stop" # Simple default
+
+class Usage(BaseModel):
+    prompt_tokens: int = 0 # Placeholder
+    completion_tokens: int = 0 # Placeholder
+    total_tokens: int = 0 # Placeholder
+
+class ChatCompletionResponse(BaseModel):
+    id: str = Field(default_factory=lambda: f"chatcmpl-{uuid.uuid4().hex}")
+    object: str = "chat.completion"
+    created: int = Field(default_factory=lambda: int(asyncio.get_event_loop().time()))
+    model: str # Return the model requested, even if VANTA used differently
+    choices: list[ChatCompletionChoice]
+    usage: Usage = Field(default_factory=Usage)
+# ------------------------------
+
+# --- Dependency to get Orchestrator ---
+# Ensures orchestrator is initialized before endpoint is called
+async def get_orchestrator() -> VantaMasterCore:
+    if orchestrator_instance is None:
+        # This shouldn't happen if lifespan event completes successfully
+        logger.error("Orchestrator not initialized!")
+        raise HTTPException(status_code=503, detail="Service Unavailable: Orchestrator not ready.")
+    return orchestrator_instance
+
+# --- API Endpoints ---
+@app.get("/")
+async def root():
+    # Access blueprint version via orchestrator's loaded config if available
+    version = "N/A"
+    # This check is needed because orchestrator_instance might not be ready immediately
+    # A dependency approach is safer for endpoints needing the orchestrator.
+    if orchestrator_instance and orchestrator_instance.core_config:
+         version = getattr(orchestrator_instance.core_config, 'version', 'N/A')
+    return {"message": "VANTA Framework API running...", "version": version}
+
+@app.post("/submit_task")
+async def submit_task_endpoint(
+    task_request: TaskRequest, 
+    orchestrator: VantaMasterCore = Depends(get_orchestrator),
+    api_key: str = Depends(verify_api_key) # <<< Apply API key check
+):
+    """Submits a task to the VANTA Orchestrator."""
+    try:
+        # Construct the task_data dictionary expected by submit_task
+        task_data = {
+            "intent": task_request.intent,
+            "payload": task_request.payload,
+            "context": task_request.context if task_request.context else {},
+            # Add source if not provided in context
+        }
+        if "source" not in task_data["context"]:
+             task_data["context"]["source"] = "api"
+             
+        if task_request.target_agent:
+            task_data["target_agent"] = task_request.target_agent
+
+        logger.info(f"API received task: {task_data}")
+        
+        # Submit the task to the orchestrator
+        result = await orchestrator.submit_task(task_data)
+        
+        # Return the result from the agent
+        # Check if result is an error (simple check)
+        if isinstance(result, dict) and result.get("error"):
+             raise HTTPException(status_code=500, detail=f"Task execution failed: {result['error']}")
+             
+        return result # Return the successful result
+
+    except HTTPException as http_exc:
+        raise http_exc # Re-raise known HTTP exceptions
+    except Exception as e:
+        logger.error(f"Error processing /submit_task: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
+
+# --- OpenAI Compatible Endpoint ---
+@app.post("/v1/chat/completions", response_model=ChatCompletionResponse)
+async def openai_chat_completions(
+    request: ChatCompletionRequest,
+    orchestrator: VantaMasterCore = Depends(get_orchestrator),
+    api_key: str = Depends(verify_api_key) # <<< Apply API key check
+):
+    """Handles requests formatted like OpenAI's chat completions endpoint."""
+    logger.info(f"Received OpenAI-style request for model: {request.model}")
+    
+    # --- Translate OpenAI request to VANTA task ---
+    # Define the VANTA intent for chat
+    vanta_intent = "chat_completion"
+    
+    # Pass the messages directly in the payload
+    # A dedicated VANTA chat agent would know how to handle this structure
+    vanta_payload = {
+        "messages": [msg.dict() for msg in request.messages],
+        "requested_model": request.model 
+        # TODO: Potentially translate/pass other params like temperature if needed
+    }
+    
+    # Construct the task data for VANTA's submit_task
+    task_data = {
+        "intent": vanta_intent,
+        "payload": vanta_payload,
+        "context": {"source": "openai_api_compat"}
+        # Decide if we need to target a specific agent or use default routing
+        # "target_agent": "ChatAgent" 
+    }
+
+    try:
+        logger.debug(f"Submitting translated task to VANTA orchestrator: {task_data}")
+        vanta_result = await orchestrator.submit_task(task_data)
+        logger.debug(f"Received result from VANTA orchestrator: {vanta_result}")
+
+        # --- Translate VANTA result back to OpenAI response --- 
+        if isinstance(vanta_result, dict) and vanta_result.get("error"):
+            # Handle errors reported by VANTA
+            raise HTTPException(status_code=500, detail=f"VANTA task execution failed: {vanta_result['error']}")
+
+        # **ASSUMPTION:** The VANTA agent handling 'chat_completion' returns a dict 
+        # with the response text under the key 'response_text'. 
+        # This might need adjustment based on the actual agent's implementation.
+        assistant_response_text = vanta_result.get("response_text")
+        
+        if not assistant_response_text:
+             logger.error(f"VANTA agent did not return 'response_text' for intent '{vanta_intent}'. Result: {vanta_result}")
+             raise HTTPException(status_code=500, detail="Agent response format error")
+
+        # Construct the OpenAI response structure
+        assistant_message = ChatMessage(role="assistant", content=assistant_response_text)
+        choice = ChatCompletionChoice(index=0, message=assistant_message)
+        response = ChatCompletionResponse(
+            model=request.model, # Echo back the requested model
+            choices=[choice]
+            # Usage tokens are placeholders for now
+        )
+        
+        return response
+
+    except HTTPException as http_exc:
+        raise http_exc
+    except Exception as e:
+        logger.error(f"Error processing /v1/chat/completions: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
+# ------------------------------
+
+# --- Remove old main execution block ---
+
+# --- Add Uvicorn runner block ---
 if __name__ == "__main__":
-    asyncio.run(main())
-
-# --- Deprecated run_framework using old orchestrator --- 
-# def run_framework(blueprint, agent_definitions):
-#    ... (Old implementation commented out or removed) ...
-
-# --- Application Setup (Placeholder for FastAPI or main loop) ---
-
-# Example using FastAPI (requires uncommenting in requirements.txt)
-# from fastapi import FastAPI
-# app = FastAPI(title="VANTA Framework API")
-
-# @app.get("/")
-# async def root():
-#     return {"message": "VANTA Framework running...", "blueprint_version": blueprint.get('version', 'N/A')}
-
-# Placeholder for main execution logic if not an API
-# --- Updated run_framework to use agent_definitions ---
-# def run_framework(blueprint, agent_definitions):
-#     print("\n--- Initializing VANTA Framework --- ")
-#     # Config values like version/stance should come from blueprint or config.py if defined there
-#     print(f"Version: {blueprint.get('version', 'N/A')}") 
-#     print(f"Moral Stance: {blueprint.get('moral_stance', 'Not Defined').strip()}")
-#     print(f"Router Strategy: {blueprint.get('router_strategy', {})}")
-#     print(f"Registered Agents: {list(agent_definitions.keys())}") 
-
-#     # --- Initialize Core Agents ---
-#     orchestrator_def = agent_definitions.get('AgentOrchestrator')
-
-#     orchestrator = None
-#     # --- Removed direct initialization of MemoryWeaver and RuleSmith ---
-#     # memory_weaver = None
-#     # rule_smith = None
-
-#     # --- Simplified initialization - Orchestrator handles loading others ---
-#     if orchestrator_def:
-#         # Pass blueprint and all definitions to Orchestrator
-#         orchestrator = AgentOrchestrator(
-#             agent_name='AgentOrchestrator', 
-#             definition=orchestrator_def,
-#             blueprint=blueprint,
-#             all_agent_definitions=agent_definitions
-#             # Logger is handled internally by AgentOrchestrator now
-#         )
-#         print("AgentOrchestrator initialized.")
-#     else:
-#         print("ERROR: AgentOrchestrator definition not found in agent index!")
-
-#     # TODO: Initialize other agents (AutoMutator, PromptSmith etc.) via Orchestrator? YES
-#     # TODO: Initialize VANTA.SOLVE kernel
-#     # TODO: Initialize supporting agents for VANTA.SOLVE
-#     # TODO: Start main loop / listener / task processor / ritual scheduler via Orchestrator
-#     if orchestrator:
-#         print("\nStarting Orchestrator...")
-#         # --- Orchestrator.start() now likely expects an existing loop ---
-#         # orchestrator.start() # Start the main process/loop
-#         # Instead, return the instance to be run in the main loop
-#         return orchestrator 
-#     else:
-#         print("\nERROR: Orchestrator failed to initialize. Framework cannot run.")
-#         return None
-
-#     # print("--------------------------------------")
+    port = int(os.getenv("PORT", 8000)) # Default to port 8000
+    host = os.getenv("HOST", "127.0.0.1") # Default to localhost
+    log_level_str = config.LOG_LEVEL.lower() # Use level from config.py
+    
+    print(f"--- Starting VANTA API Server ({host}:{port}) ---")
+    # Use reload=True for development, set to False or remove for production
+    uvicorn.run("run:app", host=host, port=port, log_level=log_level_str, reload=True) 
+# ----------------------------
 
 # --- Main Execution ---
 
@@ -308,3 +489,28 @@ if __name__ == "__main__":
 #     #         print("Exiting due to missing or invalid agent definitions.")
 #     # else:
 #     #     print("Exiting due to missing or invalid blueprint.") 
+
+# --- Security Scheme Definition ---
+api_key_scheme = HTTPBearer()
+
+async def verify_api_key(credentials: HTTPAuthorizationCredentials = Depends(api_key_scheme)):
+    """Dependency function to verify the provided API key."""
+    # Only enforce key check if ALLOWED_API_KEYS is populated
+    if config.ALLOWED_API_KEYS:
+        if credentials.scheme != "Bearer":
+            raise HTTPException(
+                status_code=403,
+                detail="Invalid authentication scheme. Use Bearer token.",
+            )
+        if credentials.credentials not in config.ALLOWED_API_KEYS:
+            raise HTTPException(
+                status_code=403,
+                detail="Invalid API Key",
+            )
+        # Key is valid
+        return credentials.credentials
+    else:
+        # No keys configured, allow access
+        logger.warning("API key check skipped: VANTA_ALLOWED_API_KEYS is not set.")
+        return None # Indicate no key was checked/needed
+# --------------------------------- 

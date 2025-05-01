@@ -579,6 +579,13 @@ class VantaMasterCore:
         self.logger.debug(f"Crown: Found {len(nearby_signatures)} trail signatures near {position} (key {search_center_key}, basic search).")
         return nearby_signatures
 
+    # --- Public Task Submission Method ---
+    async def submit_task(self, task_data: Dict[str, Any]) -> Any:
+        """Public method to submit a task for routing and execution."""
+        self.logger.info(f"Crown: Received task submission: {task_data.get('type', 'Unknown Type')}")
+        # Directly call the internal routing method
+        return await self._route_task(task_data)
+
 
 # --- Example Usage (Adapted Terminology) ---
 async def main():
@@ -640,25 +647,25 @@ async def main():
     # Example Task Routing
     print("\nRouting task to EchoAgent Pilgrim...")
     task_echo = {"type": "echo", "content": "Hello Living Kingdom!"}
-    result_echo = await master_core._route_task(task_echo)
+    result_echo = await master_core.submit_task(task_echo)
     print("EchoAgent Pilgrim Task Result:", result_echo)
 
     # Example: Route a task explicitly to EchoAgent
     print("\nRouting task explicitly to EchoAgent Pilgrim...")
     task_explicit = {"target_agent": "EchoAgent", "type": "echo", "content": "Explicit Hello!"}
-    result_explicit = await master_core._route_task(task_explicit)
+    result_explicit = await master_core.submit_task(task_explicit)
     print("Explicit EchoAgent Pilgrim Task Result:", result_explicit)
 
     # Example: Route a task to a non-existent Pilgrim
     print("\nRouting task to NonExistent Pilgrim (should fail or use default)...")
     task_nonexistent = {"target_agent": "NonExistentAgent", "type": "process", "data": "some data"}
-    result_nonexistent = await master_core._route_task(task_nonexistent)
+    result_nonexistent = await master_core.submit_task(task_nonexistent)
     print("NonExistent Pilgrim Task Result:", result_nonexistent)
 
     # Example: Route a task without target (should use default EchoAgent)
     print("\nRouting task without target (should use default EchoAgent Pilgrim)...")
     task_default = {"type": "echo", "content": "Default Hello!"}
-    result_default = await master_core._route_task(task_default)
+    result_default = await master_core.submit_task(task_default)
     print("Default Pilgrim Task Result:", result_default)
 
     # Example: Broadcast a message
