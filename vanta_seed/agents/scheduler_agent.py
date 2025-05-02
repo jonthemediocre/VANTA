@@ -13,17 +13,25 @@ class SchedulerAgent(BaseAgent):
     """
     def __init__(self, agent_name: str, definition: Dict[str, Any], blueprint: Dict[str, Any], all_agent_definitions: Dict[str, Any], orchestrator):
         super().__init__(agent_name, definition, blueprint, all_agent_definitions, orchestrator)
-        self.schedule_config = definition.get("config", {}).get("schedule", [])
-        self.interval_seconds = definition.get("config", {}).get("check_interval_seconds", 60) # Default check every 60s
+        agent_config = definition.get("config", {})
+        self.schedule_config = agent_config.get("schedule", [])
+        self.interval_seconds = agent_config.get("check_interval_seconds", 60)
+        self.misfire_grace_seconds = agent_config.get("misfire_grace_seconds", 3600)
+        self.max_retries = agent_config.get("max_retries", 3) # Default 3 retries
+        self.base_retry_delay_seconds = agent_config.get("base_retry_delay_seconds", 10) # Default 10s base delay
         self._schedule_loop_task: Optional[asyncio.Task] = None
         self._running = False
-        logger.info(f"SchedulerAgent '{agent_name}' initialized with {len(self.schedule_config)} scheduled tasks.")
+        logger.info(f"SchedulerAgent '{agent_name}' initialized with {len(self.schedule_config)} tasks. Interval: {self.interval_seconds}s, Misfire Grace: {self.misfire_grace_seconds}s, Max Retries: {self.max_retries}")
 
     async def startup(self):
         """Starts the scheduler loop when the agent starts."""
         logger.info(f"SchedulerAgent '{self.agent_name}' starting up.")
         self._running = True
         if not self._schedule_loop_task or self._schedule_loop_task.done():
+            self._job_states = { 
+                task_config.get("name"): {"last_run": 0, "next_run": 0, "retry_count": 0}
+                for task_config in self.schedule_config if task_config.get("name")
+            }
             self._schedule_loop_task = asyncio.create_task(self._run_schedule_loop())
             logger.info(f"SchedulerAgent '{self.agent_name}' schedule loop started.")
         else:
@@ -47,8 +55,11 @@ class SchedulerAgent(BaseAgent):
     async def _run_schedule_loop(self):
         """The main loop that checks the schedule and triggers tasks."""
         logger.info("Scheduler loop running...")
-        # Use a dictionary to store last run times, initializing to 0
-        last_run_times = {task_config.get("name"): 0 for task_config in self.schedule_config if task_config.get("name")}
+        initial_time = asyncio.get_event_loop().time()
+        for task_config in self.schedule_config:
+            task_name = task_config.get("name")
+            if task_name and task_name in self._job_states and task_config.get("run_on_startup", False):
+                self._job_states[task_name]["next_run"] = initial_time
 
         while self._running:
             try:
@@ -59,51 +70,63 @@ class SchedulerAgent(BaseAgent):
                         logger.warning("Scheduled task found without a 'name'. Skipping.")
                         continue
                     
-                    interval = task_config.get("interval_seconds", 3600) # Default 1 hour
-                    last_run = last_run_times.get(task_name, 0)
-                    task_payload = task_config.get("payload", {}) # Optional payload
-                    run_immediately = task_config.get("run_on_startup", False) # Option to run immediately
+                    interval = task_config.get("interval_seconds", 3600) 
+                    last_run = self._job_states[task_name]["last_run"]
+                    task_payload = task_config.get("payload", {}) 
+                    run_immediately = task_config.get("run_on_startup", False)
 
+                    # Determine if the task is due based on interval
+                    is_due = False
                     if last_run == 0 and run_immediately:
-                         # Run immediately on first check if configured
-                         needs_run = True
-                    elif (current_time - last_run) >= interval:
-                         needs_run = True
-                    else:
-                         needs_run = False
+                        is_due = True 
+                    elif interval > 0 and (current_time - last_run) >= interval: # Check interval > 0
+                        is_due = True
+                    # Note: If interval <= 0, it will never run based on time
 
-                    if needs_run:
+                    if is_due:
+                        # <<< START Misfire Check >>>
+                        scheduled_run_time = last_run + interval
+                        # We only check misfire if it wasn't run_immediately (last_run != 0)
+                        if last_run != 0 and self.misfire_grace_seconds >= 0: # Allow disabling misfire check with -1
+                            overdue_seconds = current_time - scheduled_run_time
+                            if overdue_seconds > self.misfire_grace_seconds:
+                                logger.warning(f"Scheduler: MISSED task '{task_name}' due at {scheduled_run_time:.0f} by {overdue_seconds:.0f}s (grace {self.misfire_grace_seconds}s). Skipping run.")
+                                self._job_states[task_name]["last_run"] = current_time # Reset last run to now
+                                self._job_states[task_name]["retry_count"] += 1
+                                if self._job_states[task_name]["retry_count"] <= self.max_retries:
+                                    self._job_states[task_name]["next_run"] = current_time + self.base_retry_delay_seconds
+                                else:
+                                    logger.error(f"Scheduler: MAX RETRIES reached for task '{task_name}'. Skipping further retries.")
+                                continue # Skip the rest of the loop for this task
+                        # <<< END Misfire Check >>>
+                        
+                        # If not misfired (or first run), proceed to submit
                         logger.info(f"Scheduler: Triggering scheduled task '{task_name}'...")
-                        # Always use the public submit_task method now
                         task_to_submit = {
-                            "intent": task_config.get("intent"), # Assuming intent is defined in schedule
+                            "intent": task_config.get("intent"), 
                             "payload": task_payload,
                             "context": {"source": "scheduler", "scheduled_task_name": task_name}
                         }
-                        if task_config.get("target_agent"): # Allow optional target agent override
+                        if task_config.get("target_agent"): 
                             task_to_submit["target_agent"] = task_config.get("target_agent")
                             
                         try:
-                            # Use asyncio.create_task to avoid blocking the scheduler loop
                             asyncio.create_task(self.orchestrator.submit_task(task_to_submit))
-                            last_run_times[task_name] = current_time
+                            self._job_states[task_name]["last_run"] = current_time # Update last run time *after* successful submission trigger
                             logger.info(f"Scheduler: Task '{task_name}' submitted to orchestrator.")
                         except Exception as e:
                             logger.error(f"Scheduler: Error submitting task '{task_name}' to orchestrator: {e}", exc_info=True)
+                            # Do NOT update last_run_time here if submission failed, let it retry next cycle
                             
-                        # Update last run time even if submission fails to avoid rapid retries
-                        last_run_times[task_name] = current_time
-
                 # Wait until the next check interval
                 await asyncio.sleep(self.interval_seconds)
 
             except asyncio.CancelledError:
                 logger.info("Scheduler loop cancellation requested.")
-                break # Exit the loop cleanly
+                break 
             except Exception as e:
                 logger.error(f"Scheduler: Unexpected error in schedule loop: {e}", exc_info=True)
-                # Avoid rapid looping on persistent errors
-                await asyncio.sleep(self.interval_seconds * 2)
+                await asyncio.sleep(self.interval_seconds * 2) 
 
         logger.info("Scheduler loop finished.")
 
@@ -115,45 +138,31 @@ class SchedulerAgent(BaseAgent):
         if intent == "update_schedule":
             new_schedule = task_data.get("payload", {}).get("schedule")
             if isinstance(new_schedule, list):
+                logger.warning("Dynamic schedule updates while running are experimental.")
                 self.schedule_config = new_schedule
-                # Reset last run times for potentially new/removed tasks
-                # Be careful with direct access if loop is running - consider using a lock or queue
-                last_run_times = {task_config.get("name"): 0 for task_config in self.schedule_config if task_config.get("name")}
-                logger.info("SchedulerAgent schedule updated.")
+                self._job_states = { 
+                    task_config.get("name"): {"last_run": 0, "next_run": 0, "retry_count": 0}
+                    for task_config in self.schedule_config if task_config.get("name")
+                }
+                logger.info("SchedulerAgent schedule updated. Job states reset.")
                 return {"status": "success", "message": "Schedule updated."}
             else:
                 logger.warning("Invalid payload for update_schedule intent.")
                 return {"status": "error", "message": "Invalid schedule payload."}
         
         elif intent == "get_schedule":
-             return {"status": "success", "schedule": self.schedule_config}
+             return {"status": "success", "schedule": self.schedule_config, "job_states": self._job_states}
              
         elif intent == "trigger_task":
              task_name_to_trigger = task_data.get("payload", {}).get("task_name")
-             if task_name_to_trigger:
+             if task_name_to_trigger and task_name_to_trigger in self._job_states:
                   logger.info(f"Attempting to manually trigger task: {task_name_to_trigger}")
-                  # Find task config
-                  task_config = next((t for t in self.schedule_config if t.get("name") == task_name_to_trigger), None)
-                  if task_config:
-                       target_orchestrator_method = task_config.get("orchestrator_method")
-                       task_payload = task_config.get("payload", {})
-                       if target_orchestrator_method and hasattr(self.orchestrator, target_orchestrator_method):
-                            try:
-                                method_to_call = getattr(self.orchestrator, target_orchestrator_method)
-                                if task_payload:
-                                    asyncio.create_task(method_to_call(task_payload))
-                                else:
-                                    asyncio.create_task(method_to_call())
-                                return {"status": "success", "message": f"Task '{task_name_to_trigger}' triggered."}
-                            except Exception as e:
-                                logger.error(f"Error triggering task '{task_name_to_trigger}': {e}", exc_info=True)
-                                return {"status": "error", "message": f"Error triggering task: {e}"}
-                       else:
-                            logger.warning(f"Orchestrator method '{target_orchestrator_method}' not found for task '{task_name_to_trigger}'.")
-                            return {"status": "error", "message": "Target method not found."}
-                  else:
-                       logger.warning(f"Task '{task_name_to_trigger}' not found in schedule.")
-                       return {"status": "error", "message": "Task not found in schedule."}
+                  self._job_states[task_name_to_trigger]["next_run"] = asyncio.get_event_loop().time()
+                  self._job_states[task_name_to_trigger]["retry_count"] = 0 
+                  return {"status": "success", "message": f"Task '{task_name_to_trigger}' scheduled for immediate run."}
+             elif task_name_to_trigger:
+                 logger.warning(f"Task '{task_name_to_trigger}' not found in current schedule state.")
+                 return {"status": "error", "message": "Task not found in schedule state."}
              else:
                   logger.warning("No task_name provided for trigger_task intent.")
                   return {"status": "error", "message": "Missing task_name in payload."}

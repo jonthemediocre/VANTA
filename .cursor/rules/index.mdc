@@ -96,6 +96,7 @@ Your question or request here...
 - [**1016-coding_agent-coe_invocation.mdc**](mdc:1016-coding_agent-coe_invocation.mdc) - Standardize CoE invocation and result handling
 - [**1017-coding_agent-config_convention.mdc**](mdc:1017-coding_agent-config_convention.mdc) - Suggest standard locations and naming for agent configuration files
 - [**1018-coding_agent-task_schema.mdc**](mdc:1018-coding_agent-task_schema.mdc) - Enforce standard task_data schema for agent communication
+- [**1019-fastapi-streaming.mdc**](mdc:.cursor/rules/1019-fastapi-streaming.mdc) - FastAPI SSE streaming best practices
 
 ### Utility & Miscellaneous
 - [**environment-variables.mdc**](mdc:environment-variables.mdc) - Environment variable guidelines

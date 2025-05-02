@@ -1,13 +1,15 @@
 import logging
 import asyncio
 import os
-from typing import Optional, Dict, Any, List
+from typing import Optional, Dict, Any, List, AsyncGenerator
 import uuid
 import json
+import httpx # Using httpx for async requests
 
 # VANTA Imports
 from .base_agent import BaseAgent
-from vanta_seed.core.data_models import AgentInput, AgentResponse, ToolCall, ToolResponse
+from vanta_seed.core.data_models import AgentInput, AgentResponse, ToolCall, ToolResponse, AgentMessage
+from .agent_utils import PilgrimCommunicatorMixin
 
 # OpenAI Imports (Ensure the 'openai' library is installed)
 from openai import AsyncOpenAI # Use Async client

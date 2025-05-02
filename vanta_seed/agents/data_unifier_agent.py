@@ -3,15 +3,17 @@ Agent responsible for AI-powered master data management, deduplication,
 and exposing unified entities.
 """
 
+import asyncio
 import logging
-from typing import Dict, Any, List
+import json
+from typing import Dict, Any, List, Optional
 from vanta_seed.agents.base_agent import BaseAgent # Use absolute import
 # Import core models if needed later
 # from vanta_seed.core.data_models import AgentInput, AgentResponse, AgentMessage
 
 # --- Get Logger ---
 # Use the base agent's logger retrieval or a dedicated one
-# logger = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 class DataUnifierAgent(BaseAgent):
     """

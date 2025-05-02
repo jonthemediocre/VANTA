@@ -1,0 +1,42 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# RULE TYPE: Manual
+# FILE PATTERNS: *SNAPSHOT.md, docs/*_SNAPSHOT.md
+
+# Project Reality Snapshot Protocol (Rule 907)
+
+## Purpose
+To standardize the format and content of project snapshot documents. These documents serve as a clear, concise summary of the project's current state, architecture, capabilities, and limitations, suitable for onboarding new team members, communicating with stakeholders, or providing context to external AI assistants.
+
+## Standard Sections
+
+Project snapshot documents (e.g., `VANTA_Project_Reality_Snapshot.md`) SHOULD include the following sections:
+
+1.  **📦 Project Overview:** High-level purpose, core concepts.
+2.  **🔑 Key Concepts & Terminology:** Glossary of project-specific terms (e.g., Crown, Pilgrim, Blueprint).
+3.  **📁 Directory Structure (Simplified):** Key directories and their purpose.
+4.  **📄 Key Files:** List of critical files and their roles.
+5.  **⚙️ Configuration Summary:** Overview of primary configuration methods (e.g., `blueprint.yaml`, `.env`, `config.py`). Include a concise example if applicable (like an agent definition).
+6.  **🌊 Execution Flow:** Simplified diagram or description of a primary workflow (e.g., task submission).
+7.  **🔌 API Overview (If applicable):** List key endpoints, request/response formats (briefly), and authentication method.
+8.  **✅ Current Capabilities & Limitations:** Bullet points summarizing what works and known limitations or pending work.
+9.  **📊 Status Summary Table (Optional):** A table visualizing the completion status of different layers or features.
+10. **🧭 Next Steps / Roadmap:** Brief outline of immediate future plans or the next development phase.
+11. **📌 Final Package Summary:** A concluding paragraph summarizing the project's essence at the time of the snapshot.
+
+## Naming Convention
+
+- Use a clear naming convention, such as `PROJECTNAME_Snapshot_YYYY-MM-DD.md` or `PROJECTNAME_Reality_Snapshot_vX.Y.md`.
+- Store snapshots in a consistent location, preferably `/docs/snapshots/` or the project root.
+
+## Maintenance
+
+- Snapshots should be updated at significant milestones (e.g., completion of a major patch cycle, release versions).
+- Reference the specific milestone or version within the document title or introduction.
+
+## Relation to Other Docs
+
+- The snapshot provides a high-level summary. It should link to more detailed documents (`README.md`, `theplan.md`, architecture diagrams) where appropriate, rather than duplicating extensive detail.

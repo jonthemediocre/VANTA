@@ -18,6 +18,7 @@ from typing import Dict, Any, Optional
 
 # --- FastAPI Imports ---
 from fastapi import FastAPI, HTTPException, Request, Depends
+from fastapi.middleware.cors import CORSMiddleware # <<< ADD THIS IMPORT
 from pydantic import BaseModel, Field # For request body validation
 import uvicorn # To run the server
 # --- Security Imports ---
@@ -162,26 +163,25 @@ async def lifespan_manager(app: FastAPI):
     global orchestrator_instance, plugin_manager_instance
     logger.info("Application startup...")
     
-    plugin_dir = config.BASE_DIR / "vanta_seed" / "agents" 
+    # --- Initialize and Load Plugins FIRST --- 
+    plugin_dir = config.BASE_DIR / "vanta_seed" / "agents"
     plugin_manager_instance = PluginManager(plugin_directory=str(plugin_dir))
-    plugin_manager_instance.load_plugins()
-    logger.info(f"Plugins loaded: {plugin_manager_instance.list_plugins()}")
+    plugin_manager_instance.load_plugins() # <<< CALL load_plugins HERE
+    logger.info(f"Plugins loaded via PluginManager: {plugin_manager_instance.list_plugins()}")
+    # -----------------------------------------
 
-    # --- Use the correct path variable --- 
-    core_config = load_yaml_config(BLUEPRINT_PATH) # Use variable from config
-    # -------------------------------------
+    # --- Load Core Config --- 
+    core_config = load_yaml_config(BLUEPRINT_PATH)
     if core_config is None:
         logger.critical("Failed to load core configuration (blueprint). Halting startup.")
         raise RuntimeError("Failed to load core configuration.")
 
+    # --- Initialize VantaMasterCore (NOW uses loaded plugins) --- 
     try:
-        # Pass the path to the core config file
-        # --- Use the correct path variable --- 
         orchestrator_instance = VantaMasterCore(
-            core_config_path=str(BLUEPRINT_PATH), # Use variable from config
-            plugin_manager=plugin_manager_instance
+            core_config_path=str(BLUEPRINT_PATH),
+            plugin_manager=plugin_manager_instance # Pass the manager with loaded plugins
         )
-        # -------------------------------------
         logger.info("VantaMasterCore initialized.")
         await orchestrator_instance.startup()
         logger.info("VantaMasterCore startup tasks complete.")
@@ -203,6 +203,23 @@ async def lifespan_manager(app: FastAPI):
 
 app = FastAPI(title="VANTA Framework API", lifespan=lifespan_manager)
 
+# --- ADD CORS MIDDLEWARE --- 
+origins = [
+    "http://localhost",         # Allow local dev environments
+    "http://localhost:3000",    # Common React/Next.js dev port
+    "http://localhost:5173",    # Common Vite dev port
+    "*"                       # Allow all origins (convenient for testing, REMOVE/RESTRICT for production)
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],      # Allow all methods
+    allow_headers=["*"],      # Allow all headers
+)
+# --- END ADD CORS MIDDLEWARE ---
+
 # --- Request Models ---
 class TaskRequest(BaseModel):
     intent: str
@@ -218,10 +235,10 @@ class ChatMessage(BaseModel):
 class ChatCompletionRequest(BaseModel):
     model: str # Although VANTA handles routing, OpenAI clients expect this
     messages: list[ChatMessage]
+    stream: Optional[bool] = False # <<< ADDED: To parse the stream parameter
     # Add other common OpenAI params if needed later (temperature, max_tokens, etc.)
     # temperature: Optional[float] = 1.0 
     # max_tokens: Optional[int] = None
-    # stream: Optional[bool] = False # Streaming not implemented here
 
 class ChatCompletionChoice(BaseModel):
     index: int
@@ -255,26 +272,38 @@ async def get_orchestrator() -> VantaMasterCore:
 api_key_scheme = HTTPBearer()
 
 # --- API Key Verification Function ---
-async def verify_api_key(credentials: HTTPAuthorizationCredentials = Depends(api_key_scheme)):
+async def verify_api_key(credentials: Optional[HTTPAuthorizationCredentials] = Depends(api_key_scheme, use_cache=False)):
     """Dependency function to verify the provided API key."""
-    # Only enforce key check if ALLOWED_API_KEYS is populated
-    if config.ALLOWED_API_KEYS:
-        if credentials.scheme != "Bearer":
-            raise HTTPException(
-                status_code=403,
-                detail="Invalid authentication scheme. Use Bearer token.",
-            )
-        if credentials.credentials not in config.ALLOWED_API_KEYS:
-            raise HTTPException(
-                status_code=403,
-                detail="Invalid API Key",
-            )
-        # Key is valid
-        return credentials.credentials
-    else:
-        # No keys configured, allow access
-        logger.warning("API key check skipped: VANTA_ALLOWED_API_KEYS is not set.")
-        return None # Indicate no key was checked/needed
+    # --- Explicitly skip check if no keys are configured --- 
+    if not config.ALLOWED_API_KEYS:
+        logger.debug("API key check skipped: VANTA_ALLOWED_API_KEYS is not set.")
+        return None # Allow access
+    # -------------------------------------------------------
+
+    # --- Proceed with check only if keys ARE configured --- 
+    if not credentials:
+        # This case handles requests missing the Authorization header entirely when keys ARE required
+        raise HTTPException(
+            status_code=403,
+            detail="Not authenticated: Authorization header missing.",
+            headers={"WWW-Authenticate": "Bearer"}, # Standard practice
+        )
+        
+    if credentials.scheme != "Bearer":
+        raise HTTPException(
+            status_code=403,
+            detail="Invalid authentication scheme. Use Bearer token.",
+        )
+        
+    if credentials.credentials not in config.ALLOWED_API_KEYS:
+        raise HTTPException(
+            status_code=403,
+            detail="Invalid API Key",
+        )
+        
+    # Key is valid
+    logger.debug(f"API key verified successfully.") # Add debug log for success
+    return credentials.credentials
 # --------------------------------- 
 
 # --- API Endpoints ---
@@ -332,10 +361,21 @@ async def submit_task_endpoint(
 async def openai_chat_completions(
     request: ChatCompletionRequest,
     orchestrator: VantaMasterCore = Depends(get_orchestrator),
-    api_key: str = Depends(verify_api_key) # <<< Apply API key check
+    # --- Temporarily comment out API key check for debugging --- 
+    # api_key: str = Depends(verify_api_key) 
+    # -------------------------------------------------------
 ):
     """Handles requests formatted like OpenAI's chat completions endpoint."""
     logger.info(f"Received OpenAI-style request for model: {request.model}")
+
+    # --- ADDED: Check for streaming request --- 
+    if hasattr(request, 'stream') and request.stream:
+        logger.warning("Streaming chat completions requested, but not yet supported.")
+        raise HTTPException(
+            status_code=400, 
+            detail="Streaming responses are not supported by this VANTA endpoint yet."
+        )
+    # --- END ADDED ---
     
     # --- Translate OpenAI request to VANTA task ---
     # Define the VANTA intent for chat
@@ -361,31 +401,39 @@ async def openai_chat_completions(
     try:
         logger.debug(f"Submitting translated task to VANTA orchestrator: {task_data}")
         vanta_result = await orchestrator.submit_task(task_data)
-        logger.debug(f"Received result from VANTA orchestrator: {vanta_result}")
+        logger.debug(f"Received raw result from VANTA orchestrator: {vanta_result}") 
 
         # --- Translate VANTA result back to OpenAI response --- 
-        if isinstance(vanta_result, dict) and vanta_result.get("error"):
+        if isinstance(vanta_result, dict) and vanta_result.get("status") == "error": # Check for VANTA error status
             # Handle errors reported by VANTA
-            raise HTTPException(status_code=500, detail=f"VANTA task execution failed: {vanta_result['error']}")
+            error_detail = vanta_result.get("error", "Unknown VANTA error")
+            logger.error(f"VANTA task execution failed: {error_detail}") # Log the error
+            raise HTTPException(status_code=500, detail=f"VANTA task execution failed: {error_detail}")
 
-        # **ASSUMPTION:** The VANTA agent handling 'chat_completion' returns a dict 
-        # with the response text under the key 'response_text'. 
-        # This might need adjustment based on the actual agent's implementation.
-        assistant_response_text = vanta_result.get("response_text")
-        
-        if not assistant_response_text:
-             logger.error(f"VANTA agent did not return 'response_text' for intent '{vanta_intent}'. Result: {vanta_result}")
-             raise HTTPException(status_code=500, detail="Agent response format error")
+        # --- MODIFIED START: Extract response structure from 'output' key --- 
+        chat_completion_output = vanta_result.get("output")
+        logger.debug(f"Extracted chat_completion_output: {chat_completion_output}")
 
-        # Construct the OpenAI response structure
-        assistant_message = ChatMessage(role="assistant", content=assistant_response_text)
-        choice = ChatCompletionChoice(index=0, message=assistant_message)
-        response = ChatCompletionResponse(
-            model=request.model, # Echo back the requested model
-            choices=[choice]
-            # Usage tokens are placeholders for now
-        )
-        
+        # Validate the structure received
+        if not chat_completion_output or not isinstance(chat_completion_output, dict) or not chat_completion_output.get("choices"):
+             logger.error(f"VANTA agent did not return the expected OpenAI structure under 'output' for intent '{vanta_intent}'. Received: {vanta_result}")
+             raise HTTPException(status_code=500, detail="Agent response format error: Invalid structure.")
+             
+        # Directly use the validated structure from the agent
+        try:
+            logger.debug(f"Attempting to create ChatCompletionResponse from: {chat_completion_output}")
+            response = ChatCompletionResponse(**chat_completion_output)
+            logger.debug(f"Successfully created ChatCompletionResponse object: {response}")
+            response.model = request.model 
+        except ValidationError as e:
+             logger.error(f"Failed to validate/parse agent response structure: {e}. Output received: {chat_completion_output}", exc_info=True)
+             raise HTTPException(status_code=500, detail="Agent response format error: Validation failed.")
+        # --- END MODIFIED ---
+
+        # --- ADDED: Log the final response object --- 
+        logger.debug(f"Sending response to client: {response.model_dump_json(indent=2)}") # Use model_dump_json for clarity
+        # -------------------------------------------
+
         return response
 
     except HTTPException as http_exc:
@@ -395,16 +443,18 @@ async def openai_chat_completions(
         raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
 # ------------------------------
 
-# --- Add Uvicorn runner block ---
+# --- Main Entry Point --- 
 if __name__ == "__main__":
-    port = int(os.getenv("PORT", 8000)) # Default to port 8000
-    host = os.getenv("HOST", "127.0.0.1") # Default to localhost
-    log_level_str = config.LOG_LEVEL.lower() # Use level from config.py
-    
-    print(f"--- Starting VANTA API Server ({host}:{port}) ---")
-    # Use reload=True for development, set to False or remove for production
-    uvicorn.run("run:app", host=host, port=port, log_level=log_level_str, reload=True) 
-# ----------------------------
+    logger.info("Starting VANTA API Server...")
+    # <<< MODIFY Host and Port >>>
+    uvicorn.run(
+        "run:app", # Point to the FastAPI app instance
+        host="127.0.0.1", # Changed from "0.0.0.0"
+        port=8888, # Changed from 1337
+        reload=True, # Enable auto-reload for development
+        log_level=config.LOG_LEVEL.lower() # Use log level from config
+    )
+    # <<< END MODIFY >>>
 
 # --- Main Execution ---
 

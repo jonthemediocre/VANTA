@@ -1,0 +1,48 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# RULE TYPE: Manual
+# FILE PATTERNS: *Patch_Proposal*.md, docs/rituals/*.md, vanta_seed/core/ritual*
+
+# Agent Ritualization Protocol (Rule 620)
+
+## Purpose
+To establish conventions for defining, versioning, and implementing patches that introduce or modify agent ritualization features (e.g., Purpose Pulse, Mythic Roles, symbolic triggers) within frameworks like VANTA.
+
+## Patch Proposal Structure
+
+Ritualization patch proposals (e.g., `Ritualization_Patch_v3_Proposal.md`) SHOULD follow a standard structure:
+
+1.  **Patch Name:** Clear, versioned name (e.g., "Ritualization Patch v3 → Purpose Pulse + Mythic Role Escalation").
+2.  **Overview:** High-level summary of the ritualistic concepts being introduced/modified.
+3.  **Goals:** Specific, measurable objectives of the patch.
+4.  **Components:** Detailed breakdown of new classes, states, or logic units.
+    *   **Function:** What the component does.
+    *   **Usage:** How it interacts with the system.
+    *   **Example Implementation:** Concise code stub or pseudocode.
+    *   **Integration Notes:** How it connects to existing code (status: Planned/Complete).
+5.  **Implementation Steps:** Phased plan for rolling out the patch components.
+6.  **Notes / MDC Proposals:** Related considerations, suggestions for other rules.
+7.  **Versioning:** Intended semantic version for the patch upon completion.
+8.  **AI Directives:** Specific instructions for AI assistants implementing the patch.
+
+## State Schema Conventions
+
+- New ritualistic states (like Purpose Pulse, Mythic Role) SHOULD be implemented as distinct classes (potentially in `core/ritual_types.py` or `agents/agent_utils.py`).
+- These classes SHOULD provide methods for state transitions (e.g., `escalate`, `deescalate`, `set_state`).
+- They SHOULD provide serialization methods (e.g., `to_dict()`) for storage within the main agent state dictionary (managed by `VantaMasterCore`).
+- They SHOULD provide deserialization class methods (e.g., `from_dict()`) if needed for reconstruction.
+- Initial states SHOULD be configurable, potentially via `blueprint.yaml` within the `initial_trinity_state` section of an agent's definition.
+
+## Versioning
+
+- Use Semantic Versioning (SemVer) for distinct Ritualization Patch milestones (e.g., v3.0.0, v3.1.0).
+- Clearly document the features included in each version within the proposal or a dedicated changelog.
+
+## Implementation Notes
+
+- Integrate ritual state updates within the agent lifecycle (e.g., `__init__`, `execute`, `handle_message`) or orchestrator logic (`_run_task_on_pilgrim`, background monitors).
+- Ensure clear logging for ritual state changes (e.g., role escalations, pulse shifts).
+- Consider how ritual states affect task routing, prioritization, and A2A communication protocols.

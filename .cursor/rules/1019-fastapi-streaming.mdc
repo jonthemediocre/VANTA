@@ -1,0 +1,138 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# RULE TYPE: Best Practice
+# FILE PATTERNS: **/run.py, **/api/**/*.py, **/routers/**/*.py
+
+# FastAPI Server-Sent Events (SSE) Streaming Best Practices
+
+## Overview
+Use Server-Sent Events (SSE) for efficiently streaming updates from the server to the client over a single HTTP connection. FastAPI provides built-in support via `StreamingResponse`. This is crucial for compatibility with clients (like Jan UI when `stream: true` is requested) that expect OpenAI-style streaming responses.
+
+## Core Implementation: `StreamingResponse` with Async Generator
+
+The standard approach involves:
+1.  Importing `StreamingResponse` from `fastapi.responses`.
+2.  Creating an `async def` generator function that yields the data chunks to be streamed.
+3.  Returning `StreamingResponse` from your endpoint, passing the generator function and setting the `media_type` to `"text/event-stream"`.
+
+```python
+import asyncio
+import json
+from fastapi import FastAPI, Request
+from fastapi.responses import StreamingResponse
+from typing import AsyncGenerator, Dict, Any
+
+# Example generator function
+async def event_generator(request: Request, some_data_source: Any) -> AsyncGenerator[str, None]:
+    """
+    Yields data chunks formatted for SSE.
+    Handles client disconnects.
+    """
+    try:
+        # Example: Yielding initial data or chunks from a process
+        for i in range(10):
+            # Check if client disconnected
+            if await request.is_disconnected():
+                print("Client disconnected, stopping stream.")
+                break
+
+            # Format data according to SSE spec (data: json_payload\n\n)
+            # IMPORTANT: For OpenAI compatibility, the JSON payload often needs
+            # to mimic the OpenAI streaming chunk format (e.g., containing delta content).
+            chunk_data = {
+                "id": f"chatcmpl-item-{i}",
+                "object": "chat.completion.chunk",
+                "created": int(asyncio.get_event_loop().time()),
+                "model": "vanta-stream-model", # Or the model being used
+                "choices": [{
+                    "index": 0,
+                    "delta": {"content": f" chunk {i}..."},
+                    "finish_reason": None
+                }]
+            }
+            yield f"data: {json.dumps(chunk_data)}\n\n" # Note the double newline
+
+            await asyncio.sleep(0.5) # Simulate work
+
+        # Send final "[DONE]" message (OpenAI convention)
+        await asyncio.sleep(0.1) # Short delay before DONE
+        if not await request.is_disconnected():
+             yield "data: [DONE]\n\n"
+
+    except asyncio.CancelledError:
+        print("Stream generator cancelled (likely client disconnect).")
+    except Exception as e:
+        print(f"Error during streaming: {e}")
+        # Optionally yield an error message to the client
+        # error_chunk = {"error": {"message": str(e), "type": "server_error"}}
+        # yield f"data: {json.dumps(error_chunk)}\n\n"
+    finally:
+        print("Stream generator finished.")
+
+
+# Example FastAPI Endpoint
+@app.post("/v1/chat/completions/stream") # Example endpoint
+async def stream_chat_completions(request: Request /*, your_request_model: YourModel */):
+    # 1. Validate request model if necessary
+    # 2. Get necessary data source or start background task
+    some_data_source = "placeholder" # Replace with actual data source/task trigger
+
+    # 3. Return StreamingResponse
+    return StreamingResponse(
+        event_generator(request, some_data_source),
+        media_type="text/event-stream"
+    )
+
+```
+
+## Best Practices
+
+1.  **SSE Formatting:** Ensure each message yielded by the generator is prefixed with `data: ` and ends with `\n\n`.
+2.  **JSON Payload:** Serialize your data payload (usually as JSON) before formatting it for SSE. For OpenAI compatibility, the JSON structure within the `data:` field should match the expected chunk format (often involving a `choices` list with a `delta` object).
+3.  **`[DONE]` Message:** For OpenAI compatibility, signal the end of the stream by sending `data: [DONE]\n\n`.
+4.  **Client Disconnect Handling:** Use `await request.is_disconnected()` within your generator loop to check if the client has closed the connection and stop generating events to save resources. Wrap the generator logic in a `try...except asyncio.CancelledError...finally` block for robust cleanup.
+5.  **Media Type:** Always set `media_type="text/event-stream"` in the `StreamingResponse`.
+6.  **Error Handling:** Implement error handling within the generator. Decide whether to stop the stream or send an error event to the client.
+7.  **Keep-Alive:** Ensure your server/proxy (like Nginx or Uvicorn settings) is configured to handle long-lived connections and potentially send keep-alive signals if needed, although SSE itself often relies on the browser/client managing reconnection.
+8.  **Blocking Operations:** Avoid long-blocking operations within the async generator. Use `await asyncio.sleep(0)` or async libraries for I/O.
+
+## OpenAI Streaming Format (Example Chunk)
+
+Clients expecting OpenAI streams often look for JSON payloads like this within the `data:` part:
+
+```json
+{
+  "id": "chatcmpl-xxxxxxxxxxxx",
+  "object": "chat.completion.chunk",
+  "created": 1677652288,
+  "model": "gpt-3.5-turbo-0613",
+  "choices": [
+    {
+      "index": 0,
+      "delta": { "role": "assistant", "content": "" }, // First chunk might just set role
+      "finish_reason": null
+    }
+  ]
+}
+```
+```json
+{
+  "id": "chatcmpl-xxxxxxxxxxxx",
+  "object": "chat.completion.chunk",
+  "created": 1677652288,
+  "model": "gpt-3.5-turbo-0613",
+  "choices": [
+    {
+      "index": 0,
+      "delta": { "content": "Hello" }, // Subsequent chunks add content
+      "finish_reason": null
+    }
+  ]
+}
+```
+
+And finally:
+`data: [DONE]\n\n`

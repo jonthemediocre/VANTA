@@ -34,7 +34,7 @@ class BaseAgent(ABC):
             name (str): The unique name/ID of this Pilgrim node.
             initial_state (Optional[Dict[str, Any]]): Initial state of the Pilgrim.
         """
-        self.name = name # Pilgrim name/identifier
+        self._name = name # Store name in private attribute
         self.node_id = f"node_{name}" # Use name to create node_id for consistency
         self.logger = self._get_logger() # Initialize logger
 
@@ -416,30 +416,30 @@ class BaseAgent(ABC):
     def _determine_next_role(self,
                              current_position: Position,
                              stigmergic_trails: List[TrailSignature | Dict],
-                             purpose_vector: Optional[PurposeVectorModel | Dict]) -> Union[NodeRole, str]:
-        """Determines the agent's next role based on context and internal state."""
+                             purpose_vector: Optional[PurposeVectorModel | Dict]) -> str:
+        """Determines the agent's next role based on context and internal state. Returns role as a string."""
         # Get current state safely
         current_state_dict = self.current_state
-        current_role = current_state_dict.get('current_role', NodeRole.PILGRIM)
+        # Use string value as default
+        current_role_str = current_state_dict.get('current_role', "PILGRIM") # Get/default as string
 
         # --- Role Switching Logic --- 
 
         # 1. Energy-Based SHADE Role:
         energy_level = current_state_dict.get('energy_level', 1.0)
-        low_energy_threshold = self._get_swarm_param('shade_energy_threshold', 0.1) # Configurable threshold
+        low_energy_threshold = self._get_swarm_param('shade_energy_threshold', 0.1) 
         recovery_energy_threshold = self._get_swarm_param('shade_recovery_threshold', 0.3)
 
         if energy_level < low_energy_threshold:
-             if current_role != NodeRole.SHADE:
+             if current_role_str != "SHADE":
                  self.logger.info(f"Pilgrim '{self.name}': Switching role to SHADE due to critical energy ({energy_level:.2f}).")
-                 return NodeRole.SHADE
+                 return "SHADE"
              else:
-                 return NodeRole.SHADE # Remain SHADE if already in it
+                 return "SHADE"
 
-        # If currently SHADE and energy recovered, switch back to PILGRIM
-        if current_role == NodeRole.SHADE and energy_level > recovery_energy_threshold:
+        if current_role_str == "SHADE" and energy_level > recovery_energy_threshold:
              self.logger.info(f"Pilgrim '{self.name}': Recovered energy ({energy_level:.2f}). Switching role from SHADE back to PILGRIM.")
-             return NodeRole.PILGRIM
+             return "PILGRIM"
 
         # --- Placeholder for Sophisticated Role Logic --- 
         # TODO: Implement logic based on:
@@ -452,22 +452,15 @@ class BaseAgent(ABC):
         # Example Placeholder: Random chance to switch (low probability)
         switch_probability = self._get_swarm_param('random_role_switch_prob', 0.05)
         if random.random() < switch_probability:
-             # Exclude SHADE unless forced by energy
-             available_roles = [
-                 role for role in (NodeRole.PILGRIM, NodeRole.SCRIBE, NodeRole.HERALD) 
-                 if isinstance(role, str) # Handle fallback types
-             ]
-             if not available_roles: # Fallback if NodeRole enum isn't working
-                  available_roles = ["PILGRIM", "SCRIBE", "HERALD"]
-             
-             new_role = random.choice(available_roles)
-             if new_role != current_role:
-                 self.logger.info(f"Pilgrim '{self.name}': Randomly switching role from {current_role} to {new_role}. REPLACE THIS WITH ACTUAL LOGIC.")
-                 return new_role
+            available_roles_str = ["PILGRIM", "SCRIBE", "HERALD"]
+            new_role_str = random.choice(available_roles_str)
+            if new_role_str != current_role_str:
+                self.logger.info(f"Pilgrim '{self.name}': Randomly switching role from {current_role_str} to {new_role_str}. REPLACE THIS WITH ACTUAL LOGIC.")
+                return new_role_str
 
         # Default: Maintain current role if no other condition met
-        self.logger.debug(f"Pilgrim '{self.name}': Maintaining current role: {current_role}")
-        return current_role
+        self.logger.debug(f"Pilgrim '{self.name}': Maintaining current role: {current_role_str}")
+        return current_role_str
 
     def _generate_trail_signature(self, task_result: Dict[str, Any], state_updates: Dict[str, Any]) -> Optional[Union[TrailSignature, Dict]]:
         """Generates data for a TrailSignature based on the task outcome and the state *after* updates."""
@@ -478,7 +471,8 @@ class BaseAgent(ABC):
         # Extract common info
         node_id = current_state_dict.get('id', self.node_id)
         position = current_state_dict.get('position', [0.0]*3)
-        role = current_state_dict.get('current_role', NodeRole.PILGRIM)
+        # Use string value as default
+        role_str = current_state_dict.get('current_role', "PILGRIM")
         energy = current_state_dict.get('energy_level', 0.0)
         task_success = not task_result.get("error")
 
@@ -495,7 +489,7 @@ class BaseAgent(ABC):
             "emitting_node_id": node_id,
             "position_at_emission": position[:], # Ensure it's a copy
             "timestamp": time.time(),
-            "role_at_emission": role,
+            "role_at_emission": role_str,
             "data": { # Example data payload
                  "task_success": task_success,
                  "energy_level": energy,
@@ -510,7 +504,14 @@ class BaseAgent(ABC):
         }
 
         # Attempt to validate/create Pydantic model if possible
-        if isinstance(self.state, NodeStateModel):
+        try:
+            from pydantic import BaseModel
+            is_pydantic_state = isinstance(self.state, BaseModel)
+        except ImportError:
+            is_pydantic_state = False
+            
+        if is_pydantic_state:
+        # if isinstance(self.state, NodeStateModel): # Original check might be too specific
             try:
                 # Clean data: remove keys not in the model if necessary, or ensure defaults
                 # Example: If TrailSignature doesn't have 'direction_vector', remove it
@@ -778,23 +779,57 @@ class BaseAgent(ABC):
     # ADDED current_state property
     @property
     def current_state(self) -> Dict[str, Any]:
-         """Returns the current state as a dictionary."""
-         if isinstance(self.state, NodeStateModel):
+         """Returns the current state as a dictionary, handling both Pydantic models and dicts."""
+         if isinstance(self.state, dict):
+             # If it's already a dict, return a copy directly
+             return self.state.copy()
+         # Check if it's a Pydantic BaseModel (safer check)
+         # Import locally to avoid circular dependencies if needed, or ensure available
+         try:
+             from pydantic import BaseModel
+             is_pydantic = isinstance(self.state, BaseModel)
+         except ImportError:
+             is_pydantic = False # Assume not Pydantic if import fails
+
+         if is_pydantic:
+         # elif isinstance(self.state, NodeStateModel): # Original check might be too specific
              try:
                  # Use Pydantic's method to convert to dict, handling potential serialization issues
                  # Use model_dump for Pydantic v2+
                  if hasattr(self.state, 'model_dump'):
                      return self.state.model_dump(mode='json')
-                 else:
+                 elif hasattr(self.state, 'dict'): # Check for Pydantic v1 explicitly
                       return self.state.dict() # for older pydantic v1
+                 else:
+                     # Fallback if neither method exists (shouldn't happen for valid Pydantic)
+                     self.logger.warning(f"Agent {self.name}: Pydantic state object lacks .dict() or .model_dump(). Returning raw object attributes.")
+                     # Attempt to manually create a dict as a last resort
+                     return {k: getattr(self.state, k) for k in dir(self.state) if not k.startswith('_') and not callable(getattr(self.state, k))}
              except Exception as e:
                  self.logger.error(f"Error converting Pydantic state to dict for agent {self.name}: {e}", exc_info=True)
                  # Fallback or simplified representation
                  return {"id": getattr(self.state, 'id', self.node_id), "name": self.name, "error": "State serialization failed"}
-         elif isinstance(self.state, dict):
-             return self.state.copy() # Return a copy
          else:
              # This case should ideally not happen if __init__ is correct
-             self.logger.error(f"Agent {self.name} has unexpected state type: {type(self.state)}. Initializing default state.")
+             self.logger.error(f"Agent {self.name} has unexpected state type: {type(self.state)}. Attempting to initialize default state.")
              self._initialize_default_state() # Attempt recovery
-             return self.state.copy() if isinstance(self.state, dict) else {"error": f"Invalid state type after recovery attempt: {type(self.state)}"} 
+             # Check again after recovery attempt
+             if isinstance(self.state, dict):
+                 return self.state.copy()
+             else:
+                  # If recovery failed or resulted in non-dict state, log error
+                  self.logger.error(f"Agent {self.name}: State is still not a dictionary after recovery attempt. Type: {type(self.state)}")
+                  return {"error": f"Invalid state type after recovery attempt: {type(self.state)}"}
+
+    # --- Property Getter for name --- 
+    @property
+    def name(self) -> str:
+        """Returns the agent's name."""
+        # Ensure _name exists before returning
+        if hasattr(self, '_name'):
+            return self._name
+        else:
+            # Fallback or raise error if _name wasn't set (shouldn't happen with __init__ change)
+            self.logger.error("Agent name (_name) accessed before initialization!")
+            return "UnnamedAgent" 
+    # -------------------------------- 

@@ -1,9 +1,76 @@
 # VANTA MODULAR AGENTIC FRAMEWORK — BLUEPRINT
-version: 2.3+
-description: |
-  Unified specification of the VANTA agent, combining user‑defined behavior
-  protocols, dev flags, routers, and ritual definitions. This blueprint is
-  consumable by any LLM‑backed runtime to replicate Jon’s environment.
+version: "0.2.0"
+description: "VANTA Seed Agentic Swarm Blueprint"
+agents:
+  - name: EchoAgent
+    class: vanta_seed.agents.echo_agent.EchoAgent
+    symbolic_identity:
+      archetype: "Reflection"
+      mythos_role: "Voice of Crown"
+    settings:
+      prefix: "Echo:"
+      max_repeat: 5
+    compatible_model_names:
+      - "echo-model"
+      - "vanta-echo"
+    swarm_params:
+      interaction_affinity: 0.9
+    initial_trinity_state:
+      position: [0.0, 0.0, 0.0]
+
+  - name: MemoryAgent
+    class: vanta_seed.agents.memory_agent.MemoryAgent
+    symbolic_identity:
+      archetype: "Archivist"
+      mythos_role: "Keeper of Forgotten Light"
+    settings:
+      storage_limit: 10000
+      retrieval_mode: "priority_recent"
+    swarm_params:
+      memory_importance: 0.95
+    initial_trinity_state:
+      position: [1.0, 0.0, 0.0]
+
+  - name: SymbolicAgent
+    class: vanta_seed.agents.symbolic_agent.SymbolicAgent
+    symbolic_identity:
+      archetype: "Compressor"
+      mythos_role: "Weaver of Collapse"
+    settings:
+      compression_level: 0.8
+      symbolic_target: ["identity", "dream fragments"]
+    swarm_params:
+      resonance_sensitivity: 0.85
+    initial_trinity_state:
+      position: [0.0, 1.0, 0.0]
+
+  - name: MCPToolAgent
+    class: vanta_seed.agents.tool_agent.ToolAgent
+    symbolic_identity:
+      archetype: "Bridge"
+      mythos_role: "Instrument of Will"
+    settings:
+      awareness_mode: "basic"
+      supported_tools: ["query", "calculate", "fetch"]
+    swarm_params:
+      utility_priority: 1.0
+    initial_trinity_state:
+      position: [1.0, 1.0, 0.0]
+
+  - name: ProxyOllamaAgent
+    class: vanta_seed.agents.proxy_deepseek_agent.ProxyDeepSeekAgent
+    symbolic_identity:
+      archetype: "Proxy"
+      mythos_role: "Ollama Link"
+    settings:
+      api_url: "http://127.0.0.1:11435/v1/chat/completions"
+      default_model: "deepseek-coder"
+    compatible_model_names:
+      - "ollama-proxy"
+      - "local-llm"
+    swarm_params: {}
+    initial_trinity_state:
+      position: [0.0, 0.0, 1.0]
 
 behavior_protocols:
   - RL_Best_of_N

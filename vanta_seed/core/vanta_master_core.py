@@ -27,37 +27,64 @@ from .vitals_layer import VitalsLayer
 # --- Import BaseAgent if needed for type hinting or creation --- 
 from ..agents.base_agent import BaseAgent # Assuming a base class exists
 # --- Import Data Models --- 
-from .data_models import AgentInput, AgentResponse, ToolCall, ToolResponse, AgentMessage, CoreConfiguration # <<< Added CoreConfiguration
+from .data_models import AgentInput, AgentResponse, ToolCall, ToolResponse, AgentMessage 
 # --- Import AgentMessageBus --- 
 from .agent_message_bus import AgentMessageBus
 # --- Import PluginManager (Assuming location) --- 
 # Try importing from utils
-from ..utils.plugin_manager import PluginManager 
+from vanta_seed.utils.plugin_manager import PluginManager # <<< Changed to absolute import
 # from ..runtime.plugin_manager import PluginManager # Previous attempt
-# --- Import necessary types from swarm_types --- # Added this line
-from .swarm_types import NodeStateModel, PurposeVectorModel, SwarmHealthMetricsModel, GlobalBestNodeInfo, TrailSignature, Position, round_position, StigmergicFieldPoint # <<< Added more types
+# --- Import necessary types from swarm_types (Corrected) --- #
+from .swarm_types import NodeStateModel, PurposeVectorModel, SwarmHealthMetricsModel, GlobalBestNodeInfo, TrailSignature, Position, StigmergicFieldPoint # Removed round_position
 # ---
 
-# --- Utility Imports (Changed to absolute) ---
-from vanta_seed.utils.file_utils import load_json_file # <<< Changed to absolute import
-from vanta_seed.logging.setup import get_vanta_logger # <<< Changed to absolute import
+# --- Utility Imports (Corrected) ---
+# from vanta_seed.utils.file_utils import load_json_file # <<< Ensure this REMOVED incorrect import
+# from vanta_seed.logging import get_vanta_logger # <<< REMOVE this incorrect import
+from vanta_seed.utils.vector_utils import round_position # <<< Added round_position import
+# --- Import YAML loader from run.py --- # This is now defined locally
+import yaml 
+from vanta_seed.agents.agent_utils import PurposePulse, MythicRole # <<< Import PurposePulse and MythicRole
+# ---------------------------------- #
+
+# --- Define local helper functions --- 
+def load_json_file(file_path: str | Path) -> Optional[Dict[str, Any]]:
+    """Loads a JSON file, returning None on error."""
+    log = logging.getLogger(__name__) # Get logger specific to this module
+    try:
+        with open(file_path, 'r') as f:
+            return json.load(f)
+    except FileNotFoundError:
+        log.error(f"JSON file not found: {file_path}")
+        return None
+    except json.JSONDecodeError as e:
+        log.error(f"Error decoding JSON from {file_path}: {e}")
+        return None
+    except Exception as e:
+        log.error(f"Error loading JSON file {file_path}: {e}", exc_info=True)
+        return None
+
+def load_yaml_config(file_path: str | Path) -> Optional[Dict[str, Any]]: # ADDED Function
+    """Loads a YAML file, returning None on error."""
+    log = logging.getLogger(__name__)
+    if not os.path.exists(file_path):
+        log.error(f"YAML configuration file not found: {file_path}")
+        return None
+    try:
+        with open(file_path, 'r') as f:
+            return yaml.safe_load(f)
+    except yaml.YAMLError as e:
+        log.error(f"Error parsing YAML from {file_path}: {e}")
+        return None
+    except Exception as e:
+        log.error(f"Error loading YAML file {file_path}: {e}", exc_info=True)
+        return None
+# ----------------------------------
 
 # --- Check if Swarm Types are actually available (for conditional logic) ---
 SWARM_TYPES_AVAILABLE = True # Assume available for now, adjust if imports fail
-# try:
-#     from .swarm_types import NodeStateModel, PurposeVectorModel, SwarmHealthMetricsModel, GlobalBestNodeInfo, TrailSignature, Position, round_position, StigmergicFieldPoint
-#     SWARM_TYPES_AVAILABLE = True
-# except ImportError:
-#     logging.warning("Swarm types not found, some swarm functionality may be disabled.")
-#     SWARM_TYPES_AVAILABLE = False
-#     # Define placeholders if needed
-#     NodeStateModel = Dict
-#     PurposeVectorModel = Dict
-#     SwarmHealthMetricsModel = Dict
-#     GlobalBestNodeInfo = Dict
-#     TrailSignature = Dict
-#     Position = List[float]
-# -----------------------------------------------------------------------------
+# NOTE: Removed the try/except block for SWARM_TYPES_AVAILABLE as requested for now.
+# ----------------------------------------------------------------------------
 
 # --- Singleton Pattern for MemoryWeave --- 
 # While a true singleton might be complex with async/multiprocessing,
@@ -95,10 +122,12 @@ class VantaMasterCore:
         """
         self.core_config_path = core_config_path
         self.plugin_manager = plugin_manager
-        self.logger = get_vanta_logger(self.__class__.__name__)
-        self.core_config: Optional[CoreConfiguration] = None
+        # Use standard logging.getLogger
+        self.logger = logging.getLogger(self.__class__.__name__) 
+        self.core_config: Optional[Any] = None
         self._agents: Dict[str, BaseAgent] = {} # <<< Changed AgentInterface to BaseAgent
         self._agent_states: Dict[str, NodeStateModel] = {} # Placeholder for Pilgrim Trinity states
+        self._model_to_agent_map: Dict[str, str] = {} # <<< ADDED: Map model names to agent names
 
         # --- Placeholder Crown Attributes (from BreathLayer_v1) ---
         self._current_purpose_vector: Optional[PurposeVectorModel] = None
@@ -118,37 +147,25 @@ class VantaMasterCore:
         self._load_pilgrims() # Load agents as Pilgrims
 
     def _load_core_config(self):
-        """Loads the core configuration (kingdom parameters) from the JSON file."""
+        """Loads the core configuration (kingdom parameters) from the YAML file.""" 
         self.logger.info(f"Crown: Loading core configuration from: {self.core_config_path}")
-        if not os.path.exists(self.core_config_path):
-            self.logger.error(f"Core configuration file not found at {self.core_config_path}")
-            self.core_config = None
-            return
-
-        try:
-            config_data = load_json_file(self.core_config_path)
-            # TODO: Validate config_data against a Pydantic model for CoreConfiguration
-            # TODO: Extract initial purpose_vector details if defined in config
-            self.core_config = CoreConfiguration(**config_data)
-            # --- Load stigmergic resolution AFTER config is loaded --- 
-            self._stigmergic_resolution = config_data.get('swarm_config', {}).get('stigmergic_resolution', 1)
-            # --- Load blessing threshold --- 
-            crown_config = config_data.get('vanta_crown_interface', {})
-            self._blessing_threshold = crown_config.get('blessing_threshold', 0.85) 
-            self.logger.info(f"Crown: Successfully loaded core configuration. Stigmergic Res: {self._stigmergic_resolution}, Blessing Threshold: {self._blessing_threshold}")
-            # --- Link to Spec ---
-            # self.core_config now conceptually holds parameters defined in
-            # Trinity Swarm YAML Spec v0.1 -> swarm_config & vanta_crown_interface sections.
-        except json.JSONDecodeError as e:
-            self.logger.error(f"Error decoding JSON from {self.core_config_path}: {e}")
-            self.core_config = None
-            self._stigmergic_resolution = 1 # Fallback default
-            self._blessing_threshold = 0.85 # Fallback default
-        except Exception as e:
-            self.logger.error(f"Crown: Error loading core configuration from {self.core_config_path}: {e}")
-            self.core_config = None
-            self._stigmergic_resolution = 1 # Fallback default
-            self._blessing_threshold = 0.85 # Fallback default
+        # Use the locally defined load_yaml_config
+        config_data = load_yaml_config(self.core_config_path)
+        # ---------------------------
+        if config_data is None: # Check if loading failed
+            raise ValueError("load_yaml_config returned None")
+            
+        # Temporarily store raw dict
+        self.core_config = config_data # Store raw dict for now
+        # --- Load stigmergic resolution AFTER config is loaded --- 
+        self._stigmergic_resolution = config_data.get('swarm_config', {}).get('stigmergic_resolution', 1)
+        # --- Load blessing threshold --- 
+        crown_config = config_data.get('vanta_crown_interface', {})
+        self._blessing_threshold = crown_config.get('blessing_threshold', 0.85) 
+        self.logger.info(f"Crown: Successfully loaded core configuration. Stigmergic Res: {self._stigmergic_resolution}, Blessing Threshold: {self._blessing_threshold}")
+        # --- Link to Spec ---
+        # self.core_config now conceptually holds parameters defined in
+        # Trinity Swarm YAML Spec v0.1 -> swarm_config & vanta_crown_interface sections.
 
     def _initialize_purpose_vector(self):
         """Sets the initial Purpose Vector based on config or defaults."""
@@ -171,16 +188,21 @@ class VantaMasterCore:
 
     def _load_pilgrims(self): # Renamed from _load_agents
         """Loads and initializes agents as Pilgrims within the Trinity Swarm."""
-        if not self.core_config or not self.core_config.agents:
-            self.logger.warning("Crown: No core configuration or agents defined. Skipping Pilgrim loading.")
+        # Use dictionary access (.get) because self.core_config is currently a dict
+        agent_list = self.core_config.get('agents') if self.core_config else None # Changed from self.core_config.agents
+        if not self.core_config or not agent_list:
+            self.logger.warning("Crown: No core configuration or agents list found. Skipping Pilgrim loading.") # Updated log message
             return
 
-        self.logger.info(f"Crown: Loading {len(self.core_config.agents)} Pilgrims...")
-        for agent_config in self.core_config.agents:
+        self.logger.info(f"Crown: Loading {len(agent_list)} Pilgrims...")
+        self._model_to_agent_map.clear() # Clear map before reloading
+
+        for agent_config in agent_list:
             agent_name = agent_config.get('name')
             agent_class_str = agent_config.get('class')
             agent_settings = agent_config.get('settings', {})
             initial_node_state_config = agent_config.get('initial_trinity_state', {}) # Optional config
+            compatible_model_names = agent_config.get('compatible_model_names', []) # <<< GET MODEL NAMES
 
             if not agent_name or not agent_class_str:
                 self.logger.warning(f"Skipping Pilgrim due to missing name or class string in config: {agent_config}")
@@ -194,24 +216,46 @@ class VantaMasterCore:
                     self.logger.error(f"Crown: Pilgrim class '{agent_class_str}' not found for '{agent_name}'.")
                     continue
 
+                # --- Construct initial_state dictionary --- #
+                initial_state_dict = {
+                    "name": agent_name,
+                    "node_id": f"node_{agent_name}", # Ensure node_id consistency
+                    "settings": agent_settings, # Pass settings nested inside state
+                    "symbolic_identity": agent_config.get("symbolic_identity", {}),
+                    "swarm_params": agent_config.get("swarm_params", {}),
+                    "position": initial_node_state_config.get("position", [0.0, 0.0, 0.0]),
+                    # Add other potential initial state fields from trinity_state or blueprint
+                    "velocity": initial_node_state_config.get("velocity", [0.0, 0.0, 0.0]),
+                    "energy_level": initial_node_state_config.get("energy_level", 1.0),
+                    "current_role": initial_node_state_config.get("current_role", "Pilgrim"), # Default role
+                    # Initialize purpose/mythic state placeholders if used by base init
+                    "purpose_pulse": {"state": "Dormant", "intensity": 0.0}, # Default pulse
+                    "mythic_role": {"current": "Pilgrim", "escalation": 0.0} # Default mythic role
+                    # Add personal_best_position if needed, or let base init handle
+                }
+                # ------------------------------------------ #
+
                 # --- Instantiate the Pilgrim ---
                 # Pass reference to the Crown (self) and potentially initial state
                 agent_instance = AgentClass(
                     name=agent_name,
-                    settings=agent_settings,
-                    orchestrator=self # Pilgrims need reference to the Crown
-                    # Future: Pass initial_node_state derived from config/YAML spec
+                    initial_state=initial_state_dict,
+                    settings=agent_settings # <<< ADDED: Pass the agent-specific settings
                 )
                 self._agents[agent_name] = agent_instance
 
                 # --- Initialize Pilgrim State (Conceptual) ---
                 # This state should align with Trinity Swarm YAML Spec v0.1 -> node_schema
+                initial_pulse_state = initial_node_state_config.get("initial_pulse_state", "Dormant") # Get initial state or default
+                initial_mythic_role = initial_node_state_config.get("initial_mythic_role", "Pilgrim") # <<< Get initial role
                 self._agent_states[agent_name] = {
                     "id": f"node_{agent_name}",
                     "type": "TrinityPilgrim",
                     "created_at": asyncio.get_event_loop().time(),
                     "position": initial_node_state_config.get("position", [0.0, 0.0, 0.0]), # Example default
                     "velocity": [0.0, 0.0, 0.0],
+                    "purpose_pulse": PurposePulse(initial_state=initial_pulse_state).to_dict(), # <<< Add PurposePulse state
+                    "mythic_role": MythicRole(initial_role=initial_mythic_role).to_dict(), # <<< Add MythicRole state
                     "trinity_core": { # Default balanced state
                         "memory": {"compression_score": 0.5, "memory_relic_refs": []},
                         "will": {"risk_tolerance": 0.5, "destiny_pull_weight": 0.5},
@@ -228,12 +272,36 @@ class VantaMasterCore:
                     },
                     "trail_signature": {} # Initially empty
                  }
-                self.logger.info(f"Crown: Successfully loaded and initialized Pilgrim: '{agent_name}'")
+
+                # --- Populate the model-to-agent map ---
+                if compatible_model_names:
+                    for model_name in compatible_model_names:
+                        if model_name in self._model_to_agent_map:
+                            self.logger.warning(f"Crown: Model name '{model_name}' conflict. Already mapped to '{self._model_to_agent_map[model_name]}'. Pilgrim '{agent_name}' will NOT overwrite.")
+                        else:
+                            self.logger.info(f"Crown: Mapping model name '{model_name}' to Pilgrim '{agent_name}'.")
+                            self._model_to_agent_map[model_name] = agent_name
+                # -----------------------------------------
+
+                self.logger.info(f"Crown: Successfully loaded and initialized Pilgrim: '{agent_name}' with Pulse: {initial_pulse_state}, Role: {initial_mythic_role}")
+
+                # --- ADDED: Trigger agent startup explicitly after loading --- 
+                asyncio.create_task(self._run_agent_startup(agent_instance))
+                # -----------------------------------------------------------
 
             except Exception as e:
                 self.logger.error(f"Crown: Failed to load Pilgrim '{agent_name}': {e}", exc_info=True)
 
-        self.logger.info(f"Crown: Finished loading Pilgrims. Total alive: {len(self._agents)}")
+        self.logger.info(f"Crown: Finished loading Pilgrims. Total alive: {len(self._agents)}. Model map size: {len(self._model_to_agent_map)}") # Log map size
+
+    async def _run_agent_startup(self, agent_instance: BaseAgent):
+        """Safely runs the agent's startup method if it exists."""
+        if hasattr(agent_instance, 'startup') and callable(agent_instance.startup):
+            try:
+                self.logger.debug(f"Running startup for agent: {agent_instance.name}")
+                await agent_instance.startup()
+            except Exception as e:
+                self.logger.error(f"Error during startup for agent {agent_instance.name}: {e}", exc_info=True)
 
     def _get_pilgrim(self, agent_name: str) -> Optional[BaseAgent]: # Renamed from _get_agent, corrected type hint to BaseAgent
         """Retrieves a loaded Pilgrim instance by name."""
@@ -243,146 +311,211 @@ class VantaMasterCore:
         return pilgrim
 
     def _get_pilgrim_state(self, agent_name: str) -> Optional[NodeStateModel]:
-        """Retrieves the internal state of a Pilgrim."""
-        state = self._agent_states.get(agent_name)
-        if not state:
-             self.logger.warning(f"Crown: State for Pilgrim '{agent_name}' not found.")
-        return state
+        """Retrieves the current internal state of a specific Pilgrim."""
+        return self._agent_states.get(agent_name)
+
+    def _update_pilgrim_state(self, agent_name: str, new_state_data: Dict[str, Any]):
+        """Updates the internal state of a Pilgrim."""
+        if agent_name not in self._agent_states:
+            self.logger.warning(f"Crown: Cannot update state for unknown Pilgrim '{agent_name}'")
+            return
+
+        self._agent_states[agent_name].update(new_state_data)
+        self.logger.info(f"Crown: Updated state for Pilgrim '{agent_name}'.")
 
     async def _route_task(self, task_data: Dict[str, Any]) -> Any:
         """
-        Routes a task to the appropriate Pilgrim based on task data,
-        considering swarm dynamics and Crown guidance (conceptually).
+        Routes a task to the appropriate Pilgrim based on intent, payload,
+        or explicit target. This now incorporates routing based on 'requested_model'
+        for 'chat_completion' intents.
+
+        Args:
+            task_data (Dict[str, Any]): The task dictionary, including intent, payload, context.
+
+        Returns:
+            Any: The result from the executed Pilgrim.
         """
-        # --- Existing routing logic (explicit target, rules, default) ---
-        # This logic remains but needs enhancement based on BreathLayer_v1
-        target_agent_name = task_data.get("target_agent") # Keep explicit routing
+        intent = task_data.get("intent")
+        payload = task_data.get("payload", {})
+        context = task_data.get("context", {})
+        target_agent_name = task_data.get("target_agent")
+        requested_model = payload.get("requested_model") if isinstance(payload, dict) else None
 
-        # --- Placeholder for Swarm-influenced Routing ---
-        # Future: Analyze task_data type, content, context.
-        # Future: Consult stigmergic field data (symbolic trails).
-        # Future: Consider current Purpose Vector and swarm health metrics.
-        # Future: Select Pilgrim based on role, Trinity state, resonance score.
-        self.logger.debug("Crown: Routing task (current logic: explicit/default, swarm influence pending)")
-        # ---
+        pilgrim_to_run: Optional[BaseAgent] = None
 
-        if not self.core_config:
-             self.logger.error("Crown: Cannot route task: Core configuration not loaded.")
-             return {"error": "Core configuration not loaded."}
+        self.logger.debug(f"Crown: Routing task. Intent: '{intent}', Target: '{target_agent_name}', Requested Model: '{requested_model}'")
 
-        # 1. Explicit Target
+        # --- Priority 1: Explicit Target --- 
         if target_agent_name:
-            pilgrim = self._get_pilgrim(target_agent_name)
-            if pilgrim:
-                self.logger.info(f"Crown: Routing task explicitly to Pilgrim: '{target_agent_name}'")
-                return await self._run_task_on_pilgrim(pilgrim, task_data) # Renamed
+            pilgrim_to_run = self._get_pilgrim(target_agent_name)
+            if not pilgrim_to_run:
+                self.logger.warning(f"Crown: Explicit target Pilgrim '{target_agent_name}' not found.")
+                # Fall through to other routing methods or return error?
+                # For now, let's fall through
             else:
-                self.logger.warning(f"Crown: Explicit target Pilgrim '{target_agent_name}' not found. Falling back.")
-                # Fall through
+                self.logger.info(f"Crown: Routing to explicitly targeted Pilgrim: {target_agent_name}")
 
-        # 2. Routing Rules (Placeholder - needs swarm logic)
-        # ... (existing placeholder logic) ...
-        routing_rules = getattr(self.core_config, 'routing_rules', [])
-        routed_agent_name = None
-        if routing_rules:
-             # --- Placeholder for Rule-Based Routing Logic ---
-             self.logger.debug("Attempting rule-based routing (logic not implemented yet).")
-             # Example: Iterate through rules, match conditions, determine target agent.
-             # For now, just log and fall back to default.
-             pass
-             # --- End Placeholder ---
+        # --- Priority 2: OpenAI Model Routing (Optimized) ---
+        # Only apply if no explicit target was found or valid
+        elif intent == "chat_completion" and requested_model: # <<< Changed to elif
+            self.logger.info(f"Crown: Attempting to route via requested model: '{requested_model}' using precomputed map.")
+            target_agent_name_from_map = self._model_to_agent_map.get(requested_model)
 
-        # 3. Default Agent (Pilgrim)
-        if not routed_agent_name:
-             default_agent_name = getattr(self.core_config, 'default_agent', None)
-             if default_agent_name:
-                 pilgrim = self._get_pilgrim(default_agent_name)
-                 if pilgrim:
-                     self.logger.info(f"Crown: Routing task to default Pilgrim: '{default_agent_name}'")
-                     routed_agent_name = default_agent_name
-                 else:
-                      self.logger.error(f"Default Pilgrim '{default_agent_name}' configured but not found/loaded.") # Updated error message
-             else:
-                  self.logger.warning("Crown: No explicit target, routing rules, or default Pilgrim specified. Cannot route task.") # Updated warning message
-                  return {"error": "Task routing failed: No suitable Pilgrim found."}
-
-        # 4. Execute with Routed Pilgrim
-        if routed_agent_name:
-            pilgrim = self._get_pilgrim(routed_agent_name)
-            if pilgrim:
-                 return await self._run_task_on_pilgrim(pilgrim, task_data) # Renamed
+            if target_agent_name_from_map:
+                pilgrim_to_run = self._get_pilgrim(target_agent_name_from_map)
+                if pilgrim_to_run:
+                    self.logger.info(f"Crown: Found matching Pilgrim '{target_agent_name_from_map}' for model '{requested_model}' via map.")
+                else:
+                    # This case is unlikely if map is built correctly, but good to handle
+                    self.logger.error(f"Crown: Model map pointed to '{target_agent_name_from_map}' for model '{requested_model}', but Pilgrim not loaded.")
+                    # Fall through to default routing
             else:
-                  # This case should ideally be handled by checks above, but as a safeguard:
-                  self.logger.error(f"Crown: Routed Pilgrim '{routed_agent_name}' determined but could not be retrieved.")
-                  return {"error": f"Task routing failed: Routed Pilgrim '{routed_agent_name}' could not be loaded."}
+                 self.logger.warning(f"Crown: No Pilgrim found mapped to requested model '{requested_model}'. Falling back.")
+                 # Fall through to default routing
+
+        # --- Priority 3: Default Routing (Placeholder - based on intent?) --- 
+        if not pilgrim_to_run:
+            # Basic fallback: Use the first available agent or a designated default
+            # A more sophisticated router would analyze intent/payload here.
+            if self._agents:
+                default_agent_name = list(self._agents.keys())[0] # Example: First agent
+                pilgrim_to_run = self._agents[default_agent_name]
+                self.logger.info(f"Crown: No specific route found. Falling back to default Pilgrim: {default_agent_name}")
+            else:
+                 self.logger.error("Crown: Routing failed. No Pilgrims available.")
+                 return {"error": "No agents available to handle the task."}
+
+        # --- Execute Task on Selected Pilgrim --- 
+        if pilgrim_to_run:
+            return await self._run_task_on_pilgrim(pilgrim_to_run, task_data)
         else:
-             # Should not be reachable if logic is correct
-             self.logger.error("Crown: Task routing logic error: No Pilgrim selected.")
-             return {"error": "Internal task routing error."}
+            # This case should ideally be handled above, but as a safeguard:
+            self.logger.error("Crown: Routing logic failed to select a Pilgrim.")
+            return {"error": "Task routing failed internally."}
 
-    async def _run_task_on_pilgrim(self, pilgrim: BaseAgent, task_data: Dict[str, Any]) -> Any: # Renamed from _run_task, corrected type hint to BaseAgent
-        """Executes a task using the specified Pilgrim agent."""
+    async def _run_task_on_pilgrim(self, pilgrim: BaseAgent, task_data: Dict[str, Any]) -> Any:
+        """Executes a task using the specified Pilgrim agent, handling state updates including Pulse/Role."""
         self.logger.info(f"Crown: Executing task with Pilgrim: '{pilgrim.name}'")
-        pilgrim_state = self._get_pilgrim_state(pilgrim.name)
+        pilgrim_full_state = self._get_pilgrim_state(pilgrim.name)
 
-        # --- Get Local Stigmergic Context --- 
+        if not pilgrim_full_state:
+            self.logger.error(f"Crown: Cannot run task, state not found for Pilgrim '{pilgrim.name}'")
+            return {"error": f"State not found for Pilgrim '{pilgrim.name}'"}
+
+        # --- Get Local Stigmergic Context (existing logic) --- 
         local_trails = []
         pilgrim_current_pos = [0.0, 0.0, 0.0] # Default position
-        if pilgrim_state:
-            # Use position from the state model if available
-            pilgrim_current_pos = pilgrim_state.position if SWARM_TYPES_AVAILABLE else pilgrim_state.get('position', [0.0, 0.0, 0.0])
-            # Define search radius based on Pilgrim settings or defaults
-            sensor_radius = 5.0 # Default
-            if SWARM_TYPES_AVAILABLE and hasattr(pilgrim_state, 'swarm_params') and hasattr(pilgrim_state.swarm_params, 'sensor_radius'):
-                 # Check if sensor_radius exists before accessing
-                 sensor_radius = pilgrim_state.swarm_params.sensor_radius if hasattr(pilgrim_state.swarm_params, 'sensor_radius') else 5.0
-            elif isinstance(pilgrim_state, dict) and 'swarm_params' in pilgrim_state:
-                 sensor_radius = pilgrim_state['swarm_params'].get('sensor_radius', 5.0)
-                 
-            local_trails = self.get_stigmergic_data_near(pilgrim_current_pos, radius=sensor_radius)
+        # Extract position safely
+        if SWARM_TYPES_AVAILABLE:
+             # Assuming NodeStateModel structure is used if SWARM_TYPES_AVAILABLE is True
+             pilgrim_current_pos = pilgrim_full_state.position if hasattr(pilgrim_full_state, 'position') else [0.0, 0.0, 0.0]
+             sensor_radius = pilgrim_full_state.swarm_params.sensor_radius if hasattr(pilgrim_full_state, 'swarm_params') and hasattr(pilgrim_full_state.swarm_params, 'sensor_radius') else 5.0
+        else:
+             # Use dictionary access if not using Pydantic models
+             pilgrim_current_pos = pilgrim_full_state.get('position', [0.0, 0.0, 0.0])
+             sensor_radius = pilgrim_full_state.get('swarm_params', {}).get('sensor_radius', 5.0)
+        
+        local_trails = self.get_stigmergic_data_near(pilgrim_current_pos, radius=sensor_radius)
+        # --- End Stigmergic Context ---
 
         task_data_with_context = {
             **task_data,
-            "_crown_context": {
-                 "purpose_vector": self._current_purpose_vector.dict() if self._current_purpose_vector and SWARM_TYPES_AVAILABLE else self._current_purpose_vector,
-                 "stigmergic_trails": [t.dict() for t in local_trails] if SWARM_TYPES_AVAILABLE else local_trails, # Pass nearby trails as dicts
-                 "global_best_node": self._global_trinity_best_node.dict() if self._global_trinity_best_node and SWARM_TYPES_AVAILABLE else self._global_trinity_best_node,
+            "_crown_context": { 
+                # --- MODIFIED START: Safe dict conversion for purpose vector ---
+                "purpose_vector": self._current_purpose_vector.model_dump(mode='json') if SWARM_TYPES_AVAILABLE and hasattr(self._current_purpose_vector, 'model_dump') 
+                                  else (self._current_purpose_vector.dict() if SWARM_TYPES_AVAILABLE and hasattr(self._current_purpose_vector, 'dict') 
+                                  else (self._current_purpose_vector.copy() if isinstance(self._current_purpose_vector, dict) 
+                                  else self._current_purpose_vector)), # Fallback to original if not model or dict
+                # --- END MODIFIED ---
+                
+                # --- MODIFIED START: Safe dict conversion for local trails ---
+                "stigmergic_trails": [(t.model_dump(mode='json') if SWARM_TYPES_AVAILABLE and hasattr(t, 'model_dump') 
+                                     else (t.dict() if SWARM_TYPES_AVAILABLE and hasattr(t, 'dict') 
+                                     else (t.copy() if isinstance(t, dict) 
+                                     else t))) 
+                                    for t in local_trails],
+                # --- END MODIFIED ---
+                
+                # --- MODIFIED START: Safe dict conversion for global best node ---
+                "global_best_node": (self._global_trinity_best_node.model_dump(mode='json') if SWARM_TYPES_AVAILABLE and hasattr(self._global_trinity_best_node, 'model_dump') 
+                                    else (self._global_trinity_best_node.dict() if SWARM_TYPES_AVAILABLE and hasattr(self._global_trinity_best_node, 'dict') 
+                                    else (self._global_trinity_best_node.copy() if isinstance(self._global_trinity_best_node, dict) 
+                                    else self._global_trinity_best_node))) if self._global_trinity_best_node else None,
+                # --- END MODIFIED ---
             },
-            "_pilgrim_state": pilgrim_state.dict() if pilgrim_state and SWARM_TYPES_AVAILABLE else pilgrim_state
+            # Pass the full state dict, including pulse and role
+            # --- MODIFIED START: Safe dict conversion for pilgrim state ---
+            "_pilgrim_state": (pilgrim_full_state.model_dump(mode='json') if SWARM_TYPES_AVAILABLE and hasattr(pilgrim_full_state, 'model_dump') 
+                              else (pilgrim_full_state.dict() if SWARM_TYPES_AVAILABLE and hasattr(pilgrim_full_state, 'dict') 
+                              else (pilgrim_full_state.copy() if isinstance(pilgrim_full_state, dict) 
+                              else pilgrim_full_state)))
+            # --- END MODIFIED ---
         }
         
+        task_successful = False
+        result = {}
         # --- Execute Task --- 
         try:
             if hasattr(pilgrim, 'execute') and asyncio.iscoroutinefunction(pilgrim.execute):
                 result = await pilgrim.execute(task_data_with_context)
                 self.logger.info(f"Crown: Task successfully executed by Pilgrim: '{pilgrim.name}'")
-
-                # --- Process Results: Update State & Record Trail --- 
-                new_state_data = result.get('new_state_data')
-                trail_signature_data = result.get('trail_signature_data')
-
-                if new_state_data and isinstance(new_state_data, dict):
-                    self._update_pilgrim_state(pilgrim.name, new_state_data)
-                if trail_signature_data and isinstance(trail_signature_data, dict):
-                    # Ensure required fields for recording are present
-                    if 'emitting_node_id' not in trail_signature_data:
-                         trail_signature_data['emitting_node_id'] = self._agent_states.get(pilgrim.name).id if self._agent_states.get(pilgrim.name) and SWARM_TYPES_AVAILABLE else f"node_{pilgrim.name}"
-                    if 'position_at_emission' not in trail_signature_data:
-                         # Use updated position from new_state_data if available, else use last known
-                         updated_pos = new_state_data.get('position', pilgrim_current_pos) 
-                         trail_signature_data['position_at_emission'] = updated_pos
-                         
-                    self._record_trail_signature(trail_signature_data)
-
-                # Return only the primary task result, not internal state updates
-                return result.get("task_result", result)
+                task_successful = True # Mark task as successful
             else:
                 self.logger.error(f"Crown: Pilgrim '{pilgrim.name}' does not have a valid async 'execute' method.")
-                return {"error": f"Pilgrim '{pilgrim.name}' cannot execute tasks."}
+                result = {"error": f"Pilgrim '{pilgrim.name}' cannot execute tasks."}
 
         except Exception as e:
             self.logger.error(f"Crown: Error executing task with Pilgrim '{pilgrim.name}': {e}", exc_info=True)
-            return {"error": f"Task execution failed on Pilgrim '{pilgrim.name}': {str(e)}"}
+            result = {"error": f"Task execution failed on Pilgrim '{pilgrim.name}': {str(e)}"}
+            task_successful = False # Mark task as failed
+            
+        # --- Process Results: Update State (including Pulse/Role) & Record Trail --- 
+        # Get potential state updates from the agent's result
+        agent_state_updates = result.get('new_state_data', {}) 
+        
+        # --- Mythic Role Escalation/De-escalation Logic (Orchestrator part) --- 
+        current_mythic_role_dict = pilgrim_full_state.get('mythic_role', {"current_role": "Pilgrim"})
+        mythic_role = MythicRole.from_dict(current_mythic_role_dict)
+        original_role = mythic_role.get_role()
+        
+        # Basic Trigger Logic (Refine Later):
+        if task_successful: 
+            mythic_role.escalate_role() # Escalate on success (simple example)
+        else: # De-escalate on error
+             mythic_role.deescalate_role()
+             
+        if mythic_role.get_role() != original_role:
+             self.logger.info(f"Crown: Mythic Role for '{pilgrim.name}' changed: {original_role} -> {mythic_role.get_role()}")
+             # Ensure role update is included in state changes
+             agent_state_updates['mythic_role'] = mythic_role.to_dict()
+        # ---------------------------------------------------------------------
+        
+        # --- Update Full State if changes occurred --- 
+        if agent_state_updates: # This now includes agent updates AND potential role update
+            self._update_pilgrim_state(pilgrim.name, agent_state_updates)
+        
+        # --- Record Trail Signature (existing logic) --- 
+        trail_signature_data = result.get('trail_signature_data')
+        if trail_signature_data and isinstance(trail_signature_data, dict):
+            # Ensure required fields are present
+            if 'emitting_node_id' not in trail_signature_data:
+                 # Use node ID from potentially updated state if available
+                 updated_state = self._get_pilgrim_state(pilgrim.name) # Get potentially updated state
+                 node_id = f"node_{pilgrim.name}" # Default
+                 if updated_state:
+                      node_id = updated_state.id if SWARM_TYPES_AVAILABLE and hasattr(updated_state, 'id') else updated_state.get('id', node_id)
+                 trail_signature_data['emitting_node_id'] = node_id
+                 
+            if 'position_at_emission' not in trail_signature_data:
+                 # Use updated position if agent provided it, else use last known
+                 updated_pos = agent_state_updates.get('position', pilgrim_current_pos) 
+                 trail_signature_data['position_at_emission'] = updated_pos
+                 
+            self._record_trail_signature(trail_signature_data)
+        # ----------------------------------------------
+
+        # Return only the primary task result part of the agent's response
+        return result.get("task_result", result) 
 
     # --- Placeholder Methods for Crown Functions (from YAML Spec) ---
 
@@ -574,10 +707,35 @@ class VantaMasterCore:
 
             # Add signature and manage buffer size
             field_point.recent_trail_signatures.append(signature)
-            # Access max_items from the model's schema default if possible
-            max_items = StigmergicFieldPoint.__fields__['recent_trail_signatures'].field_info.max_items or 50
-            if len(field_point.recent_trail_signatures) > max_items: 
-                field_point.recent_trail_signatures.pop(0) # Remove oldest
+
+            # --- MODIFIED START: Hardcode max_items --- 
+            max_items = 50 # Hardcoded buffer size for simplicity
+            # --- END MODIFIED ---
+
+            # Access max_items using modern Pydantic approach (model_fields)
+            # try:
+            #     # Pydantic v2+ approach
+            #     max_items = StigmergicFieldPoint.model_fields['recent_trail_signatures'].metadata.get('max_length', 50) # Check metadata first
+            #     if not max_items:
+            #          # Fallback check constraints if metadata missing max_length
+            #          if hasattr(StigmergicFieldPoint.model_fields['recent_trail_signatures'], 'max_length'):
+            #               max_items = StigmergicFieldPoint.model_fields['recent_trail_signatures'].max_length
+            #          else:
+            #               max_items = 50 # Default if not found
+            # except (AttributeError, KeyError):
+            #      # Fallback for older Pydantic or unexpected structure
+            #      try:
+            #           # Pydantic v1 approach
+            #           field_info = StigmergicFieldPoint.__fields__['recent_trail_signatures'].field_info
+            #           max_items = getattr(field_info, 'max_items', 50) # Check field_info directly
+            #      except (AttributeError, KeyError):
+            #          # Absolute fallback
+            #          max_items = 50
+            #          self.logger.warning("Could not determine max_items for trail signatures. Falling back to default.")
+
+            # Trim the buffer if it exceeds the limit
+            if len(field_point.recent_trail_signatures) > max_items:
+                field_point.recent_trail_signatures = field_point.recent_trail_signatures[-max_items:]
 
             # Update pheromone level (example: simple increment capped at 1)
             field_point.pheromone_level = min(1.0, field_point.pheromone_level + 0.1) # Basic update logic
