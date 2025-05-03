@@ -64,7 +64,7 @@ agents:
       mythos_role: "Ollama Link"
     settings:
       api_url: "http://127.0.0.1:11435/v1/chat/completions"
-      default_model: "deepseek-coder"
+      default_model: "deepseek-llm:latest"
     compatible_model_names:
       - "ollama-proxy"
       - "local-llm"

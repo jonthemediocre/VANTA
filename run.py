@@ -67,6 +67,12 @@ AGENT_INDEX_PATH = config.AGENT_INDEX_PATH # Use the path defined in config.py
 # -----------------------------------
 
 # Setup Logging
+# Explicitly set agent logger level to DEBUG
+# Do this BEFORE loading the main logging config to ensure it takes precedence if needed
+logging.getLogger('vanta_seed.agents.proxy_deepseek_agent').setLevel(logging.DEBUG)
+# You could add other specific agent loggers here if needed:
+# logging.getLogger('vanta_seed.agents.memory_agent').setLevel(logging.DEBUG)
+
 logging.basicConfig(
     level=logging.DEBUG,
     format="%(asctime)s - %(levelname)s - [%(filename)s:%(lineno)d] - %(message)s",
