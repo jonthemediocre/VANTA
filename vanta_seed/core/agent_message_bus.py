@@ -1,67 +1,89 @@
 import asyncio
 import logging
-from collections import defaultdict
-from typing import Dict, List, Callable, Awaitable, Any
+from collections import defaultdict, deque
+from typing import Dict, List, Callable, Awaitable, Optional, TYPE_CHECKING
 
-# Import AgentMessage and BaseAgent for type hints
-from .data_models import AgentMessage
-# Use a forward reference string for BaseAgent if it causes circular import issues
-# from ..agents.base_agent import BaseAgent 
+# Use TYPE_CHECKING to avoid circular import issues at runtime
+if TYPE_CHECKING:
+    from vanta_seed.core.data_models import AgentMessage
+    from vanta_seed.agents.base_agent import BaseAgent # For type hint
 
-logger = logging.getLogger("Core.AgentMessageBus")
+logger = logging.getLogger(__name__)
+
+# Type Alias for the handler
+MessageHandler = Callable[['AgentMessage'], Awaitable[None]]
 
 class AgentMessageBus:
-    """Handles routing of direct messages between agents within the same process."""
+    """Handles routing messages between agents."""
 
     def __init__(self):
-        # Stores registered agents: agent_id -> agent_instance
-        self._registry: Dict[str, Any] = {}
-        # Stores pending messages if receiver is not immediately available (optional)
-        # self._pending_messages: defaultdict[str, List[AgentMessage]] = defaultdict(list)
-        logger.info("AgentMessageBus initialized.")
+        # Stores agent_id -> agent_instance mapping for direct calls
+        self._agent_registry: Dict[str, 'BaseAgent'] = {}
+        # Fallback queue for messages to unregistered agents (optional)
+        self._undelivered_messages: Dict[str, deque] = defaultdict(lambda: deque(maxlen=50))
+        self.logger = logging.getLogger(self.__class__.__name__)
+        self.logger.info("AgentMessageBus initialized.")
 
-    def register_agent(self, agent_id: str, agent_instance: Any):
-        """Registers an agent instance to receive messages."""
-        if agent_id in self._registry:
-            logger.warning(f"Agent {agent_id} already registered with Message Bus. Overwriting.")
-        
-        # Check if the agent has the required receive_message method
+    def register_agent(self, agent_id: str, agent_instance: 'BaseAgent'):
+        """Registers an agent instance with the message bus."""
+        if agent_id in self._agent_registry:
+            self.logger.warning(f"Agent ID '{agent_id}' is already registered. Overwriting.")
         if not hasattr(agent_instance, 'receive_message') or not asyncio.iscoroutinefunction(agent_instance.receive_message):
-             logger.error(f"Agent {agent_id} cannot be registered: Missing or non-async 'receive_message' method.")
+             self.logger.error(f"Agent '{agent_id}' ({type(agent_instance).__name__}) cannot be registered: Missing or non-async 'receive_message' method.")
              return
              
-        self._registry[agent_id] = agent_instance
-        logger.info(f"Agent {agent_id} registered with AgentMessageBus.")
-        # Process any pending messages for this agent upon registration (optional)
-        # self._process_pending_for_agent(agent_id)
+        self._agent_registry[agent_id] = agent_instance
+        self.logger.info(f"Agent '{agent_id}' ({type(agent_instance).__name__}) registered with message bus.")
+        # Optionally, try delivering queued messages upon registration
+        # self._deliver_queued_messages(agent_id)
 
     def unregister_agent(self, agent_id: str):
-        """Removes an agent from message routing."""
-        if agent_id in self._registry:
-            del self._registry[agent_id]
-            logger.info(f"Agent {agent_id} unregistered from AgentMessageBus.")
+        """Removes an agent from the registry."""
+        if agent_id in self._agent_registry:
+            del self._agent_registry[agent_id]
+            self.logger.info(f"Agent '{agent_id}' unregistered from message bus.")
         else:
-            logger.warning(f"Attempted to unregister non-existent agent: {agent_id}")
+            self.logger.warning(f"Attempted to unregister non-existent agent ID: '{agent_id}'")
 
-    async def publish_message(self, message: AgentMessage):
-        """Routes a message to the receiver agent if registered."""
-        receiver_id = message.receiver_id
-        receiver_instance = self._registry.get(receiver_id)
+    async def publish_message(self, message: 'AgentMessage'):
+        """Publishes a message to the target agent."""
+        target_agent_id = message.receiver_id # The simple name or ID used for registration
+        target_agent = self._agent_registry.get(target_agent_id)
 
-        if receiver_instance:
-            logger.debug(f"Routing message {message.message_id} from {message.sender_id} to {receiver_id}.")
-            try:
-                # Call the agent's receive_message method directly
-                await receiver_instance.receive_message(message)
-            except Exception as e:
-                logger.error(f"Error delivering message {message.message_id} to agent {receiver_id}: {e}", exc_info=True)
-                # Optionally notify sender of delivery failure?
+        # --- ADDED: Log correlation ID upon receiving message in bus --- 
+        self.logger.debug(f"BUS RECEIVED message {message.message_id} for '{target_agent_id}'. Intent: {message.intent}. CorrID: {message.correlation_id}")
+        # -------------------------------------------------------------
+
+        if target_agent:
+            if hasattr(target_agent, 'receive_message') and asyncio.iscoroutinefunction(target_agent.receive_message):
+                try:
+                    # Directly await the receive_message coroutine
+                    self.logger.debug(f"Found registered agent '{target_agent_id}'. Calling receive_message for {message.message_id}.")
+                    await target_agent.receive_message(message)
+                    self.logger.debug(f"Successfully delivered message {message.message_id} to '{target_agent_id}'.")
+                except Exception as e:
+                    self.logger.error(f"Error calling receive_message for agent '{target_agent_id}' (Message ID: {message.message_id}): {e}", exc_info=True)
+                    # Optionally queue if delivery fails?
+            else:
+                # Handle unregistered agent
+                self.logger.warning(f"Receiver agent {target_agent_id} not found or not registered for message {message.message_id}. Message dropped.")
+                # Optionally queue the message
+                # self._undelivered_messages[target_agent_id].append(message)
+                # self.logger.info(f"Message {message.message_id} queued for later delivery to {target_agent_id}.")
         else:
-            logger.warning(f"Receiver agent {receiver_id} not found or not registered for message {message.message_id}. Message dropped.")
-            # Optional: Store message as pending?
-            # self._pending_messages[receiver_id].append(message)
-            # Optional: Route to orchestrator as fallback?
-            # await self._route_to_orchestrator_fallback(message)
+            # Handle unregistered agent
+            self.logger.warning(f"Receiver agent {target_agent_id} not found or not registered for message {message.message_id}. Message dropped.")
+            # Optionally queue the message
+            # self._undelivered_messages[target_agent_id].append(message)
+            # self.logger.info(f"Message {message.message_id} queued for later delivery to {target_agent_id}.")
+
+    # Optional: Method to deliver queued messages
+    # async def _deliver_queued_messages(self, agent_id: str):
+    #     if agent_id in self._undelivered_messages and agent_id in self._agent_registry:
+    #         queued = self._undelivered_messages.pop(agent_id)
+    #         self.logger.info(f"Delivering {len(queued)} queued messages to newly registered agent '{agent_id}'.")
+    #         for message in queued:
+    #             await self.publish_message(message) # Re-publish to trigger delivery
 
     # --- Optional: Pending message handling --- 
     # def _process_pending_for_agent(self, agent_id: str):

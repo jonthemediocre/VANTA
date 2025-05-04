@@ -11,6 +11,10 @@ from vanta_seed.core.swarm_types import (
     GlobalBestNodeInfo, NodeRole
 ) # Use actual types if available
 
+# Import Pydantic models
+from ..core.models import AgentConfig, TaskData
+import uuid # <<< Added uuid import
+
 # --- Constants (Defaults) --- # ADDED Defaults block
 DEFAULT_MAX_SPEED = 1.0
 DEFAULT_INERTIA_WEIGHT = 0.7
@@ -26,56 +30,66 @@ class BaseAgent(ABC):
     operating within the Breath Kingdom swarm. (Incorporating user's provided structure)
     """
 
-    def __init__(self, name: str, initial_state: Optional[Dict[str, Any]] = None): # Removed settings, orchestrator - state comes from Crown
+    def __init__(self, name: str, config: AgentConfig, logger: logging.Logger, orchestrator_ref: Optional['VantaMasterCore'] = None):
         """
-        Initializes the Pilgrim based on Crown specification.
+        Initialize the BaseAgent.
 
         Args:
-            name (str): The unique name/ID of this Pilgrim node.
-            initial_state (Optional[Dict[str, Any]]): Initial state of the Pilgrim.
+            name (str): The unique name of the agent instance.
+            config (AgentConfig): The Pydantic model containing the agent's validated configuration.
+            logger (logging.Logger): The injected logger instance.
+            orchestrator_ref (Optional[VantaMasterCore]): Reference to the core orchestrator.
         """
-        self._name = name # Store name in private attribute
-        self.node_id = f"node_{name}" # Use name to create node_id for consistency
-        self.logger = self._get_logger() # Initialize logger
+        # Assign basic attributes
+        self._name = name 
+        self.config = config # Store the validated Pydantic config model
+        self.logger = logger # Store the injected logger
+        self.orchestrator = orchestrator_ref # Store the orchestrator reference
+        self.symbolic_identity = config.symbolic_identity # Loaded from validated config
+        
+        # --- Initialize Node ID --- 
+        self.node_id = f"node_{name}_{uuid.uuid4().hex[:4]}" # Assign node_id here
+        # ------------------------
+        
+        # --- Initialize State --- 
+        self.state: Union[Dict[str, Any], NodeStateModel] = {} # Define the attribute first
+        self._initialize_default_state() # Call state initializer
+        # ------------------------
+        
+        self.logger.info(f"BaseAgent {self._name} (ID: {self.node_id}) initialized with archetype: {self.symbolic_identity.archetype}") # Added node_id to log
 
-        # --- Internal State ---
-        # Use a class member 'state' instead of '_internal_state' for consistency
-        # Initialize as empty dict first, then update
-        self.state: Union[NodeStateModel, Dict[str, Any]] = {}
+    def startup(self):
+        """Optional method called once when the core starts up."""
+        self.logger.info(f"Agent {self._name} ({self.symbolic_identity.mythos_role}) starting up.")
+        # Announce identity
+        self.logger.info(f" >> {self._name} Online. Archetype: {self.symbolic_identity.archetype}, Role: {self.symbolic_identity.mythos_role} <<")
 
-        if initial_state:
-            self.logger.info(f"Pilgrim '{self.name}': Initializing with provided state.")
-            self._update_internal_state(initial_state) # Use update method for validation
-        else:
-            self.logger.info(f"Pilgrim '{self.name}': No initial state provided, using defaults.")
-            self._initialize_default_state() # Call new method
+    def shutdown(self):
+        """Optional method called once when the core shuts down."""
+        self.logger.info(f"Agent {self._name} shutting down.")
 
-        # Ensure pBest is set initially if not provided
-        if isinstance(self.state, dict) and self.state.get('personal_best_position') is None:
-             self.state['personal_best_position'] = self.state.get('position', [0.0]*3)[:]
-        elif isinstance(self.state, NodeStateModel) and self.state.personal_best_position is None:
-             # Pydantic models might handle defaults, but explicit check is safer
-             if self.state.position:
-                 self.state.personal_best_position = self.state.position[:]
+    @abstractmethod
+    def execute(self, task: TaskData) -> Any:
+        """
+        Execute a given task.
 
-        self.logger.info(f"Pilgrim Agent '{self.name}' initialized. Current Role: {self.state.get('current_role') if isinstance(self.state, dict) else getattr(self.state, 'current_role', 'Unknown')}")
+        Args:
+            task (TaskData): The Pydantic model containing task details.
 
-    def _get_logger(self):
-         # Helper to get logger, potentially using utils if available
-         try:
-             from vanta_seed.utils.logging_utils import get_vanta_logger
-             return get_vanta_logger(f"Agent.{self.name}")
-         except ImportError:
-             import logging
-             logger = logging.getLogger(f"Agent.{self.name}")
-             # Basic config if util not found
-             if not logger.hasHandlers():
-                 handler = logging.StreamHandler()
-                 formatter = logging.Formatter('%(asctime)s - [%(levelname)s] - %(name)s - %(message)s')
-                 handler.setFormatter(formatter)
-                 logger.addHandler(handler)
-                 logger.setLevel(logging.DEBUG) # Default level
-             return logger
+        Returns:
+            Any: The result of the task execution. Structure depends on the task intent.
+                 Should be serializable (e.g., dict, list, str, int, float, bool).
+        """
+        pass
+
+    def get_status(self) -> Dict[str, Any]:
+        """Return the current status of the agent."""
+        # Basic status, subclasses can override for more detail
+        return {
+            "name": self._name,
+            "status": "running", # Or more specific status if tracked
+            "config": self.config.dict() # Return dict representation of config
+        }
 
     # --- Core Abstract Methods (Pilgrim Lifecycle) ---
 
@@ -96,7 +110,7 @@ class BaseAgent(ABC):
         6. Generate a TrailSignature based on the outcome.
         7. Package results (task outcome, new state data dict, trail signature data dict) for the Crown.
         """
-        self.logger.debug(f"Pilgrim '{self.name}': Execute cycle starting. Task keys: {list(task_data.keys())}")
+        self.logger.debug(f"Pilgrim '{self._name}': Execute cycle starting. Task keys: {list(task_data.keys())}")
         crown_context = task_data.get("_crown_context", {})
         # Get latest state data provided by Crown, defaults to current internal state if not provided
         latest_state_from_crown = task_data.get("_pilgrim_state", self.current_state)
@@ -104,21 +118,21 @@ class BaseAgent(ABC):
         # --- Step 1: Update internal state if necessary ---
         # Compare dict versions to handle potential Pydantic objects
         if latest_state_from_crown != self.current_state:
-             self.logger.debug(f"Pilgrim '{self.name}': Received updated state from Crown. Applying...")
+             self.logger.debug(f"Pilgrim '{self._name}': Received updated state from Crown. Applying...")
              self._update_internal_state(latest_state_from_crown)
         else:
-             self.logger.debug(f"Pilgrim '{self.name}': Crown state matches internal state.")
+             self.logger.debug(f"Pilgrim '{self._name}': Crown state matches internal state.")
 
         # --- Step 2: Process Crown Context ---
         purpose_vector = crown_context.get("purpose_vector")
         stigmergic_trails = crown_context.get("stigmergic_trails", [])
         global_best_node = crown_context.get("global_best_node")
-        self.logger.debug(f"Pilgrim '{self.name}': Context received. Trails: {len(stigmergic_trails)}, Purpose: {bool(purpose_vector)}, gBest: {bool(global_best_node)}")
+        self.logger.debug(f"Pilgrim '{self._name}': Context received. Trails: {len(stigmergic_trails)}, Purpose: {bool(purpose_vector)}, gBest: {bool(global_best_node)}")
 
         # --- Step 3: Determine Primary Goal ---
         primary_goal_for_cycle = task_data.get('primary_goal', purpose_vector)
         if not primary_goal_for_cycle:
-            self.logger.warning(f"Pilgrim '{self.name}': No primary goal or purpose vector. Defaulting to hold position.")
+            self.logger.warning(f"Pilgrim '{self._name}': No primary goal or purpose vector. Defaulting to hold position.")
             current_position = self.current_state.get('position', [0.0]*3)
             primary_goal_for_cycle = current_position # Use current position as goal
 
@@ -131,9 +145,9 @@ class BaseAgent(ABC):
                 global_best_node=global_best_node,
                 task_specific_goal=primary_goal_for_cycle
             )
-            self.logger.debug(f"Pilgrim '{self.name}': State updates calculated and applied internally.")
+            self.logger.debug(f"Pilgrim '{self._name}': State updates calculated and applied internally.")
         except Exception as e:
-            self.logger.error(f"Pilgrim '{self.name}': Error calculating state updates: {e}. Proceeding with potentially stale state.", exc_info=True)
+            self.logger.error(f"Pilgrim '{self._name}': Error calculating state updates: {e}. Proceeding with potentially stale state.", exc_info=True)
             state_updates_dict = {} # Indicate no updates were successfully calculated/applied
 
         # --- Step 5: Perform Core Task Logic --- 
@@ -141,18 +155,18 @@ class BaseAgent(ABC):
             # Pass the *updated* state reflecting changes from step 4
             # Ensure we pass a dict copy to the subclass
             task_result = await self.perform_task(task_data, self.current_state.copy())
-            self.logger.debug(f"Pilgrim '{self.name}': Core task performed. Success: {not task_result.get('error')}")
+            self.logger.debug(f"Pilgrim '{self._name}': Core task performed. Success: {not task_result.get('error')}")
         except NotImplementedError:
-            self.logger.error(f"Pilgrim '{self.name}': Subclass has not implemented perform_task!")
+            self.logger.error(f"Pilgrim '{self._name}': Subclass has not implemented perform_task!")
             task_result = {"error": "perform_task not implemented"}
         except Exception as e:
-            self.logger.error(f"Pilgrim '{self.name}': Error performing core task logic: {e}", exc_info=True)
+            self.logger.error(f"Pilgrim '{self._name}': Error performing core task logic: {e}", exc_info=True)
             task_result = {"error": f"Core task failed: {str(e)}"}
 
         # --- Step 6: Generate Trail Signature --- 
         # Generate signature based on the task outcome and the state *after* updates
         trail_signature = self._generate_trail_signature(task_result, state_updates_dict)
-        self.logger.debug(f"Pilgrim '{self.name}': Trail signature generated.")
+        self.logger.debug(f"Pilgrim '{self._name}': Trail signature generated.")
 
         # --- Step 7: Package Results for Crown --- 
         # Ensure trail signature is a dictionary for JSON serialization if needed
@@ -165,7 +179,7 @@ class BaseAgent(ABC):
                      else:
                           trail_signature_data_for_crown = trail_signature.dict()
                 except Exception as e:
-                    self.logger.error(f"Pilgrim '{self.name}': Failed to serialize TrailSignature model: {e}", exc_info=True)
+                    self.logger.error(f"Pilgrim '{self._name}': Failed to serialize TrailSignature model: {e}", exc_info=True)
                     trail_signature_data_for_crown = {"error": "TrailSignature serialization failed"}
             elif isinstance(trail_signature, dict):
                 trail_signature_data_for_crown = trail_signature
@@ -176,31 +190,31 @@ class BaseAgent(ABC):
             "trail_signature_data": trail_signature_data_for_crown # Serializable dict for the Crown
         }
 
-        self.logger.debug(f"Pilgrim '{self.name}': Execute cycle complete. Returning package.")
+        self.logger.debug(f"Pilgrim '{self._name}': Execute cycle complete. Returning package.")
         return result_package
 
     def _update_internal_state(self, new_state_data: Dict[str, Any]):
         """Safely updates the internal state (self.state) with new data, using Pydantic validation if possible."""
         if not new_state_data or not isinstance(new_state_data, dict):
-             self.logger.warning(f"Pilgrim '{self.name}': Attempted to update state with invalid data type: {type(new_state_data)} or empty data.")
+             self.logger.warning(f"Pilgrim '{self._name}': Attempted to update state with invalid data type: {type(new_state_data)} or empty data.")
              return
 
         try:
              if isinstance(self.state, dict):
                  self.state.update(new_state_data)
-                 self.logger.debug(f"Pilgrim '{self.name}': Internal state updated as dictionary.")
+                 self.logger.debug(f"Pilgrim '{self._name}': Internal state updated as dictionary.")
              else:
                  # Simple dictionary update if Pydantic types are not available/used
                  # This performs a shallow update, potentially overwriting nested dicts
                  self.state.update(new_state_data)
-                 self.logger.debug(f"Pilgrim '{self.name}': Internal state updated as dictionary.")
+                 self.logger.debug(f"Pilgrim '{self._name}': Internal state updated as dictionary.")
 
         except Exception as e:
-            self.logger.error(f"Pilgrim '{self.name}': Unexpected error updating internal state: {e}", exc_info=True)
+            self.logger.error(f"Pilgrim '{self._name}': Unexpected error updating internal state: {e}", exc_info=True)
             # Fallback: Try a simple dict update if Pydantic failed unexpectedly
             if isinstance(self.state, dict):
                  self.state.update(new_state_data)
-                 self.logger.warning(f"Pilgrim '{self.name}': State update failed unexpectedly, performed shallow dict update as fallback.")
+                 self.logger.warning(f"Pilgrim '{self._name}': State update failed unexpectedly, performed shallow dict update as fallback.")
             # else: If state was Pydantic, it might be safer *not* to fall back to dict here
             #      pass
 
@@ -224,7 +238,7 @@ class BaseAgent(ABC):
         if swarm_params:
             return swarm_params.get(param_name, default)
 
-        self.logger.debug(f"Pilgrim '{self.name}': Swarm parameter '{param_name}' not found or state structure incorrect, using default: {default}")
+        self.logger.debug(f"Pilgrim '{self._name}': Swarm parameter '{param_name}' not found or state structure incorrect, using default: {default}")
         return default
 
     def _calculate_state_updates(self,
@@ -239,7 +253,7 @@ class BaseAgent(ABC):
         Returns:
             A dictionary containing the changes made in this step.
         """
-        self.logger.debug(f"Pilgrim '{self.name}': Calculating state updates...")
+        self.logger.debug(f"Pilgrim '{self._name}': Calculating state updates...")
         current_state_dict = self.current_state # Get state at start of calculation
 
         # --- 1. Calculate Movement (Velocity & Position) --- 
@@ -248,12 +262,12 @@ class BaseAgent(ABC):
             stigmergic_trails=stigmergic_trails,
             global_best_node=global_best_node
         )
-        self.logger.debug(f"Pilgrim '{self.name}': Movement calculation completed.")
+        self.logger.debug(f"Pilgrim '{self._name}': Movement calculation completed.")
 
         # --- 2. Determine Role --- 
         # Pass the *new* position calculated in step 1
         next_role = self._determine_next_role(new_position, stigmergic_trails, purpose_vector)
-        self.logger.debug(f"Pilgrim '{self.name}': Role determination completed. Next Role: {next_role}")
+        self.logger.debug(f"Pilgrim '{self._name}': Role determination completed. Next Role: {next_role}")
 
         # --- 3. Update Other State Variables (Energy, etc.) --- 
         current_pos = current_state_dict.get('position', [0.0]*3)
@@ -261,7 +275,7 @@ class BaseAgent(ABC):
         energy_cost = distance_moved * self._get_swarm_param('energy_cost_per_unit', 0.1)
         current_energy = current_state_dict.get('energy_level', 1.0)
         new_energy_level = max(0.0, current_energy - energy_cost)
-        self.logger.debug(f"Pilgrim '{self.name}': Energy update calculated. Cost: {energy_cost:.3f}, New Level: {new_energy_level:.3f}")
+        self.logger.debug(f"Pilgrim '{self._name}': Energy update calculated. Cost: {energy_cost:.3f}, New Level: {new_energy_level:.3f}")
 
         # --- 4. Assemble State Updates Dictionary --- 
         state_updates = {
@@ -284,16 +298,16 @@ class BaseAgent(ABC):
         if new_fitness_value > current_pbest_value:
              state_updates["personal_best_position"] = new_position[:]
              state_updates["personal_best_value"] = new_fitness_value
-             self.logger.info(f"Pilgrim '{self.name}': New personal best found at {[f'{p:.2f}' for p in new_position]}. Value: {new_fitness_value:.3f}")
+             self.logger.info(f"Pilgrim '{self._name}': New personal best found at {[f'{p:.2f}' for p in new_position]}. Value: {new_fitness_value:.3f}")
         else:
-             self.logger.debug(f"Pilgrim '{self.name}': Personal best not updated. Current: {current_pbest_value:.3f}, New Potential: {new_fitness_value:.3f}")
+             self.logger.debug(f"Pilgrim '{self._name}': Personal best not updated. Current: {current_pbest_value:.3f}, New Potential: {new_fitness_value:.3f}")
 
         # --- 6. Apply the updates internally NOW --- 
         if state_updates: 
-             self.logger.debug(f"Pilgrim '{self.name}': Applying calculated state updates internally: {list(state_updates.keys())}")
+             self.logger.debug(f"Pilgrim '{self._name}': Applying calculated state updates internally: {list(state_updates.keys())}")
              self._update_internal_state(state_updates)
         else:
-             self.logger.debug(f"Pilgrim '{self.name}': No state updates to apply this cycle.")
+             self.logger.debug(f"Pilgrim '{self._name}': No state updates to apply this cycle.")
 
         # Return the dictionary of changes that were calculated/applied
         return state_updates
@@ -320,7 +334,7 @@ class BaseAgent(ABC):
 
         # --- Validate Position and Dimensions --- 
         if not current_pos or not isinstance(current_pos, list) or len(current_pos) == 0:
-             self.logger.error(f"Pilgrim '{self.name}': Invalid current_pos: {current_pos}. Cannot calculate movement.")
+             self.logger.error(f"Pilgrim '{self._name}': Invalid current_pos: {current_pos}. Cannot calculate movement.")
              # Return current velocity (or zero) and current position (or origin)
              return current_vel or [0.0]*3, current_pos or [0.0]*3
 
@@ -352,7 +366,7 @@ class BaseAgent(ABC):
             if gbest_pos_candidate and isinstance(gbest_pos_candidate, list) and len(gbest_pos_candidate) == num_dimensions:
                  global_best_pos = gbest_pos_candidate
             else:
-                 self.logger.debug(f"Pilgrim '{self.name}': Global best node position invalid or missing. Using personal best for social term.")
+                 self.logger.debug(f"Pilgrim '{self._name}': Global best node position invalid or missing. Using personal best for social term.")
 
         r2 = random.random()
         social_term = [c2 * r2 * (g_best - p_curr) for g_best, p_curr in zip(global_best_pos, current_pos)]
@@ -386,9 +400,9 @@ class BaseAgent(ABC):
             if total_weight > epsilon:
                 # Average weighted direction vector towards influential trails
                 stigmergic_vector = [wsv / total_weight for wsv in weighted_sum_vec]
-                self.logger.debug(f"Pilgrim '{self.name}': Calculated stigmergic influence vector: {[f'{v:.3f}' for v in stigmergic_vector]}")
+                self.logger.debug(f"Pilgrim '{self._name}': Calculated stigmergic influence vector: {[f'{v:.3f}' for v in stigmergic_vector]}")
             else:
-                 self.logger.debug(f"Pilgrim '{self.name}': No significant stigmergic influence detected.")
+                 self.logger.debug(f"Pilgrim '{self._name}': No significant stigmergic influence detected.")
 
         r3 = random.random()
         stigmergic_term = [c3 * r3 * s_vec for s_vec in stigmergic_vector]
@@ -400,7 +414,7 @@ class BaseAgent(ABC):
             # --- Clamp Velocity to Max Speed --- 
             if abs(new_velocity[i]) > max_speed:
                 new_velocity[i] = max_speed * (1 if new_velocity[i] > 0 else -1)
-                self.logger.debug(f"Pilgrim '{self.name}': Velocity clamped in dimension {i} to {new_velocity[i]:.3f}")
+                self.logger.debug(f"Pilgrim '{self._name}': Velocity clamped in dimension {i} to {new_velocity[i]:.3f}")
 
         # --- Calculate New Position --- 
         new_position = [p + v for p, v in zip(current_pos, new_velocity)]
@@ -409,8 +423,8 @@ class BaseAgent(ABC):
         # Example: Clamp position within [-100, 100] in each dimension
         # new_position = [max(-100, min(100, p)) for p in new_position]
 
-        self.logger.debug(f"Pilgrim '{self.name}': Vel Calc: I{[f'{v:.2f}' for v in inertia_term]} C{[f'{v:.2f}' for v in cognitive_term]} S{[f'{v:.2f}' for v in social_term]} St{[f'{v:.2f}' for v in stigmergic_term]} -> NewVel{[f'{v:.2f}' for v in new_velocity]}")
-        self.logger.debug(f"Pilgrim '{self.name}': Calculated New Position: {[f'{p:.2f}' for p in new_position]}")
+        self.logger.debug(f"Pilgrim '{self._name}': Vel Calc: I{[f'{v:.2f}' for v in inertia_term]} C{[f'{v:.2f}' for v in cognitive_term]} S{[f'{v:.2f}' for v in social_term]} St{[f'{v:.2f}' for v in stigmergic_term]} -> NewVel{[f'{v:.2f}' for v in new_velocity]}")
+        self.logger.debug(f"Pilgrim '{self._name}': Calculated New Position: {[f'{p:.2f}' for p in new_position]}")
         return new_velocity, new_position
 
     def _determine_next_role(self,
@@ -432,13 +446,13 @@ class BaseAgent(ABC):
 
         if energy_level < low_energy_threshold:
              if current_role_str != "SHADE":
-                 self.logger.info(f"Pilgrim '{self.name}': Switching role to SHADE due to critical energy ({energy_level:.2f}).")
+                 self.logger.info(f"Pilgrim '{self._name}': Switching role to SHADE due to critical energy ({energy_level:.2f}).")
                  return "SHADE"
              else:
                  return "SHADE"
 
         if current_role_str == "SHADE" and energy_level > recovery_energy_threshold:
-             self.logger.info(f"Pilgrim '{self.name}': Recovered energy ({energy_level:.2f}). Switching role from SHADE back to PILGRIM.")
+             self.logger.info(f"Pilgrim '{self._name}': Recovered energy ({energy_level:.2f}). Switching role from SHADE back to PILGRIM.")
              return "PILGRIM"
 
         # --- Placeholder for Sophisticated Role Logic --- 
@@ -455,18 +469,18 @@ class BaseAgent(ABC):
             available_roles_str = ["PILGRIM", "SCRIBE", "HERALD"]
             new_role_str = random.choice(available_roles_str)
             if new_role_str != current_role_str:
-                self.logger.info(f"Pilgrim '{self.name}': Randomly switching role from {current_role_str} to {new_role_str}. REPLACE THIS WITH ACTUAL LOGIC.")
+                self.logger.info(f"Pilgrim '{self._name}': Randomly switching role from {current_role_str} to {new_role_str}. REPLACE THIS WITH ACTUAL LOGIC.")
                 return new_role_str
 
         # Default: Maintain current role if no other condition met
-        self.logger.debug(f"Pilgrim '{self.name}': Maintaining current role: {current_role_str}")
+        self.logger.debug(f"Pilgrim '{self._name}': Maintaining current role: {current_role_str}")
         return current_role_str
 
     def _generate_trail_signature(self, task_result: Dict[str, Any], state_updates: Dict[str, Any]) -> Optional[Union[TrailSignature, Dict]]:
         """Generates data for a TrailSignature based on the task outcome and the state *after* updates."""
         # Get the state reflecting the updates applied in _calculate_state_updates
         current_state_dict = self.current_state
-        self.logger.debug(f"Pilgrim '{self.name}': Generating trail signature based on state after updates.")
+        self.logger.debug(f"Pilgrim '{self._name}': Generating trail signature based on state after updates.")
 
         # Extract common info
         node_id = current_state_dict.get('id', self.node_id)
@@ -520,7 +534,7 @@ class BaseAgent(ABC):
                 # Or rely on Pydantic's default handling
                 return TrailSignature(**signature_data)
             except Exception as e:
-                self.logger.error(f"Pilgrim '{self.name}': Unexpected error generating Pydantic TrailSignature: {e}", exc_info=True)
+                self.logger.error(f"Pilgrim '{self._name}': Unexpected error generating Pydantic TrailSignature: {e}", exc_info=True)
                 return signature_data # Fallback to raw dict
         else:
             # Return the raw dictionary if Pydantic types are not used
@@ -629,15 +643,11 @@ class BaseAgent(ABC):
         self.logger.info("Pilgrim is entering rest...")
 
     # --- NEW: A2A Messaging Methods --- 
-    async def send_message(self, receiver_id: str, intent: str, payload: dict, requires_response: bool = False, correlation_id: Optional[str] = None) -> Optional[str]:
-        """Sends a message to another agent via the message bus.
+    async def send_message(self, message: 'AgentMessage') -> Optional[str]:
+        """Sends a pre-constructed message object to another agent via the message bus.
         
         Args:
-            receiver_id: The ID of the agent to send the message to.
-            intent: The purpose of the message.
-            payload: The message content.
-            requires_response: Whether a response is expected.
-            correlation_id: ID to link related messages.
+            message: The AgentMessage object to send.
             
         Returns:
             The message_id of the sent message, or None if sending failed.
@@ -651,24 +661,26 @@ class BaseAgent(ABC):
              self.logger.error(f"Cannot send message: Message Bus instance is None.")
              return None
              
+        # --- Validation (Optional but good practice) ---
         # Import locally or ensure AgentMessage is available
         from vanta_seed.core.data_models import AgentMessage 
-        import uuid # For generating message ID if needed within AgentMessage
-        from datetime import datetime # For timestamp within AgentMessage
-        
-        message = AgentMessage(
-            sender_id=self.node_id,
-            receiver_id=receiver_id,
-            intent=intent,
-            payload=payload,
-            requires_response=requires_response,
-            correlation_id=correlation_id
-            # message_id and timestamp are auto-generated by dataclass default_factory
-        )
+        if not isinstance(message, AgentMessage):
+             self.logger.error(f"Invalid object passed to send_message. Expected AgentMessage, got {type(message)}")
+             return None
+        # Ensure sender is correctly set (could be done here or assumed correct)
+        if message.sender_id != self.node_id:
+            self.logger.warning(f"Message sender_id '{message.sender_id}' doesn't match agent's node_id '{self.node_id}'. Overwriting sender_id.")
+            message.sender_id = self.node_id
+        # ---------------------------------------------
         
         try:
+            # --- Log correlation ID just before publishing --- 
+            # Use attributes directly from the message object
+            self.logger.debug(f"SENDING message {message.message_id} to {message.receiver_id}. Intent: {message.intent}. CorrID: {message.correlation_id}")
+            # ---------------------------------------------------------
+            # The bus will use message.receiver_id for lookup
             await message_bus.publish_message(message)
-            self.logger.info(f"Message {message.message_id} sent to {receiver_id} with intent '{intent}'.")
+            self.logger.info(f"Message {message.message_id} sent to {message.receiver_id} with intent '{message.intent}'.")
             return message.message_id
         except Exception as e:
             self.logger.error(f"Failed to publish message {message.message_id} to bus: {e}", exc_info=True)
@@ -730,10 +742,10 @@ class BaseAgent(ABC):
          """Sets up a basic default state if none is provided."""
          default_state_data = {
              'id': self.node_id, # Use generated ID
-             'name': self.name,
+             'name': self._name,
              'position': [random.uniform(-10, 10) for _ in range(3)], # Random 3D position
              'velocity': [0.0, 0.0, 0.0],
-             'current_role': NodeRole.PILGRIM,
+             'current_role': "PILGRIM",
              'personal_best_position': None, # Will be set to initial position
              'personal_best_value': float('-inf'),
              'energy_level': 1.0,
@@ -770,11 +782,11 @@ class BaseAgent(ABC):
 
                  self.state = NodeStateModel(**default_state_data)
              except Exception as e:
-                  self.logger.error(f"Pilgrim '{self.name}': Unexpected error initializing default Pydantic state: {e}. Falling back to dict.", exc_info=True)
+                  self.logger.error(f"Pilgrim '{self._name}': Unexpected error initializing default Pydantic state: {e}. Falling back to dict.", exc_info=True)
                   self.state = default_state_data # Fallback to dict
          else:
              self.state = default_state_data
-         self.logger.info(f"Pilgrim '{self.name}': Initialized with default state at position {self.state.get('position') if isinstance(self.state, dict) else getattr(self.state, 'position', 'Unknown')}")
+         self.logger.info(f"Pilgrim '{self._name}': Initialized with default state at position {self.state.get('position') if isinstance(self.state, dict) else getattr(self.state, 'position', 'Unknown')}")
 
     # ADDED current_state property
     @property
@@ -802,23 +814,23 @@ class BaseAgent(ABC):
                       return self.state.dict() # for older pydantic v1
                  else:
                      # Fallback if neither method exists (shouldn't happen for valid Pydantic)
-                     self.logger.warning(f"Agent {self.name}: Pydantic state object lacks .dict() or .model_dump(). Returning raw object attributes.")
+                     self.logger.warning(f"Agent {self._name}: Pydantic state object lacks .dict() or .model_dump(). Returning raw object attributes.")
                      # Attempt to manually create a dict as a last resort
                      return {k: getattr(self.state, k) for k in dir(self.state) if not k.startswith('_') and not callable(getattr(self.state, k))}
              except Exception as e:
-                 self.logger.error(f"Error converting Pydantic state to dict for agent {self.name}: {e}", exc_info=True)
+                 self.logger.error(f"Error converting Pydantic state to dict for agent {self._name}: {e}", exc_info=True)
                  # Fallback or simplified representation
-                 return {"id": getattr(self.state, 'id', self.node_id), "name": self.name, "error": "State serialization failed"}
+                 return {"id": getattr(self.state, 'id', self.node_id), "name": self._name, "error": "State serialization failed"}
          else:
              # This case should ideally not happen if __init__ is correct
-             self.logger.error(f"Agent {self.name} has unexpected state type: {type(self.state)}. Attempting to initialize default state.")
+             self.logger.error(f"Agent {self._name} has unexpected state type: {type(self.state)}. Attempting to initialize default state.")
              self._initialize_default_state() # Attempt recovery
              # Check again after recovery attempt
              if isinstance(self.state, dict):
                  return self.state.copy()
              else:
                   # If recovery failed or resulted in non-dict state, log error
-                  self.logger.error(f"Agent {self.name}: State is still not a dictionary after recovery attempt. Type: {type(self.state)}")
+                  self.logger.error(f"Agent {self._name}: State is still not a dictionary after recovery attempt. Type: {type(self.state)}")
                   return {"error": f"Invalid state type after recovery attempt: {type(self.state)}"}
 
     # --- Property Getter for name --- 

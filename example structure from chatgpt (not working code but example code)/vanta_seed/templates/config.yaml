@@ -1,0 +1,82 @@
+# config.yaml
+# Main Configuration for VantaSeed
+
+# --- Plugin Management ---
+
+plugin_directory: "my_plugins"
+
+plugins:
+  - name: "Ollama Llama3"
+    module: "ollama_plugin"
+    class: "OllamaPlugin"
+    params:
+      model: "llama3"
+
+  - name: "DeepSeek Chat"
+    module: "deepseek_plugin"
+    class: "DeepSeekPlugin"
+    params:
+      api_key: "REPLACE_WITH_REAL_API_KEY"
+      model: "deepseek-chat"
+
+  - name: "ElevenLabs TTS"
+    module: "eleven_plugin"
+    class: "ElevenPlugin"
+    params:
+      api_key: "REPLACE_WITH_REAL_API_KEY"
+      voice: "Rachel"
+
+  - name: "Whisper ASR"
+    module: "whisper_plugin"
+    class: "WhisperPlugin"
+    params:
+      use_api: true
+      api_key: "REPLACE_WITH_REAL_API_KEY"
+
+# --- Core Components ---
+
+identity_file: "templates/identity.yaml"
+collapse_file: "templates/collapse.yaml"
+rituals_file: "templates/rituals.yaml"
+governance_file: "templates/governance.yaml"
+procedural_file: "templates/procedural.yaml"
+injection_file: "templates/injection.yaml"
+lora_file: "templates/lora.yaml"
+jailbreak_file: "templates/jailbreak.yaml"
+
+# --- Memory Settings ---
+
+memory:
+  store_type: "dict"
+  store_path: "memory_store.json"
+
+episodic_memory:
+  max_episodes: 1000
+
+# --- Ritual Executor ---
+
+ritual_executor:
+  timezone: "UTC"
+
+# --- Automutator ---
+
+automutator:
+  enabled: true
+
+# --- Autonomous Tasker ---
+
+autonomous_tasker:
+  enabled: true
+  check_interval_seconds: 300
+
+# --- Agentic Router ---
+
+agentic_router:
+  default_solver: "FractalSolver"
+
+# --- Logging ---
+
+logging:
+  audit_log_file: "logs/vanta_audit.log"
+  audit_log_level: "INFO"
+  audit_log_to_console: false

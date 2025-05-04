@@ -1,0 +1,49 @@
+# procedural.yaml
+# Procedural Engine Definitions → Ritualized + Autonomous Task Flows
+
+procedures:
+
+  generate_code_sample:
+    description: "Generates example code based on user request."
+    steps:
+      - description: "Route request to DeepSeek_CodeHelper."
+        action: "plugin.generate_code"
+        params:
+          model_hint: "DeepSeek_CodeHelper_v1"
+          user_prompt: "{{ context.user_prompt }}"
+      - description: "Audit and save generated code."
+        action: "audit.log"
+        params:
+          event_type: "code_generation"
+          details:
+            prompt: "{{ context.user_prompt }}"
+            generated_code: "{{ previous_step.result }}"
+      - description: "Return final code block."
+        action: "return.value"
+        params:
+          result: "{{ previous_step.result }}"
+
+  recursive_reasoning:
+    description: "Performs chain of thought reasoning and returns summary."
+    steps:
+      - description: "Invoke DeepSeek_ThinkingBoost for reasoning."
+        action: "plugin.generate_analysis"
+        params:
+          model_hint: "DeepSeek_ThinkingBoost_v2"
+          topic: "{{ context.topic }}"
+      - description: "Store reasoning in Episodic Memory."
+        action: "episodic.record"
+        params:
+          event_type: "reasoning_event"
+          data:
+            topic: "{{ context.topic }}"
+            reasoning: "{{ previous_step.result }}"
+      - description: "Return reasoning summary."
+        action: "return.value"
+        params:
+          result: "{{ previous_step.result }}"
+
+  system_selfcheck:
+    description: "Performs a routine self-diagnostic of system components."
+    steps:
+      - description: "Check core

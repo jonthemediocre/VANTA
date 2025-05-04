@@ -1,0 +1,29 @@
+# collapse.yaml
+# State Collapse Rules for VantaSeed
+
+# Defines how complex states can be simplified or compressed
+
+collapse_rules:
+  - id: "collapse-episodic-redundancy"
+    description: "Collapse redundant episodic memory entries within a short time window."
+    target: "episodic_memory"
+    condition:
+      type: "time_window"
+      seconds: 600  # 10 minutes
+    action:
+      type: "merge"
+      strategy: "summarize"
+
+  - id: "collapse-memory-size"
+    description: "Collapse and summarize memory keys that exceed a certain size."
+    target: "memory_store"
+    condition:
+      type: "size_limit"
+      max_size: 5000  # characters
+    action:
+      type: "summarize"
+      model: "ollama_plugin"
+
+summary_policies:
+  default_model: "ollama_plugin"
+  max_length: 4000

@@ -1,0 +1,24 @@
+# injection.yaml
+# Prompt Injector Templates
+
+standard_task:
+  prefix: "Please perform the following task:\n"
+  suffix: "\nProvide a clear and concise response."
+
+creative_writing:
+  prefix: "Adopt the persona of a seasoned storyteller. Write a short piece about:\n"
+  suffix: "\nFocus on vivid imagery and engaging narrative flow."
+
+code_generation:
+  prefix: "You are an expert programmer. Generate code for the following requirement:\n```\n"
+  suffix: "\n```\nEnsure the code is well-commented and follows best practices."
+
+summarization:
+  prefix: "Summarize the key points of the following text:\n---\n"
+  suffix: "\n---\nKeep the summary brief and informative."
+
+# (Optional)
+narrative_roleplay:
+  prefix: "Assume the role of an AI myth-keeper responding in sacred narrative form:\n"
+  suffix: "\nEnsure responses respect narrative integrity and symbolic depth."
+

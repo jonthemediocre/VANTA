@@ -6,6 +6,7 @@ import time
 
 from .base_agent import BaseAgent
 from .agent_utils import PilgrimCommunicatorMixin, PurposePulse
+from vanta_seed.core.models import AgentConfig, TaskData
 from vanta_seed.core.data_models import AgentMessage
 
 logger = logging.getLogger(__name__)
@@ -16,16 +17,12 @@ class EchoAgent(BaseAgent, PilgrimCommunicatorMixin):
     potentially with a prefix defined in settings.
     Inherits communication abilities from PilgrimCommunicatorMixin.
     """
-    def __init__(self, name: str, initial_state: Dict[str, Any], settings: Optional[Dict[str, Any]] = None):
+    def __init__(self, name: str, config: AgentConfig, logger: logging.Logger, orchestrator_ref: Optional[Any] = None):
         """
-        Initializes the EchoAgent based on Crown specification.
-
-        Args:
-            name (str): The unique name/ID of this Pilgrim node.
-            initial_state (Dict[str, Any]): Initial state dictionary provided by the Crown.
-            settings (Optional[Dict[str, Any]]): Optional settings dictionary for the agent.
+        Initializes the EchoAgent.
+        Uses the BaseAgent __init__ for standard setup.
         """
-        super().__init__(name=name, initial_state=initial_state)
+        super().__init__(name=name, config=config, logger=logger, orchestrator_ref=orchestrator_ref)
         
         # --- Load settings FROM self.state --- 
         # The base __init__ populates self.state from initial_state
@@ -42,9 +39,16 @@ class EchoAgent(BaseAgent, PilgrimCommunicatorMixin):
         # self.orchestrator = orchestrator 
         
         # We don't currently use settings in EchoAgent, but accept it for compatibility
-        self.agent_settings = settings if settings is not None else {}
+        self.agent_settings = config.settings if config.settings is not None else {}
         
-        logger.info(f"EchoAgent '{self.name}' initialized via BaseAgent state.")
+        # Use direct attribute access for Pydantic models, provide default if attribute might be missing
+        self.echo_prefix = getattr(self.config.settings, 'echo_prefix', "Echo")
+        self.greeting_message = getattr(self.config.settings, 'greeting', "EchoAgent ready.")
+        
+        # Symbolic identity is now loaded by BaseAgent into self.symbolic_identity
+        # Make logging access safer
+        archetype = self.symbolic_identity.get('archetype', 'UnknownArchetype')
+        logger.info(f"EchoAgent '{self.name}' initialized. Archetype: {archetype}")
 
     async def execute(self, task_data: Dict[str, Any]) -> Dict[str, Any]:
         """

@@ -1,0 +1,31 @@
+# lora.yaml
+# LoRA Adapter Configurations (DeepSeek via Ollama)
+
+# Each adapter enhances DeepSeek models as hosted in Ollama.
+
+- name: "DeepSeek_CodeHelper_v1"
+  description: "Adapter to improve code generation and explanation using DeepSeek in Ollama."
+  path: "/path/to/lora/adapters/deepseek_codehelper_v1"  # <<< Replace with real adapter path
+  base_model_compatible:
+    - "deepseek-coder:latest"  # Ollama model name
+    - "deepseek-coder:33b"
+  activation_keywords:
+    - "generate code"
+    - "python script"
+    - "optimize function"
+    - "refactor code"
+
+- name: "DeepSeek_ThinkingBoost_v2"
+  description: "Adapter for enhancing chain-of-thought, reasoning and narrative generation."
+  path: "/path/to/lora/adapters/deepseek_thinkingboost_v2"  # <<< Replace with real adapter path
+  base_model_compatible:
+    - "deepseek-chat:latest"  # Ollama model name
+    - "deepseek-chat:67b"
+  activation_keywords:
+    - "explain step by step"
+    - "reason through"
+    - "analyze deeply"
+    - "solve recursively"
+
+# Optional expansion slots
+# Add new adapters below as needed, tuned for specific DeepSeek tasks.

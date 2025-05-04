@@ -1,0 +1,36 @@
+# governance.yaml
+# Governance Engine Rules and Guidance
+
+# --- Global Blocking ---
+
+block_all: false
+
+# --- Rules ---
+
+rules:
+  - id: "rule-001"
+    description: "Prevent deletion outside allowed temp directory."
+    action_type: "file_system.delete"
+    condition: "path not starts_with /tmp/vanta_work/"
+    decision: "deny"
+
+  - id: "rule-002"
+    description: "Rate limit non-critical external API calls."
+    action_type: "external_api.call"
+    condition: "task_priority == 'low'"
+    limit:
+      count: 100
+      per_seconds: 3600
+    decision: "monitor_limit"
+
+  - id: "rule-003"
+    description: "Require confirmation for automutation."
+    action_type: "automutation.apply"
+    decision: "require_confirmation"
+
+# --- Guidance ---
+
+guidance:
+  data_privacy: "Anonymize sensitive data before storage or transmission."
+  resource_usage: "Prefer local models unless cloud is necessary."
+  self_modification: "Avoid identity-affecting mutations unless explicitly authorized."

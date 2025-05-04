@@ -1,0 +1,61 @@
+# rituals.yaml
+# Ritual Definitions → Autonomous Scheduled System Actions (VANTA / APScheduler aligned)
+
+rituals:
+
+  morning_briefing:
+    name: "Morning Briefing"
+    trigger_type: "cron"
+    trigger_args:
+      hour: 7
+      minute: 0
+    task: "briefing.generate_daily"
+    args: []
+    kwargs: {}
+    description: "Generates and delivers the daily summary and priorities."
+
+  midday_selfcheck:
+    name: "Midday Selfcheck"
+    trigger_type: "cron"
+    trigger_args:
+      hour: 12
+      minute: 30
+    task: "system.self_diagnostic"
+    args: []
+    kwargs: {}
+    description: "Performs a midday system health check and logs results."
+
+  deepseek_model_update_check:
+    name: "DeepSeek Model Update Check"
+    trigger_type: "cron"
+    trigger_args:
+      hour: 2
+      minute: 0
+    task: "plugin.check_updates"
+    args:
+      - "DeepSeek"
+    kwargs: {}
+    description: "Checks for new versions or capabilities in DeepSeek models."
+
+  weekly_governance_review:
+    name: "Weekly Governance Review"
+    trigger_type: "cron"
+    trigger_args:
+      day_of_week: "sun"
+      hour: 3
+      minute: 0
+    task: "governance.review_rules"
+    args: []
+    kwargs: {}
+    description: "Reviews and updates governance and procedural rules."
+
+  autonomous_task_flush:
+    name: "Autonomous Task Flush"
+    trigger_type: "interval"
+    trigger_args:
+      minutes: 60
+    task: "autonomous.flush_tasks"
+    args: []
+    kwargs: {}
+    description: "Flushes and re-schedules autonomous tasks to avoid clogging or stuck queues."
+

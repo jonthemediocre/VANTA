@@ -5,6 +5,7 @@ import time
 import uuid
 from typing import Dict, Any
 from vanta_seed.core.data_models import AgentMessage
+from vanta_seed.core.models import AgentConfig, AgentSettings, SymbolicIdentity, TrinityState
 
 logger = logging.getLogger(__name__)
 
@@ -15,9 +16,24 @@ class ProxyDeepSeekAgent(BaseAgent):
 
     def __init__(self, name: str, initial_state: Dict[str, Any], settings: Dict[str, Any]):
         """Initialize the proxy agent, storing settings."""
-        super().__init__(name, initial_state) # Call BaseAgent init
-        self.settings = settings # Store the settings
-        logger.info(f"ProxyDeepSeekAgent '{self.name}' initialized with settings: {self.settings}")
+        # --- Create Placeholder BaseAgent Dependencies --- 
+        proxy_logger = logging.getLogger(f"Agent.{name}") # Create a basic logger
+        # Construct a minimal AgentConfig for the base class
+        placeholder_config = AgentConfig(
+            name=name,
+            class_path="vanta_seed.agents.proxy_deepseek_agent.ProxyDeepSeekAgent", # Use actual class path
+            settings=AgentSettings(**settings), # Use provided settings dict
+            symbolic_identity=SymbolicIdentity(archetype="Proxy", mythos_role="Unknown Link"), # Placeholder identity
+            initial_trinity_state=TrinityState(**initial_state.get('initial_trinity_state', {})) # Use provided initial state if possible
+        )
+        # --------------------------------------------- 
+        
+        # --- Correct super().__init__ call --- 
+        super().__init__(name=name, config=placeholder_config, logger=proxy_logger) # Pass required args
+        # -----------------------------------
+        
+        self.settings = settings # Store the original settings dict as well, if needed
+        proxy_logger.info(f"ProxyDeepSeekAgent '{self.name}' initialized with settings: {self.settings}")
 
     async def perform_task(self, task_data: Dict[str, Any], current_state: Dict[str, Any]) -> Dict[str, Any]:
         """

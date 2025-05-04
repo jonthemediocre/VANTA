@@ -1,0 +1,3 @@
+# Rituals
+
+(Ritual examples placeholder)

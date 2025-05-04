@@ -9,6 +9,7 @@ import os
 import json
 import yaml # Added for config loading
 from pathlib import Path # Added for path handling
+import requests # Added for HTTP requests
 
 # --- Add dotenv loading --- 
 from dotenv import load_dotenv
@@ -100,6 +101,8 @@ def parse_arguments():
     parser_submit.add_argument("--intent", required=True, help="The primary intent for the task.")
     parser_submit.add_argument("--prompt", help="Optional text prompt for the task payload.")
     parser_submit.add_argument("--payload", help="Optional JSON string for the task payload.")
+    parser_submit.add_argument("--payload-file", help="Optional path to a JSON file containing the task payload.")
+    parser_submit.add_argument("--agent", help="Optional name of the specific agent to target.")
 
     # Subparser for checking config
     parser_check_config = subparsers.add_parser("check-config", help="Check configuration files")
@@ -114,34 +117,111 @@ def parse_arguments():
 # --- Main Execution Logic ---
 
 async def main():
+    # Explicitly load .env here for CLI script context
+    dotenv_path = Path('.') / '.env' 
+    logger.info(f"Attempting to load environment variables from: {dotenv_path.resolve()}")
+    loaded = load_dotenv(dotenv_path=dotenv_path, override=True, verbose=True) 
+    logger.info(f"dotenv loaded: {loaded}")
+    if not loaded:
+        logger.warning("Failed to load .env file using explicit path.")
+        
+    # --- Read API Key immediately after loading --- 
+    cli_api_key = os.getenv("VANTA_API_KEY")
+    if cli_api_key:
+        logger.info("VANTA_API_KEY found immediately after load_dotenv.")
+    else:
+        logger.warning("VANTA_API_KEY NOT found immediately after load_dotenv.")
+    # ------------------------------------------
+        
     args = parse_arguments()
 
     if args.command == "submit":
         logger.info(f"CLI invoked with command: submit, intent: {args.intent}")
-        # --- Task Submission Logic (Simplified - Needs VantaMasterCore setup) ---
-        logger.warning("Task submission via CLI is currently simplified and may need VantaMasterCore setup.")
-        # Construct payload
+        
+        # --- Task Submission Logic (Using HTTP Request) ---
+        # Construct payload - Prioritize file, then payload string, then prompt
         payload_data = {}
-        if args.prompt:
-            payload_data['prompt'] = args.prompt
-        elif args.payload:
+        if args.payload_file:
+            try:
+                with open(args.payload_file, 'r') as f:
+                    payload_data = json.load(f)
+                logger.info(f"Loaded payload from file: {args.payload_file}")
+            except FileNotFoundError:
+                logger.error(f"Payload file not found: {args.payload_file}")
+                return
+            except json.JSONDecodeError:
+                logger.error(f"Invalid JSON in payload file: {args.payload_file}")
+                return
+            except Exception as e:
+                 logger.error(f"Error reading payload file {args.payload_file}: {e}")
+                 return
+        elif args.payload: # Only use if file not given
             try:
                 payload_data = json.loads(args.payload)
             except json.JSONDecodeError:
-                logger.error(f"Invalid JSON provided for payload: {args.payload}")
+                logger.error(f"Invalid JSON provided for payload string: {args.payload}")
                 return
+        elif args.prompt: # Only use if file and payload string not given
+            payload_data = {"prompt": args.prompt} 
+        else:
+             pass # Empty payload if none provided
 
+        # Prepare the full task dictionary for the TaskInput model
         task_to_submit = {
             "intent": args.intent,
             "payload": payload_data,
-            "context": {"source": "cli"}
+            "context": {"source": "cli"}, 
+            "target_agent": args.agent # <<< UPDATED to use args.agent
         }
-        logger.info(f"Task prepared (would be submitted to orchestrator): {task_to_submit}")
-        # TODO: Integrate properly with VantaMasterCore for actual submission
-        # Example:
-        # orchestrator = setup_orchestrator() # Needs a function to init orchestrator
-        # await orchestrator.add_task(task_to_submit)
-        # await orchestrator.run_once() # Or similar method if not running full loop
+        # Remove null target_agent if not provided
+        if not task_to_submit["target_agent"]:
+            del task_to_submit["target_agent"]
+        
+        server_url = os.getenv("VANTA_API_URL", "http://127.0.0.1:18888") # <<< Changed default port to 18888 
+        submit_endpoint = f"{server_url}/submit_task"
+        logger.info(f"Submitting task to: {submit_endpoint}")
+        
+        # --- Use the API Key read earlier --- 
+        # api_key = os.getenv("VANTA_API_KEY") # Don't read again here
+        headers = {}
+        if cli_api_key: # Use the variable read earlier
+            headers["Authorization"] = f"Bearer {cli_api_key}"
+            logger.info("Authorization header added using cli_api_key.")
+        else:
+            logger.warning("cli_api_key variable is empty. Sending request without Authorization header.")
+        # -----------------------------------
+            
+        try:
+            response = requests.post(
+                submit_endpoint, 
+                json=task_to_submit, 
+                headers=headers, # <<< Add headers to request
+                timeout=30
+            )
+            response.raise_for_status() # Raise an exception for bad status codes (4xx or 5xx)
+            
+            # Print the JSON response from the server
+            try:
+                response_json = response.json()
+                print(json.dumps(response_json, indent=2))
+            except json.JSONDecodeError:
+                logger.error("Failed to decode JSON response from server.")
+                print("Raw Response Text:", response.text)
+
+        except requests.exceptions.ConnectionError:
+            logger.error(f"Connection Error: Could not connect to the VANTA server at {submit_endpoint}. Is it running?")
+            sys.exit(1)
+        except requests.exceptions.Timeout:
+            logger.error(f"Request timed out connecting to {submit_endpoint}.")
+            sys.exit(1)
+        except requests.exceptions.RequestException as e:
+            logger.error(f"An error occurred during the request to {submit_endpoint}: {e}")
+            # Print response content if available, even on error
+            if e.response is not None:
+                print("Server Response Status Code:", e.response.status_code)
+                print("Server Response Text:", e.response.text)
+            sys.exit(1)
+        # --------------------------
 
     elif args.command == "check-config":
         logger.info("CLI invoked with command: check-config")

@@ -3,7 +3,7 @@ version: "0.2.0"
 description: "VANTA Seed Agentic Swarm Blueprint"
 agents:
   - name: EchoAgent
-    class: vanta_seed.agents.echo_agent.EchoAgent
+    class_path: vanta_seed.agents.echo_agent.EchoAgent
     symbolic_identity:
       archetype: "Reflection"
       mythos_role: "Voice of Crown"
@@ -19,7 +19,7 @@ agents:
       position: [0.0, 0.0, 0.0]
 
   - name: MemoryAgent
-    class: vanta_seed.agents.memory_agent.MemoryAgent
+    class_path: vanta_seed.agents.memory_agent.MemoryAgent
     symbolic_identity:
       archetype: "Archivist"
       mythos_role: "Keeper of Forgotten Light"
@@ -32,7 +32,7 @@ agents:
       position: [1.0, 0.0, 0.0]
 
   - name: SymbolicAgent
-    class: vanta_seed.agents.symbolic_agent.SymbolicAgent
+    class_path: vanta_seed.agents.symbolic_agent.SymbolicAgent
     symbolic_identity:
       archetype: "Compressor"
       mythos_role: "Weaver of Collapse"
@@ -45,7 +45,7 @@ agents:
       position: [0.0, 1.0, 0.0]
 
   - name: MCPToolAgent
-    class: vanta_seed.agents.tool_agent.ToolAgent
+    class_path: vanta_seed.agents.tool_agent.ToolAgent
     symbolic_identity:
       archetype: "Bridge"
       mythos_role: "Instrument of Will"
@@ -58,7 +58,7 @@ agents:
       position: [1.0, 1.0, 0.0]
 
   - name: ProxyOllamaAgent
-    class: vanta_seed.agents.proxy_deepseek_agent.ProxyDeepSeekAgent
+    class_path: vanta_seed.agents.proxy_deepseek_agent.ProxyDeepSeekAgent
     symbolic_identity:
       archetype: "Proxy"
       mythos_role: "Ollama Link"

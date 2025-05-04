@@ -10,41 +10,32 @@ import os # <<< Added import os
 from typing import Optional, Dict, List, Tuple, Any, Type # Added Optional and others
 # --- Import Pydantic ValidationError --- 
 from pydantic import ValidationError
-# --------------------------
-from .memory_weave import MemoryWeave
-# --- Import SymbolicCompressor --- 
-from .symbolic_compression import SymbolicCompressor 
-# --- Import SwarmWeave --- 
-from .swarm_weave import SwarmWeave
-# --- Import SleepMutator --- 
-from .sleep_mutator import SleepMutator
-# --- Import GatedBreath --- 
-from .gated_breath import GatedBreath
-# --- Import IdentityTrees --- 
-from .identity_trees import IdentityTrees
-# --- Import VitalsLayer --- 
-from .vitals_layer import VitalsLayer
-# --- Import BaseAgent if needed for type hinting or creation --- 
-from ..agents.base_agent import BaseAgent # Assuming a base class exists
-# --- Import Data Models --- 
-from .data_models import AgentInput, AgentResponse, ToolCall, ToolResponse, AgentMessage 
-# --- Import AgentMessageBus --- 
-from .agent_message_bus import AgentMessageBus
-# --- Import PluginManager (Assuming location) --- 
-# Try importing from utils
-from vanta_seed.utils.plugin_manager import PluginManager # <<< Changed to absolute import
-# from ..runtime.plugin_manager import PluginManager # Previous attempt
-# --- Import necessary types from swarm_types (Corrected) --- #
-from .swarm_types import NodeStateModel, PurposeVectorModel, SwarmHealthMetricsModel, GlobalBestNodeInfo, TrailSignature, Position, StigmergicFieldPoint # Removed round_position
-# ---
-
-# --- Utility Imports (Corrected) ---
-# from vanta_seed.utils.file_utils import load_json_file # <<< Ensure this REMOVED incorrect import
-# from vanta_seed.logging import get_vanta_logger # <<< REMOVE this incorrect import
-from vanta_seed.utils.vector_utils import round_position # <<< Added round_position import
-# --- Import YAML loader from run.py --- # This is now defined locally
+# --- ADDED: Import BlueprintConfig --- 
+from vanta_seed.core.models import AgentConfig, TaskData, BlueprintConfig 
+# ----------------------------------
+# Use absolute imports relative to vanta_seed
+from vanta_seed.core.memory_weave import MemoryWeave
+from vanta_seed.core.symbolic_compression import SymbolicCompressor 
+from vanta_seed.core.swarm_weave import SwarmWeave
+from vanta_seed.core.sleep_mutator import SleepMutator
+from vanta_seed.core.gated_breath import GatedBreath
+from vanta_seed.core.identity_trees import IdentityTrees
+from vanta_seed.core.vitals_layer import VitalsLayer
+from vanta_seed.agents.base_agent import BaseAgent # Keep absolute import for parent package
+from vanta_seed.core.data_models import AgentInput, AgentResponse, ToolCall, ToolResponse, AgentMessage 
+from vanta_seed.core.models import AgentConfig, TaskData 
+from vanta_seed.core.agent_message_bus import AgentMessageBus
+from vanta_seed.utils.plugin_manager import PluginManager # Keep absolute import
+from vanta_seed.core.swarm_types import NodeStateModel, PurposeVectorModel, SwarmHealthMetricsModel, GlobalBestNodeInfo, TrailSignature, Position, StigmergicFieldPoint
+from vanta_seed.core.governance_engine import GovernanceEngine
+from vanta_seed.core.procedural_engine import ProceduralEngine
+from vanta_seed.core.automutator import Automutator
+from vanta_seed.core.autonomous_tasker import AutonomousTasker
+from vanta_seed.core.ritual_executor import RitualExecutor
+from vanta_seed.core.memory_store import MemoryStore 
+from vanta_seed.utils.vector_utils import round_position # Keep absolute import
 import yaml 
-from vanta_seed.agents.agent_utils import PurposePulse, MythicRole # <<< Import PurposePulse and MythicRole
+from vanta_seed.agents.agent_utils import PurposePulse, MythicRole # Keep absolute import
 # ---------------------------------- #
 
 # --- Define local helper functions --- 
@@ -141,30 +132,63 @@ class VantaMasterCore:
         # Need to access settings *after* core_config is loaded, moved logic to _load_core_config
         self._stigmergic_resolution: int = 1 # Default, will be updated after config load
 
+        # --- NEW: References to Core Engines ---
+        self.memory_store: Optional[MemoryStore] = None
+        self.governance_engine: Optional[GovernanceEngine] = None
+        self.procedural_engine: Optional[ProceduralEngine] = None
+        self.ritual_executor: Optional[RitualExecutor] = None
+        self.automutator: Optional[Automutator] = None
+        self.autonomous_tasker: Optional[AutonomousTasker] = None
+        # ---------------------------------------
+        
+        # --- NEW: Agent Message Bus --- 
+        self.message_bus = AgentMessageBus() # Initialize the message bus
+        self.logger.info("AgentMessageBus initialized.")
+        # ----------------------------
+
         # --- Initialization ---
         self._load_core_config() # Load kingdom parameters
+        # --- Initialize Core Engines AFTER config is loaded --- 
+        self._initialize_core_engines()
+        # ----------------------------------------------------
         self._initialize_purpose_vector() # Set the first Dream Pulse (conceptually)
         self._load_pilgrims() # Load agents as Pilgrims
 
     def _load_core_config(self):
-        """Loads the core configuration (kingdom parameters) from the YAML file.""" 
+        """Loads the core configuration (kingdom parameters) from the YAML file."""
         self.logger.info(f"Crown: Loading core configuration from: {self.core_config_path}")
-        # Use the locally defined load_yaml_config
         config_data = load_yaml_config(self.core_config_path)
-        # ---------------------------
         if config_data is None: # Check if loading failed
-            raise ValueError("load_yaml_config returned None")
-            
-        # Temporarily store raw dict
-        self.core_config = config_data # Store raw dict for now
-        # --- Load stigmergic resolution AFTER config is loaded --- 
-        self._stigmergic_resolution = config_data.get('swarm_config', {}).get('stigmergic_resolution', 1)
-        # --- Load blessing threshold --- 
-        crown_config = config_data.get('vanta_crown_interface', {})
-        self._blessing_threshold = crown_config.get('blessing_threshold', 0.85) 
-        self.logger.info(f"Crown: Successfully loaded core configuration. Stigmergic Res: {self._stigmergic_resolution}, Blessing Threshold: {self._blessing_threshold}")
+            raise ValueError("load_yaml_config returned None, cannot initialize Crown.") # Raise clearer error
+
+        # --- Log the loaded data structure --- 
+        self.logger.debug(f"Raw config_data loaded from YAML:\n{json.dumps(config_data, indent=2)}")
+        # -------------------------------------
+
+        # --- Validate and Store as Pydantic Object --- 
+        try:
+            # Ensure BlueprintConfig is imported: from vanta_seed.core.models import BlueprintConfig
+            self.core_config = BlueprintConfig(**config_data) # Validate and store Pydantic model
+            self.logger.info("Crown: Core configuration validated successfully.")
+        except ValidationError as e:
+            self.logger.error(f"Crown: Core configuration validation failed: {e}", exc_info=True)
+            # Decide handling: raise error or attempt to proceed with partial/raw config?
+            # Raising error is safer to prevent unexpected behavior downstream.
+            raise ValueError(f"Core configuration validation failed: {e}") from e
+        # ---------------------------------------------
+
+        # --- Load dependent parameters AFTER validation ---
+        # Access validated config via self.core_config.<attribute>
+        # Use getattr for safe access to optional top-level sections
+        swarm_cfg = getattr(self.core_config, 'swarm_config', {}) # Safely get potential sub-model or dict
+        crown_iface = getattr(self.core_config, 'vanta_crown_interface', {})
+
+        self._stigmergic_resolution = swarm_cfg.get('stigmergic_resolution', 1) if isinstance(swarm_cfg, dict) else getattr(swarm_cfg, 'stigmergic_resolution', 1)
+        self._blessing_threshold = crown_iface.get('blessing_threshold', 0.85) if isinstance(crown_iface, dict) else getattr(crown_iface, 'blessing_threshold', 0.85)
+        # -------------------------------------------------
+        self.logger.info(f"Crown: Stigmergic Res: {self._stigmergic_resolution}, Blessing Threshold: {self._blessing_threshold}")
         # --- Link to Spec ---
-        # self.core_config now conceptually holds parameters defined in
+        # self.core_config now holds parameters defined in
         # Trinity Swarm YAML Spec v0.1 -> swarm_config & vanta_crown_interface sections.
 
     def _initialize_purpose_vector(self):
@@ -186,113 +210,187 @@ class VantaMasterCore:
              self.logger.info("Crown: Initialized with default 'Dream That Remembers' Purpose Vector.")
         self.logger.debug(f"Crown: Current Purpose Vector: {self._current_purpose_vector}")
 
-    def _load_pilgrims(self): # Renamed from _load_agents
-        """Loads and initializes agents as Pilgrims within the Trinity Swarm."""
-        # Use dictionary access (.get) because self.core_config is currently a dict
-        agent_list = self.core_config.get('agents') if self.core_config else None # Changed from self.core_config.agents
-        if not self.core_config or not agent_list:
-            self.logger.warning("Crown: No core configuration or agents list found. Skipping Pilgrim loading.") # Updated log message
-            return
+    def _load_pilgrims(self):
+        """Loads Pilgrim agents based on the blueprint configuration."""
+        self.logger.info(f"Crown: Loading {len(self.core_config.agents)} Pilgrims...")
+        self.pilgrims = {} # CHANGE: Use self.pilgrims consistently
+        self._pilgrim_states = {} # Initialize state dictionary
+        self._model_to_agent_map = {} # Initialize model map
+        total_loaded_successfully = 0
 
-        self.logger.info(f"Crown: Loading {len(agent_list)} Pilgrims...")
-        self._model_to_agent_map.clear() # Clear map before reloading
+        # --- Ritual: Pre-Load Preparation (Placeholder) ---
+        self._execute_ritual_if_found('before_pilgrim_load')
+        # --------------------------------------------------
 
-        for agent_config in agent_list:
-            agent_name = agent_config.get('name')
-            agent_class_str = agent_config.get('class')
-            agent_settings = agent_config.get('settings', {})
-            initial_node_state_config = agent_config.get('initial_trinity_state', {}) # Optional config
-            compatible_model_names = agent_config.get('compatible_model_names', []) # <<< GET MODEL NAMES
+        for agent_config_data in self.core_config.agents:
+            agent_name = agent_config_data.name
+            agent_class_path = agent_config_data.class_path
+            agent_enabled = agent_config_data.enabled
 
-            if not agent_name or not agent_class_str:
-                self.logger.warning(f"Skipping Pilgrim due to missing name or class string in config: {agent_config}")
+            if not agent_enabled:
+                self.logger.info(f"Crown: Skipping disabled Pilgrim: {agent_name}")
                 continue
 
             try:
-                self.logger.debug(f"Crown: Attempting to load Pilgrim '{agent_name}' (Class: '{agent_class_str}')")
-                AgentClass: Optional[Type[BaseAgent]] = self.plugin_manager.get_plugin_class(agent_class_str, BaseAgent) # type: ignore
+                # --- Step 1: Get Agent Class ---
+                AgentClass = self.plugin_manager.get_plugin_class(agent_class_path)
+                if not AgentClass:
+                    self.logger.error(f"Crown: Agent class not found for path: {agent_class_path}")
+                    continue # Skip this agent
 
-                if AgentClass is None:
-                    self.logger.error(f"Crown: Pilgrim class '{agent_class_str}' not found for '{agent_name}'.")
+                # --- Step 2: Validate Config with Pydantic Model ---
+                # agent_config_obj = AgentConfig(**agent_config_data.dict()) # Validate full structure
+                # NOTE: agent_config_data is already an AgentConfig instance due to BlueprintConfig validation
+                agent_config_obj = agent_config_data
+
+                # --- Step 3: Instantiate Agent --- 
+                # Check for specific agent types with different init signatures
+                agent_instance: Optional[BaseAgent] = None
+                if AgentClass.__name__ == "ProxyDeepSeekAgent":
+                    try:
+                        proxy_settings = agent_config_obj.settings.model_dump() if agent_config_obj.settings else {}
+                        # Proxy needs initial_state as a dict, not TrinityState Pydantic model
+                        proxy_initial_state = agent_config_obj.initial_trinity_state.model_dump() if agent_config_obj.initial_trinity_state else {}
+                        self.logger.debug(f"Instantiating ProxyDeepSeekAgent '{agent_name}' with specific signature.")
+                        # Corrected call matching ProxyDeepSeekAgent __init__ expectations
+                        agent_instance = AgentClass(
+                            name=agent_name, 
+                            settings=proxy_settings, # Pass settings dict as 'settings'
+                            initial_state=proxy_initial_state # Pass initial state dict
+                        )
+                    except Exception as e:
+                         self.logger.error(f"Crown: Error instantiating specific agent ProxyDeepSeekAgent '{agent_name}': {e}", exc_info=True)
+                         continue # Skip this agent
+                # --- ADDED: Specific handling for MemoryAgent ---
+                elif AgentClass.__name__ == "MemoryAgent":
+                    try:
+                        self.logger.debug(f"Instantiating MemoryAgent '{agent_name}' with MemoryStore injection.")
+                        agent_instance = AgentClass(
+                            name=agent_name,
+                            config=agent_config_obj,
+                            logger=self.logger,
+                            orchestrator_ref=self,
+                            memory_store=self.memory_store # Inject the MemoryStore
+                        )
+                    except Exception as e:
+                         self.logger.error(f"Crown: Error instantiating MemoryAgent '{agent_name}': {e}", exc_info=True)
+                         continue # Skip this agent
+                # ---------------------------------------------
+                else:
+                    # Default instantiation for other agents derived from BaseAgent
+                    try:
+                        # --- GET AGENT-SPECIFIC LOGGER and SET LEVEL --- 
+                        agent_logger = logging.getLogger(f"Agent.{agent_name}")
+                        # Force level based on environment or global config if needed
+                        # For now, let's try forcing DEBUG
+                        agent_logger.setLevel(logging.DEBUG) 
+                        # ----------------------------------------------
+                        agent_instance = AgentClass(
+                            name=agent_name, 
+                            config=agent_config_obj, 
+                            logger=agent_logger, # <<< Pass the specific logger 
+                            orchestrator_ref=self
+                        )
+                    except TypeError as te:
+                        self.logger.error(f"Crown: TypeError instantiating standard agent '{agent_name}' ({AgentClass.__name__}): {te}. Check __init__ signature.", exc_info=True)
+                        continue
+                    except Exception as e:
+                        self.logger.error(f"Crown: Error instantiating standard agent '{agent_name}' ({AgentClass.__name__}): {e}", exc_info=True)
+                        continue
+                # ----------------------------------
+                
+                # Check if instantiation failed (e.g. proxy init failure)
+                if agent_instance is None:
+                    self.logger.error(f"Crown: Instantiation returned None for Pilgrim: {agent_name}. Skipping further setup.")
                     continue
 
-                # --- Construct initial_state dictionary --- #
-                initial_state_dict = {
-                    "name": agent_name,
-                    "node_id": f"node_{agent_name}", # Ensure node_id consistency
-                    "settings": agent_settings, # Pass settings nested inside state
-                    "symbolic_identity": agent_config.get("symbolic_identity", {}),
-                    "swarm_params": agent_config.get("swarm_params", {}),
-                    "position": initial_node_state_config.get("position", [0.0, 0.0, 0.0]),
-                    # Add other potential initial state fields from trinity_state or blueprint
-                    "velocity": initial_node_state_config.get("velocity", [0.0, 0.0, 0.0]),
-                    "energy_level": initial_node_state_config.get("energy_level", 1.0),
-                    "current_role": initial_node_state_config.get("current_role", "Pilgrim"), # Default role
-                    # Initialize purpose/mythic state placeholders if used by base init
-                    "purpose_pulse": {"state": "Dormant", "intensity": 0.0}, # Default pulse
-                    "mythic_role": {"current": "Pilgrim", "escalation": 0.0} # Default mythic role
-                    # Add personal_best_position if needed, or let base init handle
-                }
-                # ------------------------------------------ #
+                self.logger.debug(f"Crown: Successfully instantiated Pilgrim: {agent_name}")
 
-                # --- Instantiate the Pilgrim ---
-                # Pass reference to the Crown (self) and potentially initial state
-                agent_instance = AgentClass(
-                    name=agent_name,
-                    initial_state=initial_state_dict,
-                    settings=agent_settings # <<< ADDED: Pass the agent-specific settings
-                )
-                self._agents[agent_name] = agent_instance
+                # --- Step 4: Add to live pilgrims *only if instantiation succeeded* ---
+                self.pilgrims[agent_name] = agent_instance
 
-                # --- Initialize Pilgrim State (Conceptual) ---
-                # This state should align with Trinity Swarm YAML Spec v0.1 -> node_schema
-                initial_pulse_state = initial_node_state_config.get("initial_pulse_state", "Dormant") # Get initial state or default
-                initial_mythic_role = initial_node_state_config.get("initial_mythic_role", "Pilgrim") # <<< Get initial role
-                self._agent_states[agent_name] = {
-                    "id": f"node_{agent_name}",
-                    "type": "TrinityPilgrim",
-                    "created_at": asyncio.get_event_loop().time(),
-                    "position": initial_node_state_config.get("position", [0.0, 0.0, 0.0]), # Example default
-                    "velocity": [0.0, 0.0, 0.0],
-                    "purpose_pulse": PurposePulse(initial_state=initial_pulse_state).to_dict(), # <<< Add PurposePulse state
-                    "mythic_role": MythicRole(initial_role=initial_mythic_role).to_dict(), # <<< Add MythicRole state
-                    "trinity_core": { # Default balanced state
-                        "memory": {"compression_score": 0.5, "memory_relic_refs": []},
-                        "will": {"risk_tolerance": 0.5, "destiny_pull_weight": 0.5},
-                        "imagination": {"divergence_pressure": 0.5}
-                    },
-                    "meta_balancer": {"current_mode": "Exploit", "mode_stability": 0.8},
-                    "swarm_params": { # Example defaults, should load from config/spec
-                         "inertia_weight": 0.7,
-                         "personal_best_coeff": 1.5,
-                         "global_best_coeff": 1.5,
-                         "stigmergic_coeff": 1.0,
-                         "symbolic_resonance_sensitivity": 0.5,
-                         "current_role": "Employed" # Default role
-                    },
-                    "trail_signature": {} # Initially empty
-                 }
+                # --- Step 5: Initialize State *after successful instantiation* ---
+                self._initialize_pilgrim_state(agent_name, agent_config_obj)
+                
+                # --- Step 5.5: Register agent with Message Bus using agent_name --- 
+                self.message_bus.register_agent(agent_name, agent_instance) # Use agent_name as ID
+                # -----------------------------------------------
 
-                # --- Populate the model-to-agent map ---
-                if compatible_model_names:
-                    for model_name in compatible_model_names:
+                # --- Step 6: Update Model Map *after successful instantiation* ---
+                # Safely check for compatible_model_names attribute
+                compatible_models = getattr(agent_config_obj, 'compatible_model_names', None)
+                if compatible_models:
+                    for model_name in compatible_models:
                         if model_name in self._model_to_agent_map:
-                            self.logger.warning(f"Crown: Model name '{model_name}' conflict. Already mapped to '{self._model_to_agent_map[model_name]}'. Pilgrim '{agent_name}' will NOT overwrite.")
-                        else:
-                            self.logger.info(f"Crown: Mapping model name '{model_name}' to Pilgrim '{agent_name}'.")
-                            self._model_to_agent_map[model_name] = agent_name
-                # -----------------------------------------
+                            self.logger.warning(f"Model '{model_name}' already mapped to agent '{self._model_to_agent_map[model_name]}'. Overwriting with '{agent_name}'.")
+                        self._model_to_agent_map[model_name] = agent_name
+                        self.logger.debug(f"Mapped model '{model_name}' to agent '{agent_name}'")
 
-                self.logger.info(f"Crown: Successfully loaded and initialized Pilgrim: '{agent_name}' with Pulse: {initial_pulse_state}, Role: {initial_mythic_role}")
+                # --- Step 7: Increment successful load count --- 
+                total_loaded_successfully += 1
+                # Optional: Run agent-specific startup?
+                # asyncio.create_task(agent_instance.startup()) # If startup is async
 
-                # --- ADDED: Trigger agent startup explicitly after loading --- 
-                asyncio.create_task(self._run_agent_startup(agent_instance))
-                # -----------------------------------------------------------
-
+            except ValidationError as e:
+                self.logger.error(f"Crown: Configuration validation failed for Pilgrim '{agent_name}': {e}", exc_info=True)
+                continue # Skip this agent
             except Exception as e:
                 self.logger.error(f"Crown: Failed to load Pilgrim '{agent_name}': {e}", exc_info=True)
+                continue # <<< ADDED: Ensure we skip adding/initializing if instantiation fails
 
-        self.logger.info(f"Crown: Finished loading Pilgrims. Total alive: {len(self._agents)}. Model map size: {len(self._model_to_agent_map)}") # Log map size
+        self.logger.info(f"Crown: Finished loading Pilgrims. Total alive: {total_loaded_successfully}. Model map size: {len(self._model_to_agent_map)}")
+
+        # --- Ritual: Post-Load Finalization (Placeholder) ---
+        self._execute_ritual_if_found('after_pilgrim_load')
+        # ---------------------------------------------------
+
+    def _initialize_pilgrim_state(self, agent_name: str, agent_config: AgentConfig):
+        """Initializes the state dictionary for a given pilgrim."""
+        try:
+            # Start with the initial trinity state defined in the config
+            initial_state_dict = agent_config.initial_trinity_state.model_dump() if agent_config.initial_trinity_state else {}
+
+            # Add other essential base fields (using NodeStateModel structure as guide)
+            initial_state_dict['id'] = f"node_{agent_name}_{uuid.uuid4().hex[:4]}" # Assign unique node ID
+            initial_state_dict['name'] = agent_name
+            # Ensure position/velocity defaults if not in trinity state config
+            if 'position' not in initial_state_dict: initial_state_dict['position'] = [random.uniform(-10, 10) for _ in range(3)]
+            if 'velocity' not in initial_state_dict: initial_state_dict['velocity'] = [0.0, 0.0, 0.0]
+            initial_state_dict['current_role'] = "PILGRIM" # Default role
+            initial_state_dict['personal_best_position'] = initial_state_dict['position'][:] # Initialize pBest
+            initial_state_dict['personal_best_value'] = float('-inf')
+            initial_state_dict['energy_level'] = 1.0 # Default energy
+            initial_state_dict['last_updated_timestamp'] = asyncio.get_event_loop().time()
+            
+            # Incorporate agent settings and symbolic identity into the state dictionary
+            initial_state_dict['settings'] = agent_config.settings.model_dump() if agent_config.settings else {}
+            initial_state_dict['symbolic_identity'] = agent_config.symbolic_identity.model_dump() if agent_config.symbolic_identity else {}
+
+            # Initialize PurposePulse and MythicRole states within the main state dict
+            initial_state_dict['purpose_pulse'] = PurposePulse().to_dict() # Store as dict
+            initial_state_dict['mythic_role'] = MythicRole().to_dict() # Store as dict
+
+            # Add swarm params if defined in config settings, else use defaults
+            # This structure assumes swarm_params are nested under agent_config.settings
+            swarm_params_settings = initial_state_dict['settings'].get('swarm_params', {})
+            initial_state_dict['swarm_params'] = {
+                'inertia_weight': swarm_params_settings.get('inertia_weight', 0.7),
+                'cognitive_weight': swarm_params_settings.get('cognitive_weight', 1.5),
+                'social_weight': swarm_params_settings.get('social_weight', 1.5),
+                'stigmergic_weight': swarm_params_settings.get('stigmergic_weight', 1.0),
+                'max_speed': swarm_params_settings.get('max_speed', 1.0),
+                # Add other swarm params with defaults
+            }
+
+            # Store the fully constructed initial state
+            self._pilgrim_states[agent_name] = initial_state_dict
+            self.logger.info(f"Initialized state for Pilgrim '{agent_name}' at position {initial_state_dict['position']}")
+
+        except Exception as e:
+            self.logger.error(f"Failed to initialize state for Pilgrim '{agent_name}': {e}", exc_info=True)
+            # Ensure state is not partially initialized if error occurs
+            if agent_name in self._pilgrim_states:
+                del self._pilgrim_states[agent_name]
 
     async def _run_agent_startup(self, agent_instance: BaseAgent):
         """Safely runs the agent's startup method if it exists."""
@@ -305,22 +403,24 @@ class VantaMasterCore:
 
     def _get_pilgrim(self, agent_name: str) -> Optional[BaseAgent]: # Renamed from _get_agent, corrected type hint to BaseAgent
         """Retrieves a loaded Pilgrim instance by name."""
-        pilgrim = self._agents.get(agent_name)
+        pilgrim = self.pilgrims.get(agent_name)
         if not pilgrim:
             self.logger.warning(f"Crown: Pilgrim '{agent_name}' not found.")
         return pilgrim
 
-    def _get_pilgrim_state(self, agent_name: str) -> Optional[NodeStateModel]:
-        """Retrieves the current internal state of a specific Pilgrim."""
-        return self._agent_states.get(agent_name)
+    def _get_pilgrim_state(self, agent_name: str) -> Optional[Dict[str, Any]]: # Changed return type hint
+        """Retrieves the current internal state dictionary of a specific Pilgrim."""
+        # <<< FIXED: Use the correct state dictionary name >>>
+        return self._pilgrim_states.get(agent_name)
 
     def _update_pilgrim_state(self, agent_name: str, new_state_data: Dict[str, Any]):
         """Updates the internal state of a Pilgrim."""
-        if agent_name not in self._agent_states:
+        # <<< FIXED: Use the correct state dictionary name >>>
+        if agent_name not in self._pilgrim_states:
             self.logger.warning(f"Crown: Cannot update state for unknown Pilgrim '{agent_name}'")
             return
 
-        self._agent_states[agent_name].update(new_state_data)
+        self._pilgrim_states[agent_name].update(new_state_data)
         self.logger.info(f"Crown: Updated state for Pilgrim '{agent_name}'.")
 
     async def _route_task(self, task_data: Dict[str, Any]) -> Any:
@@ -342,6 +442,10 @@ class VantaMasterCore:
         requested_model = payload.get("requested_model") if isinstance(payload, dict) else None
 
         pilgrim_to_run: Optional[BaseAgent] = None
+
+        # --- DEBUGGING: Log available pilgrim keys --- 
+        self.logger.info(f"Crown: Routing - Available Pilgrim Keys: {list(self.pilgrims.keys())}")
+        # -------------------------------------------
 
         self.logger.debug(f"Crown: Routing task. Intent: '{intent}', Target: '{target_agent_name}', Requested Model: '{requested_model}'")
 
@@ -377,9 +481,9 @@ class VantaMasterCore:
         if not pilgrim_to_run:
             # Basic fallback: Use the first available agent or a designated default
             # A more sophisticated router would analyze intent/payload here.
-            if self._agents:
-                default_agent_name = list(self._agents.keys())[0] # Example: First agent
-                pilgrim_to_run = self._agents[default_agent_name]
+            if self.pilgrims:
+                default_agent_name = list(self.pilgrims.keys())[0] # Example: First agent
+                pilgrim_to_run = self.pilgrims[default_agent_name]
                 self.logger.info(f"Crown: No specific route found. Falling back to default Pilgrim: {default_agent_name}")
             else:
                  self.logger.error("Crown: Routing failed. No Pilgrims available.")
@@ -615,32 +719,59 @@ class VantaMasterCore:
 
     # --- Lifecycle Methods (Adapted) ---
     async def startup(self):
-        """Perform startup tasks for the Crown and Pilgrims."""
+        """Perform startup tasks for the Crown and Pilgrims.
+        MODIFIED: Also starts core engines if they have start methods.
+        """
         self.logger.info("VantaMasterCore Crown awakening...")
         # Start background tasks like swarm monitoring if needed
         # self._swarm_monitor_task = asyncio.create_task(self._run_swarm_monitoring())
 
+        # --- Start Core Engines --- 
+        core_engine_start_tasks = []
+        if self.ritual_executor and hasattr(self.ritual_executor, 'start'):
+            self.logger.debug("Starting RitualExecutor...")
+            # Assuming start might be async or return a task
+            start_op = self.ritual_executor.start()
+            if asyncio.iscoroutine(start_op):
+                 core_engine_start_tasks.append(start_op)
+        if self.autonomous_tasker and hasattr(self.autonomous_tasker, 'start'):
+             self.logger.debug("Starting AutonomousTasker...")
+             start_op = self.autonomous_tasker.start()
+             if asyncio.iscoroutine(start_op):
+                  core_engine_start_tasks.append(start_op)
+        # Add other engines if they have start methods
+        # ------------------------
+        
         # Call startup on all Pilgrims
-        startup_tasks = []
         agent_names_for_startup = list(self._agents.keys())
+        pilgrim_startup_tasks = []
         for agent_name in agent_names_for_startup:
             pilgrim = self._agents.get(agent_name) # Re-fetch in case dictionary changes
             if pilgrim and hasattr(pilgrim, 'startup') and asyncio.iscoroutinefunction(pilgrim.startup):
                 self.logger.debug(f"Crown: Calling startup for Pilgrim '{agent_name}'")
-                startup_tasks.append(pilgrim.startup())
+                pilgrim_startup_tasks.append(pilgrim.startup())
         
-        if startup_tasks:
-             results = await asyncio.gather(*startup_tasks, return_exceptions=True)
+        if pilgrim_startup_tasks:
+             results = await asyncio.gather(*pilgrim_startup_tasks, return_exceptions=True)
              # Process results/errors - correlate back to agent names more carefully
              for i, result in enumerate(results):
                   agent_name = agent_names_for_startup[i]
                   if isinstance(result, Exception):
                        self.logger.error(f"Error during startup of Pilgrim '{agent_name}': {result}")
 
+        # --- Wait for core engine starts if async --- 
+        if core_engine_start_tasks:
+            self.logger.debug("Waiting for core engine start tasks...")
+            await asyncio.gather(*core_engine_start_tasks, return_exceptions=True)
+            # TODO: Check results of engine starts
+        # ------------------------------------------
+
         self.logger.info("VantaMasterCore Crown awake and operational.")
 
     async def shutdown(self):
-        """Perform shutdown tasks for the Crown and Pilgrims."""
+        """Perform shutdown tasks for the Crown and Pilgrims.
+        MODIFIED: Also shuts down core engines.
+        """
         self.logger.info("VantaMasterCore Crown entering rest...")
         # Cancel background tasks
         # if hasattr(self, '_swarm_monitor_task') and self._swarm_monitor_task:
@@ -650,17 +781,44 @@ class VantaMasterCore:
         #     except asyncio.CancelledError:
         #         self.logger.info("Swarm monitor task cancelled.")
 
+        # --- Shutdown Core Engines FIRST --- 
+        core_engine_shutdown_tasks = []
+        # Call in reverse order of potential dependency? (Tasker -> Automutator -> Engines -> Rituals)
+        if self.autonomous_tasker and hasattr(self.autonomous_tasker, 'shutdown'):
+             self.logger.debug("Shutting down AutonomousTasker...")
+             shutdown_op = self.autonomous_tasker.shutdown()
+             if asyncio.iscoroutine(shutdown_op):
+                  core_engine_shutdown_tasks.append(shutdown_op)
+        if self.automutator and hasattr(self.automutator, 'shutdown'):
+             self.logger.debug("Shutting down Automutator...")
+             shutdown_op = self.automutator.shutdown()
+             if asyncio.iscoroutine(shutdown_op):
+                  core_engine_shutdown_tasks.append(shutdown_op)
+        if self.ritual_executor and hasattr(self.ritual_executor, 'shutdown'):
+            self.logger.debug("Shutting down RitualExecutor...")
+            shutdown_op = self.ritual_executor.shutdown()
+            if asyncio.iscoroutine(shutdown_op):
+                 core_engine_shutdown_tasks.append(shutdown_op)
+        # Add other engines if they have shutdown methods
+        
+        if core_engine_shutdown_tasks:
+            self.logger.debug("Waiting for core engine shutdown tasks...")
+            await asyncio.gather(*core_engine_shutdown_tasks, return_exceptions=True)
+            # TODO: Check results of engine shutdowns
+        self.logger.info("Core engines shutdown complete.")
+        # --------------------------------
+
         # Call shutdown on all Pilgrims
-        shutdown_tasks = []
         agent_names_for_shutdown = list(self._agents.keys())
+        pilgrim_shutdown_tasks = []
         for agent_name in agent_names_for_shutdown:
              pilgrim = self._agents.get(agent_name) # Re-fetch
              if pilgrim and hasattr(pilgrim, 'shutdown') and asyncio.iscoroutinefunction(pilgrim.shutdown):
                  self.logger.debug(f"Crown: Calling shutdown for Pilgrim '{agent_name}'")
-                 shutdown_tasks.append(pilgrim.shutdown())
+                 pilgrim_shutdown_tasks.append(pilgrim.shutdown())
         
-        if shutdown_tasks:
-             results = await asyncio.gather(*shutdown_tasks, return_exceptions=True)
+        if pilgrim_shutdown_tasks:
+             results = await asyncio.gather(*pilgrim_shutdown_tasks, return_exceptions=True)
              # Process results/errors
              for i, result in enumerate(results):
                   agent_name = agent_names_for_shutdown[i]
@@ -776,6 +934,71 @@ class VantaMasterCore:
         self.logger.info(f"Crown: Received task submission: {task_data.get('type', 'Unknown Type')}")
         # Directly call the internal routing method
         return await self._route_task(task_data)
+
+    # --- NEW: Initialize Core Engines Method --- 
+    def _initialize_core_engines(self):
+        """Initializes core VANTA engines after core config is loaded."""
+        self.logger.info("Crown: Initializing core engines...")
+        if not self.core_config:
+            self.logger.error("Cannot initialize core engines: Core config not loaded.")
+            return
+
+        try:
+            # Use getattr to safely access optional top-level config sections
+            # --- Determine MemoryStore persist path --- 
+            base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))) # Get VANTA root dir
+            default_memory_dir = os.path.join(base_dir, 'memory')
+            storage_config = getattr(self.core_config, 'storage', {})
+            persist_path_config = storage_config.get('persist_path') # Check if path specified in blueprint
+            # ------------------------------------------
+            
+            # Pass config dict, let MemoryStore handle internal keys
+            max_items_config = storage_config.get('max_items', 10000) # Get max_items from blueprint if set
+            self.memory_store = MemoryStore(max_items=max_items_config, persist_path=persist_path_config)
+            
+            self.governance_engine = GovernanceEngine(config=getattr(self.core_config, 'governance', {}))
+            self.procedural_engine = ProceduralEngine(config=getattr(self.core_config, 'procedural', {}))
+            self.ritual_executor = RitualExecutor(config=getattr(self.core_config, 'rituals', {}), master_core_ref=self)
+            self.automutator = Automutator(config=getattr(self.core_config, 'automutator', {}),
+                                           procedural_engine=self.procedural_engine,
+                                           governance_engine=self.governance_engine)
+            self.autonomous_tasker = AutonomousTasker(config=getattr(self.core_config, 'autonomous_tasker', {}),
+                                                automutator=self.automutator)
+            
+            # Load rules/data for engines that need it
+            if hasattr(self.governance_engine, 'load_rules'): self.governance_engine.load_rules()
+            if hasattr(self.procedural_engine, 'load_rules'): self.procedural_engine.load_rules()
+            
+            self.logger.info("Crown: Core engines initialized.")
+        except Exception as e:
+            self.logger.error(f"Crown: Failed to initialize one or more core engines: {e}", exc_info=True)
+            # Should we prevent startup if core engines fail?
+            # For now, log the error and continue, components will be None
+            self.memory_store = None
+            self.governance_engine = None
+            self.procedural_engine = None
+            self.ritual_executor = None
+            self.automutator = None
+            self.autonomous_tasker = None
+    # -----------------------------------------
+
+    # --- NEW: Method to access Message Bus --- 
+    def get_message_bus(self) -> Optional[AgentMessageBus]:
+        """Returns the instance of the AgentMessageBus."""
+        return self.message_bus
+    # -----------------------------------------
+
+    # --- NEW: Placeholder for Ritual Execution --- 
+    def _execute_ritual_if_found(self, trigger: str):
+        """Placeholder method to simulate checking and executing rituals."""
+        self.logger.debug(f"Checking for rituals triggered by: {trigger} (Placeholder - No execution)")
+        if self.ritual_executor and hasattr(self.ritual_executor, 'trigger_rituals'):
+            # In a real implementation, you might call:
+            # asyncio.create_task(self.ritual_executor.trigger_rituals(trigger))
+            pass # Just log for now
+        else:
+            self.logger.debug(f"RitualExecutor not available or missing 'trigger_rituals' method.")
+    # ---------------------------------------------
 
 
 # --- Example Usage (Adapted Terminology) ---

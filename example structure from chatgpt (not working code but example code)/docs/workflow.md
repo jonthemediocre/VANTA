@@ -1,0 +1,3 @@
+# Workflow
+
+(Mermaid diagram placeholder)

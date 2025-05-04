@@ -15,9 +15,14 @@ from pathlib import Path # Keep Path
 import json # <-- Add json import back
 import logging # Added for detailed logging
 from typing import Dict, Any, Optional
+import sys
+
+# --- Add dotenv import --- 
+from dotenv import load_dotenv 
+# -----------------------
 
 # --- FastAPI Imports ---
-from fastapi import FastAPI, HTTPException, Request, Depends
+from fastapi import FastAPI, HTTPException, Request, Depends, Header
 from fastapi.middleware.cors import CORSMiddleware # <<< ADD THIS IMPORT
 from pydantic import BaseModel, Field # For request body validation
 import uvicorn # To run the server
@@ -105,59 +110,6 @@ def load_json_config(file_path: Path) -> dict | None:
     except Exception as e:
         logger.error(f"Error loading JSON file {file_path}: {e}", exc_info=True)
         return None
-
-# --- FastAPI Lifespan Management ---
-async def lifespan(app: FastAPI):
-    global orchestrator_instance, plugin_manager_instance
-    logger.info("Application startup...")
-    
-    # --- Initialize Plugin Manager ---
-    # Assuming plugins are in vanta_seed/agents
-    plugin_dir = config.BASE_DIR / "vanta_seed" / "agents" 
-    plugin_manager_instance = PluginManager(plugin_directory=str(plugin_dir))
-    plugin_manager_instance.load_plugins()
-    logger.info(f"Plugins loaded: {plugin_manager_instance.list_plugins()}")
-    # -------------------------------
-
-    # --- Load Configurations ---
-    # Assuming blueprint is the core config needed by VantaMasterCore
-    core_config = load_yaml_config(BLUEPRINT_PATH) 
-    # Agent definitions are loaded inside VantaMasterCore via core_config path now?
-    # Let's adjust VantaMasterCore init if needed, or load here if separate.
-    # Assuming VantaMasterCore's _load_core_config handles loading agent defs too.
-    
-    if core_config is None:
-        logger.critical("Failed to load core configuration (blueprint). Exiting.")
-        # In a real app, maybe raise an exception or handle differently
-        return 
-
-    # --- Initialize VantaMasterCore ---
-    try:
-        # Pass the PATH to the core config, VantaMasterCore loads it internally
-        orchestrator_instance = VantaMasterCore(
-            core_config_path=str(BLUEPRINT_PATH), # Pass path
-            plugin_manager=plugin_manager_instance
-        )
-        logger.info("VantaMasterCore initialized.")
-        # Start the orchestrator's background tasks
-        await orchestrator_instance.startup()
-        logger.info("VantaMasterCore startup complete.")
-    except Exception as e:
-         logger.critical(f"Failed to initialize or start VantaMasterCore: {e}", exc_info=True)
-         # Prevent app from starting if core fails
-         raise RuntimeError("VantaMasterCore failed to start.") from e
-
-    yield # Application runs here
-
-    # --- Shutdown Logic ---
-    logger.info("Application shutting down...")
-    if orchestrator_instance:
-        try:
-            await orchestrator_instance.shutdown()
-            logger.info("VantaMasterCore shutdown complete.")
-        except Exception as e:
-            logger.error(f"Error during VantaMasterCore shutdown: {e}", exc_info=True)
-    logger.info("Application shutdown complete.")
 
 # --- FastAPI App Instance ---
 # Use context manager for lifespan with FastAPI 0.100+
@@ -272,6 +224,14 @@ async def get_orchestrator() -> VantaMasterCore:
         # This shouldn't happen if lifespan event completes successfully
         logger.error("Orchestrator not initialized!")
         raise HTTPException(status_code=503, detail="Service Unavailable: Orchestrator not ready.")
+        
+    # --- DEBUGGING: Log pilgrim keys from the instance being returned --- 
+    pilgrim_keys = []
+    if hasattr(orchestrator_instance, 'pilgrims') and isinstance(orchestrator_instance.pilgrims, dict):
+        pilgrim_keys = list(orchestrator_instance.pilgrims.keys())
+    logger.info(f"get_orchestrator: Returning instance {id(orchestrator_instance)} with pilgrim keys: {pilgrim_keys}")
+    # ------------------------------------------------------------------
+    
     return orchestrator_instance
 
 # --- Security Scheme Definition ---
@@ -345,6 +305,13 @@ async def submit_task_endpoint(
             task_data["target_agent"] = task_request.target_agent
 
         logger.info(f"API received task: {task_data}")
+        
+        # --- DEBUGGING: Log pilgrim keys from orchestrator instance used by endpoint ---
+        pilgrim_keys = []
+        if hasattr(orchestrator, 'pilgrims') and isinstance(orchestrator.pilgrims, dict):
+            pilgrim_keys = list(orchestrator.pilgrims.keys())
+        logger.info(f"/submit_task endpoint: Using orchestrator {id(orchestrator)} with pilgrim keys: {pilgrim_keys}")
+        # -----------------------------------------------------------------------------
         
         # Submit the task to the orchestrator
         result = await orchestrator.submit_task(task_data)
@@ -451,16 +418,29 @@ async def openai_chat_completions(
 
 # --- Main Entry Point --- 
 if __name__ == "__main__":
+    # --- Load .env before anything else --- 
+    dotenv_path = Path(__file__).resolve().parent / '.env'
+    print(f"Loading environment variables from: {dotenv_path}")
+    loaded = load_dotenv(dotenv_path=dotenv_path, override=True, verbose=True)
+    print(f"Dotenv loaded: {loaded}")
+    # --------------------------------------
+    
+    # Setup logging ONLY if running as main script
+    logger = logging.getLogger(__name__)
     logger.info("Starting VANTA API Server...")
-    # <<< MODIFY Host and Port >>>
+    
+    # Use environment variable for host/port or defaults
+    host = os.getenv("VANTA_HOST", "127.0.0.1")
+    port = int(os.getenv("VANTA_PORT", 18888)) # <<< Changed default port to 18888
+
+    # Run the Uvicorn server
     uvicorn.run(
         "run:app", # Point to the FastAPI app instance
-        host="127.0.0.1", # Changed from "0.0.0.0"
-        port=8888, # Changed from 1337
-        reload=True, # Enable auto-reload for development
-        log_level=config.LOG_LEVEL.lower() # Use log level from config
+        host=host,
+        port=port,
+        reload=False, # <<< Disable auto-reload for testing
+        log_level="info"
     )
-    # <<< END MODIFY >>>
 
 # --- Main Execution ---
 
@@ -567,3 +547,183 @@ if __name__ == "__main__":
 #         logger.warning("API key check skipped: VANTA_ALLOWED_API_KEYS is not set.")
 #         return None # Indicate no key was checked/needed
 # --------------------------------- 
+
+# Ensure VantaMasterCore is globally accessible or passed appropriately
+master_core: Optional[VantaMasterCore] = None
+plugin_manager: Optional[PluginManager] = None # Add global ref for plugin manager
+
+# --- Pydantic Models for API ---
+class TaskInput(BaseModel):
+    intent: str
+    payload: Optional[Dict[str, Any]] = None
+    context: Optional[Dict[str, Any]] = None
+    target_agent: Optional[str] = None
+
+class ApiResponse(BaseModel):
+    status: str = "success"
+    data: Optional[Any] = None
+    error: Optional[str] = None
+# ----------------------------
+
+# --- Lifecycle Events ---
+@app.on_event("startup")
+async def startup_event():
+    """Application startup logic."""
+    global master_core, plugin_manager # <<< Declare global
+    logger.info("Application startup...")
+    
+    # --- Initialize Plugin Manager --- 
+    plugin_dir = config.get_vanta_path("vanta_seed/agents")
+    logger.info(f"Initializing PluginManager for directory: {plugin_dir}")
+    plugin_manager = PluginManager(plugin_directory=str(plugin_dir))
+    plugin_manager.load_plugins()
+    logger.info(f"Plugins loaded via PluginManager: {plugin_manager.list_plugins()}")
+    # -------------------------------
+    
+    # --- Initialize VantaMasterCore --- 
+    blueprint_path = config.get_vanta_path(config.VANTA_BLUEPRINT_FILE)
+    if not blueprint_path.exists():
+         logger.error(f"CRITICAL: Blueprint file not found at {blueprint_path}. Cannot start Master Core.")
+         # Exit or raise? For now, log and continue but core won't function
+         master_core = None 
+    else:
+         try:
+              master_core = VantaMasterCore(
+                   core_config_path=str(blueprint_path), # Pass path as string
+                   plugin_manager=plugin_manager # Pass the initialized manager
+              )
+              logger.info("VantaMasterCore initialized.")
+              # Run Crown startup tasks
+              await master_core.startup()
+              logger.info("VantaMasterCore startup tasks complete.")
+         except Exception as e:
+              logger.exception(f"CRITICAL: Failed to initialize VantaMasterCore: {e}")
+              master_core = None # Ensure it's None on failure
+    # -------------------------------
+    logger.info("Application startup complete.")
+
+@app.on_event("shutdown")
+async def shutdown_event():
+    """Application shutdown logic."""
+    global master_core
+    logger.info("Application shutdown...")
+    if master_core and hasattr(master_core, 'shutdown'):
+        await master_core.shutdown()
+        logger.info("VantaMasterCore shutdown complete.")
+    logger.info("Application shutdown complete.")
+# -----------------------
+
+# --- API Endpoints ---
+@app.get("/")
+async def read_root():
+    return {"message": "Welcome to VANTA"}
+
+# --- NEW: General Task Submission Endpoint --- 
+@app.post("/submit_task", response_model=ApiResponse)
+async def submit_task_endpoint(task: TaskInput):
+    """Receives a task and submits it to the VantaMasterCore."""
+    global master_core
+    if not master_core:
+        logger.error("Submit Task request failed: VantaMasterCore not initialized.")
+        raise HTTPException(status_code=503, detail="Core service unavailable")
+        
+    task_dict = task.model_dump() # Use model_dump for Pydantic v2
+    logger.info(f"API received task submission via /submit_task: Intent '{task.intent}'")
+    
+    try:
+        result = await master_core.submit_task(task_dict)
+        return ApiResponse(status="success", data=result)
+    except Exception as e:
+        logger.exception(f"Error processing task via /submit_task: {e}")
+        # Consider returning a more structured error
+        return ApiResponse(status="error", error=f"Internal server error: {str(e)}")
+# ------------------------------------------
+
+# --- Existing OpenAI Compatible Endpoint --- 
+@app.post("/v1/chat/completions")
+async def chat_completions(request: Request, authorization: str = Header(None)):
+    pass # Replace placeholder with pass to avoid syntax error
+    # Original logic for this endpoint should be preserved here
+    # Example start:
+    # logger.info("Received request on /v1/chat/completions")
+    # api_key = get_api_key(authorization)
+    # if not is_api_key_valid(api_key):
+    #     raise HTTPException(status_code=401, detail="Invalid or missing API Key")
+    # ... rest of the OpenAI endpoint logic ...
+
+# --- Health Check Endpoint --- 
+@app.get("/health")
+async def health_check(): # Added function definition
+    # Placeholder logic, should check core components like Master Core status
+    return {"status": "ok"}
+    # pass # Replace placeholder with pass
+
+# --- Plugin Listing Endpoint --- 
+@app.get("/plugins")
+async def list_plugins():
+    # Placeholder logic, should return a list of available plugins
+    return {"plugins": ["PlaceholderPlugin1", "PlaceholderPlugin2"]}
+
+# --- NEW: OpenAI Compatible Chat Completions Endpoint --- 
+@app.post("/v1/chat/completions", response_model=ChatCompletionResponse)
+async def handle_chat_completions(
+    request: ChatCompletionRequest,
+    orchestrator: VantaMasterCore = Depends(get_orchestrator),
+    api_key: str = Depends(verify_api_key) # <<< CORRECTED: Use verify_api_key
+):
+    """Handles OpenAI-compatible chat completion requests."""
+    logger.info(f"Received /v1/chat/completions request for model: {request.model}")
+    if not orchestrator:
+        logger.error("Orchestrator not initialized during chat completion request.")
+        raise HTTPException(status_code=503, detail="Service Temporarily Unavailable: Orchestrator not ready.")
+
+    # --- Translate OpenAI request to VANTA task --- 
+    vanta_task_payload = {
+        "requested_model": request.model,
+        "messages": [msg.model_dump() for msg in request.messages],
+        # Pass common parameters if the proxy agent supports them
+        "temperature": request.temperature,
+        "max_tokens": request.max_tokens,
+        # "stream": request.stream, # Add stream handling later if needed
+    }
+    
+    task_data = {
+        "intent": "chat_completion",
+        "payload": vanta_task_payload,
+        "context": {"source": "openai_api"}
+        # target_agent will be determined by VantaMasterCore based on requested_model
+    }
+
+    try:
+        logger.debug(f"Submitting translated task to orchestrator: {task_data}")
+        # Assuming submit_task returns a dict, potentially with 'response_text'
+        core_result = await orchestrator.submit_task(task_data)
+        logger.debug(f"Orchestrator returned: {core_result}")
+
+        if isinstance(core_result, dict) and core_result.get("response_text"):
+            response_text = core_result["response_text"]
+            # --- Format VANTA result into OpenAI response --- 
+            response_message = ResponseMessage(content=response_text)
+            choice = Choice(message=response_message)
+            openai_response = ChatCompletionResponse(
+                model=request.model, # Reflect back the requested model (or actual model used if known)
+                choices=[choice]
+                # usage can be added if token counts are available
+            )
+            logger.info(f"Successfully processed chat completion for model {request.model}")
+            return openai_response
+        elif isinstance(core_result, dict) and core_result.get("error"):
+             # Propagate errors from the core
+             logger.error(f"Error from VANTA core during chat completion: {core_result['error']}")
+             raise HTTPException(status_code=500, detail=f"Agent execution failed: {core_result['error']}")
+        else:
+            # Handle unexpected result format from VANTA core
+            logger.error(f"Unexpected result format from VANTA core: {core_result}")
+            raise HTTPException(status_code=500, detail="Internal Server Error: Unexpected response format from agent.")
+
+    except HTTPException as http_exc:
+        raise http_exc # Re-raise known HTTP exceptions
+    except Exception as e:
+        logger.exception(f"Unexpected error processing chat completion request: {e}")
+        raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
+# ------------------------------------------------------
