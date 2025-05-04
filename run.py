@@ -431,7 +431,7 @@ if __name__ == "__main__":
     
     # Use environment variable for host/port or defaults
     host = os.getenv("VANTA_HOST", "127.0.0.1")
-    port = int(os.getenv("VANTA_PORT", 18888)) # <<< Changed default port to 18888
+    port = int(os.getenv("VANTA_PORT", 8888)) # <<< CHANGED BACK to 8888
 
     # Run the Uvicorn server
     uvicorn.run(
