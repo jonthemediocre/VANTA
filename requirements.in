@@ -26,6 +26,7 @@ GitPython # For programmatic Git interaction
 
 # Optional Vector DB (uncomment if needed)
 # chromadb 
+qdrant-client # Added for Data Catalog persistence
 
 # Other direct dependencies
 transformers

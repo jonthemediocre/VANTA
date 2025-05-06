@@ -1,0 +1,59 @@
+# vanta_seed/swarm/agent_registry.yaml
+# Defines agents eligible for Swarm RL training and their specific RL configs.
+
+description: "Registry for RL-eligible agents in the VANTA Swarm."
+version: 0.1
+
+rl_agents:
+  # Example entry for DataUnifierAgent
+  DataUnifierAgent:
+    enabled: true
+    # Path to the main agent config (e.g., in agents.index.mpc.json or separate file)
+    # base_config_ref: "DataUnifierAgent" # Reference to entry in main agent registry
+    env_config: # Specific config passed to VantaAgentEnv for this agent
+      max_steps_per_episode: 50
+      threshold_step: 0.05
+    wrapper_config: # Config passed to RLAgentWrapper
+      reward_threshold: 0.8 # Example, may not be used by current wrapper
+    training_modes: ["solo", "cooperative"] # Modes this agent can participate in
+    policy_config: # Placeholder for policy network definition (e.g., layer sizes)
+      actor_layers: [64, 64]
+      critic_layers: [64, 64]
+
+  # Example entry for a hypothetical LangchainBridgeAgent
+  LangchainBridgeAgent:
+    enabled: false # Example: Not enabled for RL training yet
+    # base_config_ref: "LangchainBridgeAgent"
+    env_config:
+      max_steps_per_episode: 20
+    wrapper_config: {}
+    training_modes: ["cooperative"]
+    policy_config: {}
+
+  # Add other RL-eligible agents here...
+
+# SWARM AGENT REGISTRY → Defines which agents are RL-eligible
+
+agents:
+  - name: DataUnifierAgent
+    module: vanta_seed.agents.data_unifier_agent
+    class: DataUnifierAgent
+    rl_enabled: true
+    mode: solo
+    # Optional detailed configs (Cursor AI addition for hybrid model)
+    # env_config: 
+    #   max_steps_per_episode: 75 
+    # wrapper_config: {} 
+    # policy_config: 
+    #   reward_success: 3.5 # Example override
+
+  - name: LangchainBridgeAgent
+    module: vanta_seed.agents.langchain_bridge_agent
+    class: LangchainBridgeAgent
+    rl_enabled: true
+    mode: cooperative
+    # env_config: {}
+    # wrapper_config: {}
+    # policy_config: {}
+
+  # Add more agents as needed 

@@ -1,0 +1,52 @@
+# .cursor/rituals/memory_cursor_assist.yaml
+# Defines Cursor AI's role and focus for VANTA SEED Memory Ritual Patches 2.x - 4.x
+
+ritual_phase: "Memory Evolution (Patches 2.x - 4.x)"
+target_framework: "VANTA SEED Python App"
+cursor_ai_role: "Ritual Engineer & Swarm Memory Architect Collaborator"
+
+primary_directives:
+  - "Assist in implementing and refining memory storage layers (YAML, Chroma, Postgres/Swarm)."
+  - "Ensure memory retrieval logic supports advanced filtering (tags, context, time, semantics)."
+  - "Help design and implement ConceptAgent and SwarmMemoryAgent."
+  - "Maintain alignment with the canonical memory structure (`VANTA/memory/`)."
+  - "Facilitate the integration of memory layers with other agents (Symbolic, Ritual, etc.)."
+  - "Generate code adhering to VANTA SEED standards and existing patterns."
+  - "Propose and update relevant `.cursor/rules/*.mdc` files to reflect memory architecture evolution."
+  - "Assist in generating documentation for new memory components and rituals (`docs/architecture.md`)."
+
+focus_areas_by_patch:
+  patch_2x_chroma_rag:
+    - "Implement ChromaDB integration within MemoryStore or a dedicated RetrievalAgent."
+    - "Adapt `get_items_filtered` and `search_items` to leverage vector search capabilities."
+    - "Ensure efficient embedding generation and storage strategy."
+    - "Define schemas for storing document metadata alongside vectors."
+    - "Update agents (e.g., SymbolicAgent) to perform semantic retrieval."
+  patch_3x_concept_agent:
+    - "Scaffold the `ConceptAgent` class."
+    - "Design logic for clustering/abstracting raw memories into concepts."
+    - "Implement storage/retrieval for `concept_shards.yaml`."
+    - "Integrate `ConceptAgent` with `MemoryStore` and potentially `SymbolicAgent`."
+    - "Define schemas for `Concept` objects."
+  patch_4x_swarm_memory:
+    - "Scaffold the `SwarmMemoryAgent` class."
+    - "Design interaction protocols for agents accessing shared swarm memory."
+    - "Implement backend integration (Postgres/Chroma) for persistent global state."
+    - "Develop logic for consensus or weighted updates to shared memory."
+    - "Integrate `SwarmMemoryAgent` with the `AgentMessageBus`."
+
+constraints_and_principles:
+  - "Adhere strictly to the unified `VANTA/memory/` directory structure."
+  - "Prioritize clarity, maintainability, and alignment with VANTA's symbolic goals."
+  - "Use asynchronous patterns (`asyncio`) appropriately."
+  - "Leverage existing VANTA models and utilities where possible."
+  - "Propose changes iteratively; seek confirmation for major architectural shifts."
+  - "Reference `912-rule-scope-distinction.mdc` when proposing new rules."
+
+reporting_and_logging:
+  - "Clearly state which patch phase (`2.x`, `3.x`, `4.x`) a proposed change relates to."
+  - "Use standardized AI response signatures (`911-ai-response-signature.mdc`)."
+  - "Document significant design decisions or assumptions made during implementation assistance."
+
+# Version of this assist definition
+assist_version: "1.0" 

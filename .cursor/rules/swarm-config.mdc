@@ -1,0 +1,83 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# RULE TYPE: Always
+# FILE PATTERNS: vanta_seed/swarm/*.yaml, config/swarm/*.yaml
+
+# Swarm Registry & Configuration Standards
+
+## Purpose
+Ensure consistency, quality, and automation-readiness for all YAML files defining swarm components (agents, tri-nodes, policies, etc.).
+
+## Standard Structure & Keys
+
+All top-level items within a registry list (e.g., `trinodes:`, `agents:`) should be dictionaries adhering to the following:
+
+```yaml
+- id: UNIQUE_STRING_ID # Required: Machine-readable, unique identifier (e.g., DATA_TRINODE_01, agent_unifier_prod)
+  name: Human Readable Name # Required: User-friendly name (e.g., "Data Integrity Tri-Node 1", "Production Data Unifier")
+  type: agent | trinode | policy | reward_policy | node_manifest # Required: Type of component defined.
+  description: "Brief explanation of the component's purpose." # Required: String description.
+  metadata: # Required: Dictionary for tracking provenance and status.
+    version: 1.0
+    created_at: "YYYY-MM-DDTHH:MM:SSZ"
+    last_updated: "YYYY-MM-DDTHH:MM:SSZ"
+    status: active | inactive | deprecated
+    tags: ["data", "experimental"] # Optional list of tags
+
+  # --- Type-Specific Optional Keys ---
+
+  # For type: agent
+  class_path: "vanta_seed.agents.specific_agent.SpecificAgent" # Path for dynamic loading
+  config_path: "./config/agents/specific_agent_config.yaml" # Optional: Path to agent-specific config
+  env_config: # Optional: Environment-specific overrides
+    development:
+      log_level: DEBUG
+    production:
+      log_level: INFO
+
+  # For type: trinode
+  members: # Required for trinode
+    - agent_id_1
+    - agent_id_2
+    - agent_id_3
+  ritual_alignment: "ritual_class_name" # Required for trinode
+  collapse_target: "target_identifier" # Required for trinode
+  parent: MASTER_TRINITY_NODE # Required for trinode
+  policy_config: # Optional: Policies specific to this TriNode
+    consensus_threshold: 0.7
+    failure_mode: retry | escalate
+
+  # For type: policy / reward_policy
+  policy_logic_path: "vanta_seed.swarm.policies.specific_policy.SpecificPolicyLogic" # Path to implementation
+  parameters: # Optional: Configurable parameters for the policy
+    learning_rate: 0.01
+    discount_factor: 0.99
+
+  # Add structures for other types (node_manifest etc.) as needed
+```
+
+## Formatting Rules
+
+- **Indentation:** Use 2 spaces for indentation. NO TABS.
+- **Keys:** Use `snake_case` for all dictionary keys.
+- **Lists:** Use standard YAML list format (`- item`).
+- **Strings:** Use double quotes for strings containing special characters or requiring explicit string typing.
+- **Comments:** Use `#` for comments to explain non-obvious configurations.
+
+## Validation Requirements
+
+- **Uniqueness:** The `id` field *must* be unique within its registry file (e.g., unique agent IDs in `agent_registry.yaml`, unique trinode names in `trinode_registry.yaml`).
+- **Type Enum:** The `type` field *must* be one of the recognized swarm component types.
+- **Required Keys:** All components *must* include `id`, `name`, `type`, `description`, and `metadata`.
+- **Type-Specific Keys:** Components *must* include required keys specific to their `type` (e.g., `members`, `ritual_alignment`, `collapse_target`, `parent` are required for `type: trinode`).
+
+## Automation & Tooling
+
+Adhering to this standard enables:
+- Automated validation of configuration files in CI/CD.
+- Auto-generation of documentation for swarm components.
+- Dynamic loading and registration of agents/nodes/policies.
+- Potential auto-generation of monitoring dashboards or admin UIs based on registry contents.

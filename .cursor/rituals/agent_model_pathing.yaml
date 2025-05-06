@@ -1,0 +1,33 @@
+# VANTA SEED - Agent Model Pathing Ritual v1.0
+# This file declares the intended routing and model usage for different contexts.
+
+# Path for external clients (e.g., Jan AI, UI frontends) hitting the primary API endpoint
+external_path:
+  description: "Standard interaction path for external clients via the primary API gateway."
+  entry_point: "/v1/chat/completions (handled by ProxyOllamaAgent)"
+  default_model: "vanta-core:latest"
+  notes: "Ensures consistent VANTA persona. No dynamic routing at this stage."
+
+# Paths for internal VANTA SEED operations (A2A, VantaMasterCore orchestration)
+internal_paths:
+  description: "Model allocation for specialized tasks orchestrated internally by the swarm or core."
+  routing_strategy: "Currently VantaMasterCore directs tasks to agents configured for specific models. Future: SwarmRouterAgent."
+  role_model_map:
+    - role: "Primary Reasoning & Recursive Core"
+      model: "vanta-core:latest"
+      base_model: "DeepSeek-R1 Series"
+      rationale: "Optimal for logical consistency, ritual adherence, swarm memory linkage."
+
+    - role: "Narrative, Compression, Conceptualization, MythWeaving"
+      model: "vanta-myth:latest"
+      base_model: "Qwen3 Series"
+      rationale: "Flexible, strong compositional reasoning for creative/alternative path generation."
+
+    - role: "Utility, Lightweight Execution, Tools Interface"
+      model: "vanta-worker:latest"
+      base_model: "Gemma3 Series"
+      rationale: "Efficient and fast for specific, well-defined tasks or basic echo/tool functions."
+
+# Final Principle Reference (Matches VANTA Directive)
+# External -> Always primary core model for consistent identity.
+# Internal -> Can distribute to specialized models based on task, orchestrated by core logic. 

@@ -172,6 +172,20 @@
         "max_refinement_passes": 2
       }
     },
+    "DataUnifierAgent": {
+        "description": "AI-powered master data management to create \"trusted data products.\"",
+        "type": "processing",
+        "status": "development",
+        "module": "vanta_seed.agents.data_unifier_agent",
+        "class": "DataUnifierAgent",
+        "capabilities": ["data_ingestion", "deduplication", "entity_resolution", "data_merging"],
+        "dependencies": ["CrossModalMemory", "EmbeddingManager"],
+        "config": {
+            "deduplication_threshold": 0.9,
+            "merge_strategy": "recency"
+        },
+        "enabled": true
+    },
     "MoERouter": {
         "description": "Routes prompts to appropriate LLMs (OpenAI, Ollama, etc.).",
         "type": "routing",

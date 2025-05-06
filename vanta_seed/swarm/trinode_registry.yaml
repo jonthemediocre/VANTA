@@ -1,0 +1,23 @@
+# vanta_seed/swarm/trinode_registry.yaml
+# Defines the Triadic Sub-Nets within the Swarm
+
+trinodes:
+  - name: DATA_TRINODE_01 # Example Tri Node for Data Integrity Rituals
+    members: # List of Agent IDs that form this Tri Node
+      - DataUnifierAgent-01 # Specific instance IDs might be needed later
+      - DataCatalogAgent-01
+      - EntityResolutionAgent-01
+    ritual_alignment: "data_integrity" # The class of rituals this Tri Node handles
+    collapse_target: "data_archive_main" # Where the Tri Node's final collapse is stored/directed
+    parent: MASTER_TRINITY_NODE # Explicit link to the governing entity
+
+  - name: COMPUTE_TRINODE_01 # Example Tri Node for Compute Optimization Rituals
+    members:
+      - ComputeEstimatorAgent-01
+      - ParallelSamplingAgent-01
+      # - ModelOptimizerAgent-01 # Example of a potential third member
+    ritual_alignment: "compute_optimization"
+    collapse_target: "compute_log_archive"
+    parent: MASTER_TRINITY_NODE
+
+# Add more Tri Node definitions as the swarm evolves... 

@@ -1,0 +1,76 @@
+graph LR
+    subgraph Current Phase (Germination ~58%)
+        direction LR
+        A[Agent Action / Observation] --> B(Raw Episodic Memory);
+        B -- Stored in --> C[MemoryStore];
+        C -- Persisted --> D[(memory_items.yaml)];
+        B -- Tagged/Linked --> E{Tagged/Linked Structure};
+        E -- Enables --> F[Filtered Retrieval];
+        F -- Input for --> G[SymbolicAgent];
+        G -- Compresses --> H(Narrative/Mythic Memory);
+        H -- Re-Stored in --> C;
+        H -- Has Lineage --> E;
+        X[Ritual/Mutation Event] --> I(Recursive Ritual Memory);
+        I -- Influences --> A;
+        I -- Can be stored in --> C;
+        Y[Myth Shards] --> G; % Myth shards influence compression
+        Y --> I; % Myth shards influence rituals
+        C -- Provides Data for --> F;
+    end
+
+    subgraph Next Phase - Patch 2.x (Swarm Context Foundation)
+        direction TB
+        J[ChromaDB / Vector Store] <--> K{RAG Retrieval};
+        C --> L(Embedding Generation);
+        L --> J;
+        K -- Provides Context --> A;
+        K -- Enhances --> F;
+    end
+
+    subgraph Next Phase - Patch 3.x (Abstract Reasoning)
+        direction TB
+        H --> M[ConceptAgent];
+        M -- Clusters/Abstracts --> N(Conceptual Memory);
+        N -- Stored in --> O[(concept_shards.yaml)];
+        N -- Creates --> P{Hierarchical Structure};
+        P -- Enables --> Q[Abstract Reasoning];
+        Q -- Influences --> G;
+        Q -- Influences --> A;
+    end
+
+    subgraph Next Phase - Patch 4.x (Swarm Mind & State)
+        direction TB
+        R[SwarmMemoryAgent] <--> S[Global Shared Memory];
+        S -- Stored in --> T[(Postgres/Chroma)];
+        A -- Contributes to --> S;
+        S -- Provides Context to --> A;
+        U[Agent State Memory] -- Persists --> V[(agent_state.yaml)];
+        U -- Defines --> W[Agent Long-Term Identity];
+        W -- Influences --> A;
+    end
+
+    subgraph Final Goal (Mythic Swarm Collapse)
+        Z[Queen VANTA Collapse Ritual]
+    end
+
+    %% Connections Between Phases
+    D --> J; % Existing YAML data can feed Chroma
+    F --> K; % Filtered retrieval informs RAG
+    H --> M; % Narrative feeds Concept Agent
+    N --> P; % Concepts build Hierarchy
+    S --> Z; % Swarm memory enables Collapse
+    Q --> Z; % Abstract reasoning enables Collapse
+    W --> Z; % Agent identity enables Collapse
+
+    %% Styling
+    classDef current fill:#cfc,stroke:#333;
+    classDef next2 fill:#ccf,stroke:#333;
+    classDef next3 fill:#fcc,stroke:#333;
+    classDef next4 fill:#ffc,stroke:#333;
+    classDef goal fill:#f9f,stroke:#333,stroke-width:2px;
+    classDef storage fill:#eee,stroke:#666,stroke-dasharray: 5 5;
+
+    class A,B,E,F,G,H,I,X,Y current;
+    class C,D,K,L,M,N,O,P,Q,R,S,T,U,V,W next2,next3,next4;
+    class J,O,T,V storage;
+    class Z goal; 

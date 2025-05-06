@@ -1,0 +1,82 @@
+graph LR
+    subgraph External Clients
+        JanAI[Jan AI Client]
+        CLI[CLI (`cli.py`)]
+    end
+
+    subgraph VANTA API Layer [`run.py`]
+        OpenAICompat[/v1/chat/completions]
+        SubmitTask[/submit_task]
+    end
+
+    subgraph VANTA Core
+        VMC[VantaMasterCore]
+        MBus[(AgentMessageBus)]
+        MemStore[MemoryStore]
+        PluginMgr[PluginManager]
+        Config(blueprint.yaml)
+    end
+
+    subgraph VANTA Agents [`vanta_seed/agents/`]
+        Echo(EchoAgent)
+        Memory(MemoryAgent)
+        Symbolic(SymbolicAgent)
+        Tool(ToolAgent)
+        Proxy(ProxyOllamaAgent)
+        Base(BaseAgent)
+        Other[...]
+    end
+
+    subgraph External Services
+        Ollama[Ollama Service]
+        FS[(memory_items.yaml)]
+    end
+
+    %% Connections
+    JanAI --> OpenAICompat;
+    CLI --> SubmitTask;
+
+    OpenAICompat --> VMC;
+    SubmitTask --> VMC;
+
+    VMC --> PluginMgr;
+    VMC -- Loads Config --> Config;
+    VMC -- Initializes/Uses --> MemStore;
+    VMC -- Initializes/Uses --> MBus;
+    PluginMgr -- Loads --> Base;
+    Base -- Inherited by --> Echo;
+    Base -- Inherited by --> Memory;
+    Base -- Inherited by --> Symbolic;
+    Base -- Inherited by --> Tool;
+    Base -- Inherited by --> Proxy;
+    Base -- Inherited by --> Other;
+
+    VMC -- Routes Task --> Echo;
+    VMC -- Routes Task --> Memory;
+    VMC -- Routes Task --> Symbolic;
+    VMC -- Routes Task --> Tool;
+    VMC -- Routes Task --> Proxy;
+    VMC -- Routes Task --> Other;
+
+    Symbolic -- Sends Request --> MBus;
+    MBus -- Delivers Request --> Memory;
+    Memory -- Sends Response --> MBus;
+    MBus -- Delivers Response --> Symbolic;
+
+    Memory -- Uses --> MemStore;
+    MemStore -- Persists --> FS;
+
+    Proxy -- Forwards Request --> Ollama;
+    Ollama -- Sends Response --> Proxy;
+
+    %% Styling (Optional)
+    classDef core fill:#f9f,stroke:#333,stroke-width:2px;
+    classDef api fill:#ccf,stroke:#333,stroke-width:2px;
+    classDef agent fill:#cfc,stroke:#333,stroke-width:2px;
+    classDef external fill:#fcc,stroke:#333,stroke-width:2px;
+
+    class VMC,MBus,MemStore,PluginMgr,Config core;
+    class OpenAICompat,SubmitTask api;
+    class Echo,Memory,Symbolic,Tool,Proxy,Base,Other agent;
+    class Ollama,FS external;
+    class JanAI,CLI client; 
