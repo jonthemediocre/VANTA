@@ -119,7 +119,6 @@ httpx[http2]==0.28.1
     #   qdrant-client
 huggingface-hub[hf-xet]==0.30.2
     # via
-    #   sentence-transformers
     #   tokenizers
     #   transformers
     #   vllm
@@ -148,8 +147,6 @@ jinja2==3.1.6
     #   torch
 jiter==0.9.0
     # via openai
-joblib==1.5.0
-    # via scikit-learn
 jsonschema==4.23.0
     # via
     #   mistral-common
@@ -194,7 +191,6 @@ numpy==2.2.5
     #   opencv-python-headless
     #   outlines
     #   qdrant-client
-    #   scikit-learn
     #   scipy
     #   transformers
     #   vllm
@@ -228,7 +224,6 @@ partial-json-parser==0.2.1.1.post5
 pillow==11.2.1
     # via
     #   mistral-common
-    #   sentence-transformers
     #   vllm
 portalocker==2.10.1
     # via qdrant-client
@@ -335,15 +330,8 @@ rq==2.3.2
     # via -r requirements.in
 safetensors==0.5.3
     # via transformers
-scikit-learn==1.6.1
-    # via sentence-transformers
 scipy==1.15.2
-    # via
-    #   scikit-learn
-    #   sentence-transformers
-    #   vllm
-sentence-transformers==4.1.0
-    # via -r requirements.in
+    # via vllm
 sentencepiece==0.2.0
     # via
     #   mistral-common
@@ -364,8 +352,6 @@ starlette==0.46.2
     #   prometheus-fastapi-instrumentator
 sympy==1.14.0
     # via torch
-threadpoolctl==3.6.0
-    # via scikit-learn
 tiktoken==0.9.0
     # via
     #   mistral-common
@@ -380,21 +366,18 @@ torch==2.7.0
     #   -r requirements.in
     #   compressed-tensors
     #   outlines
-    #   sentence-transformers
 tqdm==4.67.1
     # via
     #   gguf
     #   huggingface-hub
     #   openai
     #   outlines
-    #   sentence-transformers
     #   transformers
     #   vllm
 transformers==4.51.3
     # via
     #   -r requirements.in
     #   compressed-tensors
-    #   sentence-transformers
     #   vllm
 typer==0.15.3
     # via fastapi-cli
@@ -409,7 +392,6 @@ typing-extensions==4.13.2
     #   pydantic-core
     #   pydantic-extra-types
     #   rich-toolkit
-    #   sentence-transformers
     #   torch
     #   typer
     #   typing-inspection

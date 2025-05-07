@@ -1,0 +1,95 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# RULE TYPE: Auto Attached
+# FILE PATTERNS: **/schemas/**/*.py, **/models/**/*.py
+
+# 505: Pydantic Schema Design Best Practices
+
+## 1. Core Principles
+
+-   **Clarity and Intent:** Schemas should clearly represent the data they model. Use descriptive names for models and fields.
+-   **Immutability where Possible:** For data that shouldn't change after creation, consider using `frozen=True` in the model `Config`.
+-   **Single Responsibility:** Each Pydantic model should ideally represent a single, coherent data structure or entity. Avoid overly complex, monolithic models.
+-   **Explicitness:** Be explicit with field types. Avoid overuse of `Any` if a more specific type is known.
+
+## 2. Field Definitions
+
+-   **Required vs. Optional:** Clearly distinguish between required fields (no default or `...` as default) and `Optional[Type]` fields (with `default=None` or a `default_factory`).
+-   **Default Values:** Use `default` for simple static defaults and `default_factory` for defaults requiring function calls (e.g., `datetime.utcnow`, `uuid.uuid4`, `list`).
+-   **Field Descriptions:** Always provide a `description` for each field using `Field(..., description="...")`. This aids documentation and understanding.
+-   **Aliases:** Use `alias` in `Field(alias="external_name")` when the Python attribute name differs from the expected external (e.g., JSON) key name.
+-   **Constraints:** Utilize Pydantic's built-in constraints (e.g., `min_length`, `max_length`, `gt`, `lt`) within `Field` where appropriate for basic validation.
+
+## 3. Model Configuration (`class Config:`)
+
+-   **`extra = 'allow'/'ignore'/'forbid'`:**
+    -   `'allow'`: Allows extra fields during parsing and includes them in the model. Use when flexibility is needed.
+    -   `'ignore'`: Ignores extra fields during parsing. Useful for robustness against unexpected external data.
+    -   `'forbid'`: Raises a `ValidationError` if extra fields are present. Use for strict data contracts.
+    Choose the strategy that best fits the use case. Default to `'forbid'` for strictness unless flexibility is required.
+-   **`validate_assignment = True`:** Enforces type validation when model fields are assigned values *after* instantiation. Highly recommended for maintaining data integrity.
+-   **`frozen = True`:** Makes model instances immutable. Attributes cannot be changed after creation. Useful for representing fixed data records.
+-   **`orm_mode = True` (now `from_attributes = True` in Pydantic V2):** Enables creating Pydantic models directly from ORM objects (e.g., SQLAlchemy models).
+-   **`alias_generator`:** Allows programmatic generation of field aliases.
+-   **`populate_by_name` (Pydantic V2):** Allows populating model fields by their alias *or* field name. Useful when dealing with data sources that might use either.
+
+## 4. Validation
+
+-   **Root Validators (`@model_validator(mode='before'/'after')` in Pydantic V2):**
+    -   Use for validations that depend on multiple fields or the entire model structure.
+    -   `mode='before'`: Runs before individual field parsing and validation.
+    -   `mode='after'`: Runs after individual field parsing and validation.
+-   **Field Validators (`@field_validator('field_name', mode='before'/'after')` in Pydantic V2):**
+    -   Use for custom validation logic specific to a single field.
+-   **Reusing Validators:** Define validator functions that can be reused across multiple fields or models.
+-   **Clarity of Errors:** Ensure custom validation logic raises clear `ValueError` or `AssertionError` messages that can be easily understood.
+
+## 5. Schema Evolution & Versioning
+
+-   **Backward Compatibility:** When modifying existing schemas, strive for backward compatibility if possible (e.g., by adding new optional fields).
+-   **Versioning:** For significant breaking changes, consider versioning your schemas (e.g., `UserV1`, `UserV2`) or your API endpoints.
+-   **Migration Paths:** If breaking changes are unavoidable, provide clear migration paths or transformation logic.
+-   **`deprecated=True` in `Field`:** Mark fields as deprecated if they are planned for removal.
+
+## 6. Nested Models
+
+-   Break down complex data structures into smaller, nested Pydantic models. This improves readability and reusability.
+-   Example:
+    ```python
+    class Address(BaseModel):
+        street: str
+        city: str
+
+    class User(BaseModel):
+        name: str
+        address: Address # Nested model
+    ```
+
+## 7. Common Patterns
+
+-   **UUIDs for IDs:** Prefer UUIDs for unique identifiers (`default_factory=uuid.uuid4`).
+-   **Timestamps:** Use `datetime` objects. For `created_at` or `updated_at` fields, use `default_factory=datetime.utcnow`.
+-   **Enums:** Use Python's `Enum` class for fields with a fixed set of possible values. Pydantic integrates well with them.
+-   **Generic Models:** Use Pydantic's support for `typing.Generic` to create reusable generic models.
+
+## 8. Documentation & Examples
+
+-   Provide clear docstrings for each Pydantic model explaining its purpose.
+-   Include example usage or expected JSON/dict structures in documentation.
+-   For complex models, consider documenting the validation rules explicitly.
+
+## Review Checklist
+
+-   [ ] Are field names and model names clear and descriptive?
+-   [ ] Are `Optional` fields correctly defined with defaults?
+-   [ ] Is `Field(description="...")` used for all fields?
+-   [ ] Is the `Config.extra` policy appropriate for the model's use case?
+-   [ ] Is `Config.validate_assignment = True` set?
+-   [ ] Are custom validators clear and do they raise informative errors?
+-   [ ] Are nested models used appropriately for complex structures?
+-   [ ] Have schema evolution and versioning been considered?
+---
+This rule aims to promote consistency, clarity, and robustness in data modeling using Pydantic.

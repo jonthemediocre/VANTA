@@ -77,4 +77,47 @@
 - [Medium Priority - Documentation] Add detailed implementation documentation (code comments, READMEs) for core vanta_seed modules and agents.
 - [Low Priority - UI Integration] Design and implement API endpoints required for UI/frontend interaction.
 - [Low Priority - UI Integration] Develop frontend components and connect to the VANTA backend (if UI is in scope).
-- [Low Priority - Deployment] Detail specific cloud configurations, database setup, monitoring setup, and CI/CD pipeline enhancements. 
+- [Low Priority - Deployment] Detail specific cloud configurations, database setup, monitoring setup, and CI/CD pipeline enhancements.
+## TODO - Resolve pip-tools compile error for sentence-transformers/vllm
+
+**Context:**
+Currently blocked on installing `sentence-transformers` (and its dependency `torch`) and `vllm` due to errors during `pip-tools compile`. The primary goal is to get `sentence-transformers` working for the `RitualCollapseService`.
+
+**Current Issue:**
+- Command: `python -m piptools compile -v --resolver=backtracking requirements.in`
+- Error: `NotADirectoryError: [WinError 267] The directory name is invalid`
+- This error occurs while `pip-tools` is "Getting requirements to build wheel" for the `vllm` package. It's a common Windows issue related to temporary directory paths or path length limitations during package builds.
+
+**Last Attempted Solution & Next Immediate Step:**
+1.  **Problem:** Incorrect syntax was used for setting environment variables (`export` in a PowerShell prompt).
+2.  **Corrected Approach (To be executed next):**
+    *   In the MINGW64 terminal (which is currently showing a PowerShell prompt `PS C:\...`):
+        ```powershell
+        $env:TEMP = "C:\tmp"
+        $env:TMP = "C:\tmp"
+        if (-not (Test-Path "C:\tmp")) { New-Item -ItemType Directory -Force -Path "C:\tmp" }
+        python -m piptools compile -v --resolver=backtracking requirements.in
+        ```
+    *   Observe the output of the `pip-tools compile` command.
+
+**If the above still fails, subsequent diagnostic/fix steps:**
+1.  **Windows Long Path Support:** Verify if Win32 long paths are enabled on the system. If not, enable it (requires admin and possibly a restart).
+    *   Group Policy: `gpedit.msc` -> `Local Computer Policy` -> `Computer Configuration` -> `Administrative Templates` -> `System` -> `Filesystem` -> `Enable Win32 long paths`.
+    *   Registry: `HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\FileSystem`, set `LongPathsEnabled` (DWORD) to `1`.
+2.  **Isolate `vllm`:** If the error persists and seems specific to `vllm`:
+    *   Temporarily comment out `vllm` from `requirements.in`.
+    *   Re-run `python -m piptools compile ...` (with `TEMP`/`TMP` set) to see if other dependencies (especially `sentence-transformers` and `torch`) can compile successfully.
+    *   This would allow `RitualCollapseService` development to proceed, deferring the `vllm` installation complexities.
+3.  **Pin `torch` version (If `sentence-transformers` or `torch` itself causes issues after isolating `vllm`):**
+    *   If errors point to `torch` installation (e.g., CUDA version conflicts on Windows), try pinning `torch` to a known compatible CPU-only version or a specific version known to work on Windows in `requirements.in`. Example:
+        ```
+        torch==2.1.0+cpu # or a specific version indicated by errors
+        torchvision==0.16.0+cpu
+        torchaudio==2.1.0+cpu
+        ```
+        (Note: The `+cpu` specifiers might need to be obtained from PyTorch's official site for the correct wheel).
+
+**Goal upon resuming:**
+- Successfully run `python -m piptools compile --resolver=backtracking requirements.in -o requirements.txt` to generate a complete `requirements.txt`.
+- Successfully run `pip install -r requirements.txt`.
+- Successfully run `python -m vanta_seed.services.ritual_collapse_service` without `ModuleNotFoundError` for `sentence_transformers`. 

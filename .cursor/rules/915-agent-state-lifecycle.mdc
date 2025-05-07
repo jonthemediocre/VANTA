@@ -1,0 +1,108 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# RULE TYPE: Auto Attached
+# FILE PATTERNS: **/agents/**/*.py, **/services/**/*.py, **/kernel/**/*.py
+
+# 915: Agent State & Lifecycle Management Guidelines
+
+## 1. Core Principles
+
+-   **Explicit States:** Agents should operate with well-defined, explicit states (e.g., `INITIALIZING`, `IDLE`, `ACTIVE`, `PROCESSING`, `WAITING_FOR_INPUT`, `SUSPENDED`, `ERROR`, `TERMINATED`).
+-   **State Transitions:** Transitions between states should be clearly defined and, where possible, managed by a state machine pattern or explicit methods.
+-   **Atomicity:** State transitions should be as atomic as possible to prevent inconsistent states.
+-   **Persistence:** Critical agent state that needs to survive restarts or scaling events should be persistable (e.g., using `DataCatalogService` with `ContextualData` or `OperationalData` models).
+-   **Observability:** Agent state and lifecycle events should be logged and/or made observable for monitoring and debugging.
+
+## 2. Standard Agent States
+
+While specific agents may have custom states, consider these standard states as a baseline:
+
+-   `UNINITIALIZED`: The agent instance has been created but not yet fully set up (e.g., dependencies not injected, connections not made).
+-   `INITIALIZING`: The agent is actively performing its setup routines.
+-   `IDLE`/`READY`: The agent is initialized and ready to accept tasks or process events, but is not currently active.
+-   `ACTIVE`/`PROCESSING`: The agent is currently performing a task or processing data.
+-   `WAITING_FOR_INPUT`: The agent has paused its current task and is awaiting external input (e.g., user response, API callback).
+-   `SUSPENDED`: The agent's operation has been temporarily paused but can be resumed. State should be preserved.
+-   `ERROR`: The agent has encountered an unrecoverable error and may not be able to continue its current task or operate normally. Requires intervention or reset.
+-   `TERMINATING`: The agent is in the process of shutting down, releasing resources.
+-   `TERMINATED`: The agent has completed shutdown and is no longer active.
+
+## 3. Lifecycle Methods & Event Handling
+
+Consider implementing standard lifecycle methods in agent classes:
+
+-   `__init__(...)`: Basic instantiation. Dependencies might be passed here.
+-   `initialize()` or `setup()`: Performs resource allocation, connection setup, loading initial state. Transitions agent to `INITIALIZING` then `IDLE`/`READY`.
+-   `start_task(task_data)` or `process_event(event_data)`: Initiates active work. Transitions agent to `ACTIVE`/`PROCESSING`.
+-   `pause()` or `suspend()`: Temporarily halts agent activity. Transitions to `SUSPENDED`.
+-   `resume()`: Resumes activity from a `SUSPENDED` state.
+-   `stop()` or `shutdown()` or `terminate()`: Performs cleanup, releases resources. Transitions to `TERMINATING` then `TERMINATED`.
+-   `get_status()`: Returns the current state and potentially other operational metrics.
+-   `on_error(error_details)`: Handles errors, logs them, and potentially transitions the agent to an `ERROR` state.
+
+## 4. State Persistence and Recovery
+
+-   **Identify Critical State:** Determine which aspects of an agent's state *must* be preserved across sessions or restarts (e.g., ongoing task progress, learned parameters, user context relevant to the agent).
+-   **Serialization:** Ensure critical state can be serialized (e.g., to JSON or via Pydantic models like `ContextualData`, `KnowledgeData`, `OperationalData`).
+-   **Storage Mechanism:** Utilize a reliable storage mechanism (e.g., `DataCatalogService` backed by Qdrant, a relational database, or a dedicated state store) for persisting and retrieving agent state.
+    -   Use `OperationalData` to store task status, attempts, inputs/outputs.
+    -   Use `ContextualData` for session-specific or user-specific agent context.
+-   **Recovery Logic:** Implement logic within `initialize()` or a dedicated `recover()` method to load persisted state upon agent startup or resumption.
+
+## 5. State Transitions and Guard Conditions
+
+-   Clearly document valid state transitions (e.g., an agent can only go from `PROCESSING` to `COMPLETED` or `ERROR`, not directly to `IDLE` without finishing/failing).
+-   Implement guard conditions to prevent invalid state transitions.
+-   Log all significant state transitions with context (e.g., `Agent [ID] transitioned from [STATE_A] to [STATE_B] due to [REASON].`).
+
+## 6. Concurrency and Asynchronous Operations
+
+-   If agents perform long-running or asynchronous tasks, ensure state management is thread-safe or handles async contexts correctly.
+-   Update agent state appropriately upon completion or failure of asynchronous operations (e.g., using callbacks or futures).
+
+## 7. Orchestration Considerations
+
+-   An orchestrator (e.g., `AgentOrchestratorService`) may be responsible for managing the lifecycle of multiple agents (creating, starting, stopping, monitoring).
+-   Agents should report their state to the orchestrator.
+-   The orchestrator may trigger state transitions in agents based on system-wide events or policies.
+
+## Example: Basic State Management
+
+```python
+from enum import Enum
+
+class AgentState(Enum):
+    IDLE = "idle"
+    PROCESSING = "processing"
+    ERROR = "error"
+
+class MyAgent:
+    def __init__(self):
+        self.state = AgentState.IDLE
+        # ... other initializations ...
+
+    def start_processing(self, data):
+        if self.state != AgentState.IDLE:
+            raise Exception(f"Cannot start processing from state {self.state}")
+        self.state = AgentState.PROCESSING
+        print(f"Agent started processing: {data}")
+        # ... actual processing logic ...
+        # self.state = AgentState.IDLE # On successful completion
+
+    # ... other methods ...
+```
+
+## Review Checklist
+
+-   [ ] Are agent states clearly defined and documented?
+-   [ ] Are state transitions explicit and logical?
+-   [ ] Is critical agent state persisted appropriately?
+-   [ ] Is there recovery logic for persisted state?
+-   [ ] Are state transitions and lifecycle events logged?
+-   [ ] Does the agent handle errors gracefully and transition to an `ERROR` state if necessary?
+-   [ ] Are standard lifecycle methods (initialize, shutdown) implemented?
+---
+Adherence to these guidelines helps in building robust, manageable, and observable agent systems.

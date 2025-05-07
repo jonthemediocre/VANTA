@@ -33,3 +33,4 @@ transformers
 tokenizers
 torch
 outlines 
+sentence-transformers # Added for knowledge embedding 

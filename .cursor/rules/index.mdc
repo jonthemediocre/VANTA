@@ -51,6 +51,7 @@ Your question or request here...
 
 ### Data & API (500 Series)
 - [**500-prisma.mdc**](mdc:500-prisma.mdc) - Prisma database patterns
+- [**505-pydantic-schema-design.mdc**](mdc:.cursor/rules/505-pydantic-schema-design.mdc) - Pydantic schema design best practices
 - [**prisma.mdc**](mdc:prisma.mdc) - Additional Prisma guidelines
 - [**api-routes.mdc**](mdc:api-routes.mdc) - API route implementation guidelines
 - [**data-fetching.mdc**](mdc:data-fetching.mdc) - Data fetching with SWR
@@ -75,6 +76,7 @@ Your question or request here...
 - [**910-assistant-autonomy.mdc**](mdc:910-assistant-autonomy.mdc) - Guideline for AI to prioritize self-research
 - [**911-ai-response-signature.mdc**](mdc:.cursor/rules/911-ai-response-signature.mdc) - Defines AI response signature fields
 - [**912-rule-scope-distinction.mdc**](mdc:.cursor/rules/912-rule-scope-distinction.mdc) - Clarifies scope of .cursor/rules vs project rules
+- [**915-agent-state-lifecycle.mdc**](mdc:.cursor/rules/915-agent-state-lifecycle.mdc) - Agent state and lifecycle management guidelines
 
 ### Coding Agent Patterns (1000 Series)
 - [**1000-coding_agent-feedback_instrumentation.mdc**](mdc:1000-coding_agent-feedback_instrumentation.mdc) - Ensure RL-driven features log user feedback events
