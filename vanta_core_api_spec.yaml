@@ -1,0 +1,47 @@
+apps:
+  - InnerCircle
+  - Guardian
+  - VantaChat
+  - Jan AI
+  - Future Apps (Unified Standard)
+
+api:
+  endpoints:
+    memory:
+      - contextual
+      - knowledge
+      - operational
+      - mythic_object
+      - mythic_path
+    agentic_session:
+      - session_id
+      - source
+      - timestamp
+      - agentic_opt_in
+      - do_not_narrativize
+    narrative:
+      - mythic_object
+      - mythic_path
+
+  model_router:
+    backends:
+      - openai
+      - ollama
+      - lmstudio
+    override:
+      model_hint: optional
+
+privacy:
+  - agentic_opt_in
+  - do_not_narrativize
+  - narrative_delete_request
+  - app_ui_disclosure_required
+
+authentication:
+  - bearer_token
+  - app_key_future
+
+network:
+  - localhost
+  - cloud_private
+  - embedded_on_device 

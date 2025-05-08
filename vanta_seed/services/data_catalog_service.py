@@ -1,13 +1,15 @@
 import logging
 import os
 import uuid # Added for generating Qdrant point IDs
-from typing import Dict, Any, Optional, List
+from typing import Dict, Any, Optional, List, Literal # Added Literal
 from qdrant_client import QdrantClient, models
-from qdrant_client.http.models import PointStruct, Distance, VectorParams, UpdateStatus, Filter, FieldCondition, MatchValue
-from pydantic import BaseModel, Field, Extra, ValidationError as PydanticValidationError # Alias Pydantic's
+from qdrant_client.http.models import PointStruct, Distance, VectorParams, UpdateStatus, Filter, FieldCondition, MatchValue, PayloadSchemaType
+from pydantic import BaseModel, Field # Removed Extra
 from qdrant_client.http.exceptions import UnexpectedResponse
 import httpx
 
+# Import BaseMemoryRecord and updated schemas
+from vanta_seed.schemas.base_schemas import BaseMemoryRecord
 # Import MemoryAgent schemas
 from vanta_seed.schemas.memory_agent_schemas import ContextualData, KnowledgeData, OperationalData
 # Import QdrantAdapter
@@ -47,18 +49,21 @@ MYTHIC_LINK_COLLECTION = "vanta_mythic_links"
 DUMMY_VECTOR_SIZE = 10 # Required by Qdrant, but not used for primary functionality here
 
 # Field names for natural IDs of Metadata and Schema, must match their Pydantic model field names
-METADATA_ID_FIELD = "data_source_id" # Assuming DataSourceMetadata will have this field
-SCHEMA_ID_FIELD = "schema_id"       # Assuming SchemaDefinition will have this field
+METADATA_ID_FIELD = "data_source_id"
+SCHEMA_ID_FIELD = "schema_id"
 
-# Field names for primary IDs in MemoryAgent data (used for Qdrant point IDs or filtering)
-# These match the Pydantic model field names for clarity.
-SESSION_ID_FIELD = "session_id"
+# Field names for primary IDs in MemoryAgent data
+CONTEXTUAL_DATA_ID_FIELD = "context_id" # New specific ID for ContextualData
 KNOWLEDGE_ID_FIELD = "knowledge_id"
-OPERATION_ID_FIELD = "operation_id"
+OPERATIONAL_ID_FIELD = "operational_id" # Corrected from operation_id for consistency
 
 # Field names for primary IDs in Mythic Layer data
-MYTHIC_OBJECT_ID_FIELD = "id" # Corresponds to MythicObject.id
-MYTHIC_LINK_ID_FIELD = "id"   # Corresponds to MythicLink.id
+MYTHIC_OBJECT_ID_FIELD = "mythic_object_id" # Corrected from "id"
+MYTHIC_LINK_ID_FIELD = "mythic_link_id"   # Corrected from "id"
+
+# Common fields from BaseMemoryRecord for potential indexing
+SESSION_ID_FIELD = "session_id" # Already defined, but good to note its role
+SOURCE_FIELD = "source"
 
 # --- Pydantic Models for Validation (Now with explicit ID fields) ---
 
@@ -68,17 +73,13 @@ class DataSourceMetadata(BaseModel):
     type: str # e.g., "PostgreSQL", "KafkaTopic", "S3Bucket", "APIEndpoint"
     owner: Optional[str] = None
     tags: Optional[List[str]] = Field(default_factory=list)
-    # Allow other fields to be present for flexibility
-    class Config:
-        extra = 'allow'
+    model_config = {"extra": "allow"} # Pydantic V2 style
 
 class SchemaProperty(BaseModel):
     type: str
     format: Optional[str] = None
     description: Optional[str] = None
-    # Allow other JSON schema attributes
-    class Config:
-        extra = 'allow'
+    model_config = {"extra": "allow"} # Pydantic V2 style
 
 class SchemaDefinition(BaseModel):
     schema_id: str = Field(..., description="The unique, user-defined identifier for the schema.")
@@ -86,10 +87,7 @@ class SchemaDefinition(BaseModel):
     properties: Dict[str, SchemaProperty] = Field(default_factory=dict)
     required: Optional[List[str]] = Field(default_factory=list)
     description: Optional[str] = None
-    # Allow other top-level JSON schema fields
-    class Config:
-        extra = 'allow'
-        populate_by_name = True # Allows using 'type' in input data for 'schema_type'
+    model_config = {"extra": "allow", "populate_by_name": True} # Pydantic V2 style
 
 class DataCatalogService:
     """
@@ -111,8 +109,8 @@ class DataCatalogService:
         self.contextual_adapter: Optional[QdrantAdapter] = None
         self.knowledge_adapter: Optional[QdrantAdapter] = None
         self.operational_adapter: Optional[QdrantAdapter] = None
-        self.mythic_object_adapter: Optional[QdrantAdapter] = None # New Adapter
-        self.mythic_link_adapter: Optional[QdrantAdapter] = None   # New Adapter
+        self.mythic_object_adapter: Optional[QdrantAdapter] = None
+        self.mythic_link_adapter: Optional[QdrantAdapter] = None
         self.knowledge_embedder: Optional[SimpleKnowledgeEmbedder] = None
 
         try:
@@ -121,26 +119,27 @@ class DataCatalogService:
             self.client.get_collections() 
             logger.info(f"Successfully connected to Qdrant at {self.qdrant_url}.")
 
-            self.metadata_adapter = QdrantAdapter(self.client)
-            self.schema_adapter = QdrantAdapter(self.client)
-            self.contextual_adapter = QdrantAdapter(self.client)
+            self.metadata_adapter = QdrantAdapter(self.client, id_field_name=METADATA_ID_FIELD)
+            self.schema_adapter = QdrantAdapter(self.client, id_field_name=SCHEMA_ID_FIELD)
+            self.contextual_adapter = QdrantAdapter(self.client, id_field_name=CONTEXTUAL_DATA_ID_FIELD)
             
             try:
                 self.knowledge_embedder = SimpleKnowledgeEmbedder()
                 if self.knowledge_embedder.model: 
-                    self.knowledge_adapter = QdrantAdapter(self.client, embedder=self.knowledge_embedder)
+                    self.knowledge_adapter = QdrantAdapter(self.client, 
+                                                           embedder=self.knowledge_embedder, 
+                                                           id_field_name=KNOWLEDGE_ID_FIELD)
                     logger.info("Knowledge adapter initialized WITH SimpleKnowledgeEmbedder.")
                 else:
                     logger.warning("Knowledge embedder model failed to load. Initializing knowledge adapter WITHOUT embedder.")
-                    self.knowledge_adapter = QdrantAdapter(self.client) 
+                    self.knowledge_adapter = QdrantAdapter(self.client, id_field_name=KNOWLEDGE_ID_FIELD)
             except Exception as embed_init_ex:
                 logger.error(f"Failed to initialize SimpleKnowledgeEmbedder: {embed_init_ex}. Knowledge adapter will be without embedder.")
-                self.knowledge_adapter = QdrantAdapter(self.client) 
+                self.knowledge_adapter = QdrantAdapter(self.client, id_field_name=KNOWLEDGE_ID_FIELD)
 
-            self.operational_adapter = QdrantAdapter(self.client) 
-            
-            self.mythic_object_adapter = QdrantAdapter(self.client) 
-            self.mythic_link_adapter = QdrantAdapter(self.client)
+            self.operational_adapter = QdrantAdapter(self.client, id_field_name=OPERATIONAL_ID_FIELD)
+            self.mythic_object_adapter = QdrantAdapter(self.client, id_field_name=MYTHIC_OBJECT_ID_FIELD)
+            self.mythic_link_adapter = QdrantAdapter(self.client, id_field_name=MYTHIC_LINK_ID_FIELD)
 
             logger.info("Qdrant Adapters initialized.")
             
@@ -174,46 +173,88 @@ class DataCatalogService:
 
     def _ensure_all_collections_exist(self):
         """Wrapper to ensure all necessary collections and their indexes are set up."""
-        # This method itself could raise QdrantConnectionError or QdrantOperationError if client not set or API calls fail
-        if not self.client: # Should be caught by __init__ but as a safeguard
+        if not self.client:
             raise ConnectionFailure("Cannot ensure collections: Qdrant client not initialized.")
         
-        collections_to_ensure = [
-            (METADATA_COLLECTION, METADATA_ID_FIELD, DUMMY_VECTOR_SIZE),
-            (SCHEMA_COLLECTION, SCHEMA_ID_FIELD, DUMMY_VECTOR_SIZE),
-            (CONTEXTUAL_DATA_COLLECTION, SESSION_ID_FIELD, DUMMY_VECTOR_SIZE),
-            (KNOWLEDGE_DATA_COLLECTION, KNOWLEDGE_ID_FIELD, 
-             KNOWLEDGE_EMBEDDING_DIMENSION if self.knowledge_embedder and self.knowledge_embedder.model else DUMMY_VECTOR_SIZE),
-            (OPERATIONAL_DATA_COLLECTION, OPERATION_ID_FIELD, DUMMY_VECTOR_SIZE),
-            (MYTHIC_OBJECT_COLLECTION, MYTHIC_OBJECT_ID_FIELD, DUMMY_VECTOR_SIZE), # Using DUMMY_VECTOR_SIZE for now
-            (MYTHIC_LINK_COLLECTION, MYTHIC_LINK_ID_FIELD, DUMMY_VECTOR_SIZE)      # Links likely won't be vectorized
-        ]
-        for name, id_field, vec_size in collections_to_ensure:
-            self._ensure_collection_with_index(name, id_field, vec_size)
+        # Define which collections store BaseMemoryRecord types for common indexing
+        base_memory_collections = {
+            CONTEXTUAL_DATA_COLLECTION, 
+            KNOWLEDGE_DATA_COLLECTION, 
+            OPERATIONAL_DATA_COLLECTION,
+            MYTHIC_OBJECT_COLLECTION,
+            MYTHIC_LINK_COLLECTION
+        }
 
-    def _ensure_collection_with_index(self, collection_name: str, id_field_for_index: str, vector_size: int):
-        """Ensures a Qdrant collection exists with specified vector size and a payload index."""
+        collections_to_ensure = [
+            (METADATA_COLLECTION, METADATA_ID_FIELD, DUMMY_VECTOR_SIZE, False), # Last bool: is_base_memory_type
+            (SCHEMA_COLLECTION, SCHEMA_ID_FIELD, DUMMY_VECTOR_SIZE, False),
+            (CONTEXTUAL_DATA_COLLECTION, CONTEXTUAL_DATA_ID_FIELD, DUMMY_VECTOR_SIZE, True),
+            (KNOWLEDGE_DATA_COLLECTION, KNOWLEDGE_ID_FIELD, 
+             KNOWLEDGE_EMBEDDING_DIMENSION if self.knowledge_embedder and self.knowledge_embedder.model else DUMMY_VECTOR_SIZE, True),
+            (OPERATIONAL_DATA_COLLECTION, OPERATIONAL_ID_FIELD, DUMMY_VECTOR_SIZE, True),
+            (MYTHIC_OBJECT_COLLECTION, MYTHIC_OBJECT_ID_FIELD, DUMMY_VECTOR_SIZE, True), 
+            (MYTHIC_LINK_COLLECTION, MYTHIC_LINK_ID_FIELD, DUMMY_VECTOR_SIZE, True)
+        ]
+        for name, id_field, vec_size, is_base_memory_type in collections_to_ensure:
+            fields_to_index = [id_field]
+            if is_base_memory_type:
+                fields_to_index.extend([SESSION_ID_FIELD, SOURCE_FIELD])
+            self._ensure_collection_with_indexes(name, vec_size, fields_to_index)
+
+    def _ensure_collection_with_indexes(self, collection_name: str, vector_size: int, payload_index_fields: List[str]):
+        """Ensures a Qdrant collection exists with specified vector size and payload indexes on given fields."""
         if not self.client: return
         try:
-            self.client.get_collection(collection_name=collection_name)
+            collection_info = self.client.get_collection(collection_name=collection_name)
             logger.info(f"Collection '{collection_name}' (vector_size: {vector_size}) already exists.")
-            # TODO: Optionally verify if existing collection vector_size matches desired, recreate if not (destructive).
-            # For now, assume it's compatible or was created correctly previously.
-        except UnexpectedResponse as ue: # Specifically catch collection not found case
-            if ue.status_code == 404:
-                logger.info(f"Collection '{collection_name}' not found. Attempting to create with vector_size: {vector_size}...")
+            # TODO: Optionally verify if existing collection vector_size matches desired.
+            # Check and create payload indexes if they don't exist
+            existing_indexes = {idx.key for idx in self.client.get_collection_payload_index(collection_name).indexes}
+            for field_name in payload_index_fields:
+                if field_name not in existing_indexes:
+                    logger.info(f"Creating payload index on field '{field_name}' for collection '{collection_name}'.")
+                    # Assuming keyword for string IDs, text for source, adjust if needed
+                    schema_type = PayloadSchemaType.KEYWORD if "id" in field_name.lower() else PayloadSchemaType.TEXT
+                    if field_name == SESSION_ID_FIELD: # Session ID is UUID, stored as string, so keyword is fine.
+                        schema_type = PayloadSchemaType.KEYWORD
+                    
+                    try:
+                        self.client.create_payload_index(collection_name=collection_name, field_name=field_name, field_schema=schema_type)
+                    except UnexpectedResponse as e:
+                        if "already exists" in str(e).lower() or e.status_code == 400: # Check for "already exists" or conflict
+                             logger.warning(f"Payload index on '{field_name}' for '{collection_name}' might already exist or conflict: {e}")
+                        else:
+                            raise # Re-raise other unexpected errors
+                    except Exception as e_gen: # Catch other potential errors during index creation
+                        logger.error(f"General error creating payload index on '{field_name}' for '{collection_name}': {e_gen}")
+                        raise OperationFailure(f"Failed to create payload index on {field_name} for {collection_name}", original_exception=e_gen)
+
+        except UnexpectedResponse as e:
+            if e.status_code == 404: # Collection does not exist
+                logger.info(f"Collection '{collection_name}' does not exist. Creating now with vector_size: {vector_size}.")
                 self.client.create_collection(
                     collection_name=collection_name,
                     vectors_config=models.VectorParams(size=vector_size, distance=models.Distance.COSINE)
                 )
-                logger.info(f"Collection '{collection_name}' created successfully with vector_size: {vector_size}.")
+                logger.info(f"Collection '{collection_name}' created.")
+                # Create payload indexes after collection creation
+                for field_name in payload_index_fields:
+                    logger.info(f"Creating payload index on field '{field_name}' for new collection '{collection_name}'.")
+                    schema_type = PayloadSchemaType.KEYWORD if "id" in field_name.lower() else PayloadSchemaType.TEXT
+                    if field_name == SESSION_ID_FIELD:
+                        schema_type = PayloadSchemaType.KEYWORD
+                    try:
+                        self.client.create_payload_index(collection_name=collection_name, field_name=field_name, field_schema=schema_type)
+                    except Exception as e_idx_new:
+                        logger.error(f"Error creating payload index on '{field_name}' for new collection '{collection_name}': {e_idx_new}")
+                        # Decide if this is fatal for collection setup or just a warning
+                        # For now, log and continue, but this might need stricter handling
             else:
-                raise # Re-raise other unexpected responses
-        try:
-            self.client.create_payload_index(collection_name=collection_name, field_name=id_field_for_index, field_schema=models.PayloadSchemaType.KEYWORD)
-            logger.info(f"Payload index ensured on '{id_field_for_index}' for collection '{collection_name}'.")
-        except Exception as e_index:
-            logger.warning(f"Could not create payload index on '{id_field_for_index}' for '{collection_name}': {e_index}")
+                logger.error(f"Failed to check/create collection '{collection_name}': {e}")
+                raise OperationFailure(f"Failed to ensure collection {collection_name}", original_exception=e)
+        except Exception as e:
+            logger.error(f"An unexpected error occurred with collection '{collection_name}': {e}")
+            raise OperationFailure(f"Unexpected error with collection {collection_name}", original_exception=e)
 
     def close_qdrant_client(self):
         if self.client:
@@ -234,7 +275,7 @@ class DataCatalogService:
         try: 
             # Pydantic validation happens on model instantiation if data is dict, or by adapter if model passed
             return self.metadata_adapter.upsert_model(METADATA_COLLECTION, data, METADATA_ID_FIELD)
-        except PydanticValidationError as ve: raise ValidationError("Invalid metadata for registration", ve)
+        except ValidationError as ve: raise
         except DataCatalogException: raise # Re-raise our specific exceptions from adapter
         except Exception as e: raise StorageFailure("Unexpected error registering metadata", e)
 
@@ -252,7 +293,7 @@ class DataCatalogService:
                 # Adapter will use id_value (path) for lookup, but model_update_instance payload is used for update content.
                 raise ValidationError(f"Path ID '{data_source_id}' does not match payload ID '{data_update.data_source_id}' for metadata update.")
             return self.metadata_adapter.update_model_by_id(METADATA_COLLECTION, data_source_id, data_update, METADATA_ID_FIELD)
-        except PydanticValidationError as ve: raise ValidationError("Invalid metadata for update", ve)
+        except ValidationError as ve: raise
         except DataCatalogException: raise 
         except Exception as e: raise StorageFailure(f"Unexpected error updating metadata for ID '{data_source_id}'", e)
 
@@ -272,7 +313,7 @@ class DataCatalogService:
     def register_schema(self, data: SchemaDefinition) -> bool:
         if not self.schema_adapter: raise ConfigurationError("SchemaAdapter not initialized")
         try: return self.schema_adapter.upsert_model(SCHEMA_COLLECTION, data, SCHEMA_ID_FIELD)
-        except PydanticValidationError as ve: raise ValidationError("Invalid schema for registration", ve)
+        except ValidationError as ve: raise
         except DataCatalogException: raise
         except Exception as e: raise StorageFailure("Unexpected error registering schema", e)
 
@@ -288,7 +329,7 @@ class DataCatalogService:
             if data_update.schema_id != schema_id: 
                 raise ValidationError(f"Path ID '{schema_id}' does not match payload ID '{data_update.schema_id}' for schema update.")
             return self.schema_adapter.update_model_by_id(SCHEMA_COLLECTION, schema_id, data_update, SCHEMA_ID_FIELD)
-        except PydanticValidationError as ve: raise ValidationError("Invalid schema for update", ve)
+        except ValidationError as ve: raise
         except DataCatalogException: raise
         except Exception as e: raise StorageFailure(f"Unexpected error updating schema for ID '{schema_id}'", e)
 
@@ -398,38 +439,38 @@ class DataCatalogService:
     # --- OperationalData Handlers (Using QdrantAdapter) ---
     def register_operational(self, data: OperationalData) -> Optional[OperationalData]:
         if not self.operational_adapter: return None
-        logger.info(f"Registering operational data with id: {data.operation_id}")
-        success = self.operational_adapter.upsert_model(OPERATIONAL_DATA_COLLECTION, data, OPERATION_ID_FIELD)
+        logger.info(f"Registering operational data with id: {data.operational_id}")
+        success = self.operational_adapter.upsert_model(OPERATIONAL_DATA_COLLECTION, data, OPERATIONAL_ID_FIELD)
         return data if success else None
 
-    def get_operational(self, operation_id: str) -> Optional[OperationalData]:
+    def get_operational(self, operational_id: str) -> Optional[OperationalData]:
         if not self.operational_adapter: return None
-        logger.info(f"Getting operational data for id: {operation_id}")
-        return self.operational_adapter.get_model_by_id(OPERATIONAL_DATA_COLLECTION, operation_id, OperationalData, OPERATION_ID_FIELD)
+        logger.info(f"Getting operational data for id: {operational_id}")
+        return self.operational_adapter.get_model_by_id(OPERATIONAL_DATA_COLLECTION, operational_id, OperationalData, OPERATIONAL_ID_FIELD)
 
-    def update_operational(self, operation_id: str, data_update: OperationalData) -> Optional[OperationalData]:
+    def update_operational(self, operational_id: str, data_update: OperationalData) -> Optional[OperationalData]:
         if not self.operational_adapter: return None
-        if data_update.operation_id != operation_id:
-            logger.warning(f"Operational update: Path id '{operation_id}' differs from payload '{data_update.operation_id}'. Using path ID.")
-            data_update.operation_id = operation_id
-        logger.info(f"Updating operational data for id: {operation_id}")
-        return self.operational_adapter.update_model_by_id(OPERATIONAL_DATA_COLLECTION, operation_id, data_update, OPERATION_ID_FIELD)
+        if data_update.operational_id != operational_id:
+            logger.warning(f"Operational update: Path id '{operational_id}' differs from payload '{data_update.operational_id}'. Using path ID.")
+            data_update.operational_id = operational_id
+        logger.info(f"Updating operational data for id: {operational_id}")
+        return self.operational_adapter.update_model_by_id(OPERATIONAL_DATA_COLLECTION, operational_id, data_update, OPERATIONAL_ID_FIELD)
 
-    def delete_operational(self, operation_id: str) -> bool:
+    def delete_operational(self, operational_id: str) -> bool:
         if not self.operational_adapter: return False
-        logger.info(f"Deleting operational data for id: {operation_id}")
-        return self.operational_adapter.delete_model_by_id(OPERATIONAL_DATA_COLLECTION, operation_id, OPERATION_ID_FIELD)
+        logger.info(f"Deleting operational data for id: {operational_id}")
+        return self.operational_adapter.delete_model_by_id(OPERATIONAL_DATA_COLLECTION, operational_id, OPERATIONAL_ID_FIELD)
 
     def list_operational_items(self) -> List[str]: # New method for API
         if not self.operational_adapter: return []
-        return self.operational_adapter.list_all_model_ids(OPERATIONAL_DATA_COLLECTION, OPERATION_ID_FIELD)
+        return self.operational_adapter.list_all_model_ids(OPERATIONAL_DATA_COLLECTION, OPERATIONAL_ID_FIELD)
 
     # --- MythicObject Management ---
     def register_mythic_object(self, data: MythicObject) -> bool:
         if not self.mythic_object_adapter: raise ConfigurationError("MythicObjectAdapter not initialized")
         try:
             return self.mythic_object_adapter.upsert_model(MYTHIC_OBJECT_COLLECTION, data, MYTHIC_OBJECT_ID_FIELD)
-        except PydanticValidationError as ve: raise ValidationError("Invalid MythicObject for registration", original_exception=ve)
+        except ValidationError as ve: raise
         except DataCatalogException: raise
         except Exception as e: raise StorageFailure("Unexpected error registering MythicObject", original_exception=e)
 
@@ -443,10 +484,10 @@ class DataCatalogService:
     def update_mythic_object(self, mythic_object_id: str, data_update: MythicObject) -> Optional[MythicObject]:
         if not self.mythic_object_adapter: raise ConfigurationError("MythicObjectAdapter not initialized")
         try:
-            if data_update.id != mythic_object_id: 
-                raise ValidationError(f"Path ID '{mythic_object_id}' does not match payload ID '{data_update.id}' for MythicObject update.")
+            if data_update.mythic_object_id != mythic_object_id: 
+                raise ValidationError(f"Path ID '{mythic_object_id}' does not match payload ID '{data_update.mythic_object_id}' for MythicObject update.")
             return self.mythic_object_adapter.update_model_by_id(MYTHIC_OBJECT_COLLECTION, mythic_object_id, data_update, MYTHIC_OBJECT_ID_FIELD)
-        except PydanticValidationError as ve: raise ValidationError("Invalid MythicObject for update", original_exception=ve)
+        except ValidationError as ve: raise
         except DataCatalogException: raise
         except Exception as e: raise StorageFailure(f"Unexpected error updating MythicObject for ID '{mythic_object_id}'", original_exception=e)
 
@@ -469,7 +510,7 @@ class DataCatalogService:
         if not self.mythic_link_adapter: raise ConfigurationError("MythicLinkAdapter not initialized")
         try:
             return self.mythic_link_adapter.upsert_model(MYTHIC_LINK_COLLECTION, data, MYTHIC_LINK_ID_FIELD)
-        except PydanticValidationError as ve: raise ValidationError("Invalid MythicLink for registration", original_exception=ve)
+        except ValidationError as ve: raise
         except DataCatalogException: raise
         except Exception as e: raise StorageFailure("Unexpected error registering MythicLink", original_exception=e)
 
@@ -483,10 +524,10 @@ class DataCatalogService:
     def update_mythic_link(self, mythic_link_id: str, data_update: MythicLink) -> Optional[MythicLink]:
         if not self.mythic_link_adapter: raise ConfigurationError("MythicLinkAdapter not initialized")
         try:
-            if data_update.id != mythic_link_id: 
-                raise ValidationError(f"Path ID '{mythic_link_id}' does not match payload ID '{data_update.id}' for MythicLink update.")
+            if data_update.mythic_link_id != mythic_link_id: 
+                raise ValidationError(f"Path ID '{mythic_link_id}' does not match payload ID '{data_update.mythic_link_id}' for MythicLink update.")
             return self.mythic_link_adapter.update_model_by_id(MYTHIC_LINK_COLLECTION, mythic_link_id, data_update, MYTHIC_LINK_ID_FIELD)
-        except PydanticValidationError as ve: raise ValidationError("Invalid MythicLink for update", original_exception=ve)
+        except ValidationError as ve: raise
         except DataCatalogException: raise
         except Exception as e: raise StorageFailure(f"Unexpected error updating MythicLink for ID '{mythic_link_id}'", original_exception=e)
 
@@ -527,6 +568,88 @@ class DataCatalogService:
         logger.info(f"Attempting to retrieve schema '{schema_id}' for topic '{data_topic}' based on direct mapping.")
         schema_def = self.get_schema(schema_id)
         return schema_def.model_dump(by_alias=True) if schema_def else None
+
+    # --- "Forget Me" Functionality ---
+    def delete_data_by_filter(self, collection_name: str, filter_model: models.Filter) -> bool:
+        """
+        Deletes points from a specified collection based on a Qdrant filter model.
+        Returns True if the delete operation was submitted successfully.
+        Relies on the appropriate adapter for the collection.
+        """
+        adapter = self._get_adapter_for_collection(collection_name)
+        if not adapter:
+            logger.error(f"No adapter found for collection '{collection_name}' in delete_data_by_filter.")
+            # Or raise ConfigurationError, depending on desired strictness
+            # raise ConfigurationError(f"Adapter not configured for collection {collection_name}")
+            return False # Indicate failure if adapter missing
+
+        try:
+            logger.info(f"Submitting delete request via adapter for '{collection_name}' with filter: {filter_model.model_dump_json(exclude_none=True)}")
+            return adapter.delete_points_by_filter(collection_name=collection_name, filter_model=filter_model)
+        except (ConnectionFailure, OperationFailure, StorageFailure) as e:
+            # Log the specific exception type caught from the adapter
+            logger.error(f"Adapter error during delete_data_by_filter for {collection_name}: {type(e).__name__} - {e}")
+            # Re-raise or handle as needed; for now, return False to indicate failure at service level
+            # raise StorageFailure(f"Failed to delete data from {collection_name}", original_exception=e) # Option to re-raise
+            return False
+        except Exception as e:
+            # Catch any other unexpected errors from the adapter call
+            logger.error(f"Unexpected adapter error during delete_data_by_filter for {collection_name}: {e}", exc_info=True)
+            return False
+
+    def delete_memory_records_by_identifier(
+        self,
+        identifier_value: str, # Could be session_id (UUID as str) or source (str)
+        identifier_type: Literal["session_id", "source"]
+    ) -> Dict[str, bool]: # Return Dict mapping collection name to success boolean
+        """
+        Deletes memory records across all relevant collections based on session_id or source.
+        Returns a dictionary with collection names and a boolean indicating if the delete operation was successfully submitted for that collection.
+        """
+        delete_success_map: Dict[str, bool] = {}
+        
+        filter_field_name = identifier_type
+
+        qdrant_filter = models.Filter(
+            must=[
+                models.FieldCondition(
+                    key=filter_field_name,
+                    match=models.MatchValue(value=str(identifier_value)) # Ensure value is string
+                )
+            ]
+        )
+
+        memory_collections = [
+            CONTEXTUAL_DATA_COLLECTION,
+            KNOWLEDGE_DATA_COLLECTION,
+            OPERATIONAL_DATA_COLLECTION,
+            MYTHIC_OBJECT_COLLECTION,
+            MYTHIC_LINK_COLLECTION,
+        ]
+
+        for collection_name in memory_collections:
+            try:
+                # Use the updated delete_data_by_filter which calls the adapter
+                success = self.delete_data_by_filter(collection_name=collection_name, filter_model=qdrant_filter)
+                delete_success_map[collection_name] = success
+            except Exception as e: # Catch errors bubbled up or occurring in this loop
+                logger.error(f"Error processing deletion for {collection_name} by {identifier_type}: {e}", exc_info=True)
+                delete_success_map[collection_name] = False # Mark as failed
+        
+        logger.info(f"Deletion by {identifier_type}='{identifier_value}' processed. Success map: {delete_success_map}")
+        return delete_success_map
+
+    def _get_adapter_for_collection(self, collection_name: str) -> Optional[QdrantAdapter]:
+        """Helper method to get the correct adapter instance based on collection name."""
+        if collection_name == METADATA_COLLECTION: return self.metadata_adapter
+        if collection_name == SCHEMA_COLLECTION: return self.schema_adapter
+        if collection_name == CONTEXTUAL_DATA_COLLECTION: return self.contextual_adapter
+        if collection_name == KNOWLEDGE_DATA_COLLECTION: return self.knowledge_adapter
+        if collection_name == OPERATIONAL_DATA_COLLECTION: return self.operational_adapter
+        if collection_name == MYTHIC_OBJECT_COLLECTION: return self.mythic_object_adapter
+        if collection_name == MYTHIC_LINK_COLLECTION: return self.mythic_link_adapter
+        logger.warning(f"No specific adapter found for collection: {collection_name}")
+        return None
 
 if __name__ == '__main__':
     # Example usage/basic test
@@ -640,7 +763,7 @@ if __name__ == '__main__':
         op1 = OperationalData(agent_id="test_agent_007", task_type="adapter_test", status="pending", inputs={"param": 1})
         reg_op1 = catalog.register_operational(op1)
         assert reg_op1 is not None
-        op1_id = reg_op1.operation_id
+        op1_id = reg_op1.operational_id
         get_op1 = catalog.get_operational(op1_id)
         assert get_op1 is not None and get_op1.status == "pending"
 
@@ -673,41 +796,41 @@ if __name__ == '__main__':
             reg_mo1_success = catalog.register_mythic_object(mo1)
             assert reg_mo1_success, "Failed to register MythicObject"
             
-            get_mo1 = catalog.get_mythic_object(mo1.id)
+            get_mo1 = catalog.get_mythic_object(mo1.mythic_object_id)
             assert get_mo1 is not None and get_mo1.type == "test_object", f"Failed to get MythicObject or type mismatch: {get_mo1}"
-            print(f"Registered and retrieved MythicObject: {get_mo1.id}")
+            print(f"Registered and retrieved MythicObject: {get_mo1.mythic_object_id}")
 
             mo1_update_payload = {"source_ids": ["kd_test1", "kd_test2"], "type": "updated_test_object", "collapsed_content": {"detail": "updated test"}, "tags": ["updated"]}
             # Need to pass the ID for update payload
-            mo1_update = MythicObject(id=mo1.id, **mo1_update_payload)
-            upd_mo1 = catalog.update_mythic_object(mo1.id, mo1_update)
+            mo1_update = MythicObject(mythic_object_id=mo1.mythic_object_id, **mo1_update_payload)
+            upd_mo1 = catalog.update_mythic_object(mo1.mythic_object_id, mo1_update)
             assert upd_mo1 is not None and upd_mo1.type == "updated_test_object" and "updated" in upd_mo1.tags, f"Failed to update MythicObject: {upd_mo1}"
-            print(f"Updated MythicObject: {upd_mo1.id}")
+            print(f"Updated MythicObject: {upd_mo1.mythic_object_id}")
 
             all_mo_ids = catalog.list_mythic_objects()
-            assert mo1.id in all_mo_ids, "MythicObject ID not in list"
+            assert mo1.mythic_object_id in all_mo_ids, "MythicObject ID not in list"
             print(f"Listed MythicObject IDs: {all_mo_ids}")
 
             # MythicLink
-            ml1_payload = {"source_object_id": mo1.id, "target_object_id": "another_mythic_id_placeholder", "link_type": "test_link"}
+            ml1_payload = {"source_object_id": mo1.mythic_object_id, "target_object_id": "another_mythic_id_placeholder", "link_type": "test_link"}
             ml1 = MythicLink(**ml1_payload)
             
             reg_ml1_success = catalog.register_mythic_link(ml1)
             assert reg_ml1_success, "Failed to register MythicLink"
 
-            get_ml1 = catalog.get_mythic_link(ml1.id)
+            get_ml1 = catalog.get_mythic_link(ml1.mythic_link_id)
             assert get_ml1 is not None and get_ml1.link_type == "test_link", f"Failed to get MythicLink or type mismatch: {get_ml1}"
-            print(f"Registered and retrieved MythicLink: {get_ml1.id}")
+            print(f"Registered and retrieved MythicLink: {get_ml1.mythic_link_id}")
             
-            del_mo1_success = catalog.delete_mythic_object(mo1.id)
+            del_mo1_success = catalog.delete_mythic_object(mo1.mythic_object_id)
             assert del_mo1_success, "Failed to delete MythicObject"
-            assert catalog.get_mythic_object(mo1.id) is None, "MythicObject not deleted"
-            print(f"Deleted MythicObject: {mo1.id}")
+            assert catalog.get_mythic_object(mo1.mythic_object_id) is None, "MythicObject not deleted"
+            print(f"Deleted MythicObject: {mo1.mythic_object_id}")
 
-            del_ml1_success = catalog.delete_mythic_link(ml1.id)
+            del_ml1_success = catalog.delete_mythic_link(ml1.mythic_link_id)
             assert del_ml1_success, "Failed to delete MythicLink"
-            assert catalog.get_mythic_link(ml1.id) is None, "MythicLink not deleted"
-            print(f"Deleted MythicLink: {ml1.id}")
+            assert catalog.get_mythic_link(ml1.mythic_link_id) is None, "MythicLink not deleted"
+            print(f"Deleted MythicLink: {ml1.mythic_link_id}")
             
             print("Mythic Layer CRUD tests passed conceptually.")
         else:

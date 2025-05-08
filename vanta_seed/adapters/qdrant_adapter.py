@@ -209,7 +209,52 @@ class QdrantAdapter:
             logger.error(f"{msg}: {e}", exc_info=True)
             raise StorageFailure(msg, original_exception=e)
 
-    def list_all_model_ids(self, collection_name: str, id_field_name_in_payload: str, limit: int = 100) -> List[str]:
+    def delete_points_by_filter(self, collection_name: str, filter_model: models.Filter) -> bool:
+        """
+        Deletes points matching a given filter. 
+        Returns True if the delete operation was submitted successfully, False otherwise.
+        Note: Qdrant delete is often async. This method indicates submission success.
+        Raises StorageFailure/ConnectionFailure/OperationFailure on errors.
+        """
+        if not isinstance(filter_model, models.Filter):
+            msg = "Invalid filter_model provided to delete_points_by_filter. Must be models.Filter."
+            logger.error(msg)
+            raise ValueError(msg)
+        
+        try:
+            logger.info(f"Attempting to delete points from '{collection_name}' matching filter: {filter_model.model_dump_json(exclude_none=True)}")
+            response = self.client.delete(
+                collection_name=collection_name,
+                points_selector=models.FilterSelector(filter=filter_model),
+                wait=True # Wait for acknowledgement or completion if possible
+            )
+            
+            if response.status == models.UpdateStatus.COMPLETED or response.status == models.UpdateStatus.ACKNOWLEDGED:
+                logger.info(f"Delete operation for filter submitted successfully for '{collection_name}'. Status: {response.status}")
+                return True
+            else:
+                msg = f"Delete by filter for '{collection_name}' failed with Qdrant status: {response.status}"
+                logger.error(msg)
+                raise OperationFailure(msg)
+        except httpx.ConnectError as ce:
+            msg = f"Connection error during delete_points_by_filter for '{collection_name}'"
+            logger.error(f"{msg}: {ce}")
+            raise ConnectionFailure(msg, original_exception=ce)
+        except UnexpectedResponse as ue:
+            # Don't treat 404 (collection not found) as False, raise it as an OperationFailure
+            if ue.status_code == 404: 
+                 msg = f"Collection '{collection_name}' not found during delete_by_filter. Status: {ue.status_code}"
+                 logger.error(msg)
+                 raise OperationFailure(msg, original_exception=ue)
+            msg = f"Qdrant HTTP error during delete_points_by_filter for '{collection_name}' (Status: {ue.status_code})"
+            logger.error(f"{msg}: {ue.content.decode() if ue.content else 'No content'}")
+            raise OperationFailure(msg, original_exception=ue)
+        except Exception as e:
+            msg = f"Unexpected error during delete_points_by_filter for '{collection_name}'"
+            logger.error(f"{msg}: {e}", exc_info=True)
+            raise StorageFailure(msg, original_exception=e)
+
+    def list_all_model_ids(self, collection_name: str, id_field_name_in_payload: str, limit: int = 1000) -> List[str]: # Increased default limit
         """Lists all natural IDs. Returns list of IDs or empty list. Raises StorageFailure on error."""
         if not self.client: raise ConnectionFailure("Qdrant client not initialized for list_all_model_ids")
         ids: List[str] = []
