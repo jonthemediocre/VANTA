@@ -121,3 +121,52 @@ Currently blocked on installing `sentence-transformers` (and its dependency `tor
 - Successfully run `python -m piptools compile --resolver=backtracking requirements.in -o requirements.txt` to generate a complete `requirements.txt`.
 - Successfully run `pip install -r requirements.txt`.
 - Successfully run `python -m vanta_seed.services.ritual_collapse_service` without `ModuleNotFoundError` for `sentence_transformers`. 
+
+# --- VANTA Kernel Protocol Automation (Agentic DevOps Standard) ---
+- [ ] Integrate `.github/workflows/vanta_kernel_protocol.yml` for scheduled protocol actions (commit graph, trigger registry, RL label generation, dependency audit, security scan)
+- [ ] Implement and maintain `scripts/update_protocol_registry.py` and `scripts/generate_rl_labels.py` for auto-generation
+- [ ] Ensure `docs/triggers.md` is always up-to-date and auto-generated
+- [ ] All protocol and symbolic trigger changes must be validated by scheduled automation
+- [ ] This is mandatory for VANTA Kernel, Guardian, InnerCircle, VantaChat
+- [ ] Tags: #agentic_devops #protocol_integrity
+
+# --- VANTA Kernel + Cross-App Protocol Trigger System ---
+# (As per user specification - requires CoT for prioritization and ownership)
+
+- [ ] **Design & Implement `trigger_registry.py`**:
+    - Define universal kernel trigger definitions.
+    - Ensure it's app-agnostic, context-aware, and auto-loaded by Trigger Engine.
+    - User to define: Priority, Ownership.
+- [ ] **Design & Implement `vanta_trigger_engine.py`**:
+    - Implement universal trigger resolution logic.
+    - Enable module-based execution for different protocols.
+    - Support app-level and child-level context.
+    - User to define: Priority, Ownership.
+- [ ] **Design & Implement `efficacy_score.py`**:
+    - Implement RL feedback and decay system.
+    - Include time-based decay and caregiver manual override.
+    - Integrate with RitualCollapse, MythicRecall, and Trigger Engine.
+    - User to define: Priority, Ownership.
+- [ ] **Design & Implement `caregiver_roles.yaml` (or `roles.yaml`)**:
+    - Define UI/Access Role Binding.
+    - Ensure it's a universal access filter, aware of app and Narrative Recall.
+    - User to define: Priority, Ownership.
+- [ ] **Define Visual Prompt Engine Output Format**:
+    - Specify the universal response format for visual prompts (message, animation, emotions).
+    - Ensure it's cross-app ready (Guardian, InnerCircle, VantaChat).
+    - User to define: Priority, Ownership.
+- [ ] **Design & Implement DevOps Auto-Documentation & Training Label Generation**:
+    - Auto-register triggers in `THEPLAN.md`.
+    - Generate `docs/triggers.md`, `app_triggers/<app_name>.yaml`, and `rl_training_rows.csv`.
+    - Ensure it's auto-maintained for continuous RL training batches.
+    - User to define: Priority, Ownership.
+- [ ] **(Optional - v2) Design & Implement Symbolic Cross-Child Learning**:
+    - Utilize `MythicObject.tags` for age, trauma, diagnosis.
+    - Enable recall for "what worked for similar cases?"
+    - Integrate with VANTA+Guardian combined knowledge recall.
+    - User to define: Priority, Ownership.
+
+- [ ] **Chain of Thought (CoT) for Kernel System**:
+    - Sequence development priority for the above modules.
+    - Recommend module ownership structure.
+    - Generate initial development stubs where appropriate (after dependency resolution). 

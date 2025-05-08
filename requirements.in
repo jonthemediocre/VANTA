@@ -6,7 +6,7 @@ uvicorn[standard]
 pydantic
 
 # LLM Serving
-vllm
+# vllm
 
 # Config & Utils
 pyyaml
@@ -31,6 +31,10 @@ qdrant-client # Added for Data Catalog persistence
 # Other direct dependencies
 transformers
 tokenizers
-torch
-outlines 
+# torch==2.6.0 # Pinned to match vllm==0.8.3 requirement
+# outlines # Temporarily commented out to isolate dependency conflict
 sentence-transformers # Added for knowledge embedding 
+
+# aiortc==1.11.0
+# numpy==2.2.5
+# vllm==0.8.3 

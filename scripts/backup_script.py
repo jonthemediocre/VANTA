@@ -23,6 +23,8 @@ def main():
     parser.add_argument("instance_path", help="The root path to the instance directory.")
     parser.add_argument("--archive-dir", default="./archive", help="Directory to store backups (default: ./archive)")
     parser.add_argument("--backup-id", default="manual_backup", help="An identifier for this backup (default: manual_backup)")
+    parser.add_argument("--commit", action="store_true", help="Commit all changes to git after backup")
+    parser.add_argument("--push", action="store_true", help="Push committed changes to remote after commit (implies --commit)")
 
     args = parser.parse_args()
 
@@ -50,6 +52,32 @@ def main():
         
         if backup_file:
             logger.info(f"Backup successful: {backup_file}")
+            commit_hash = None
+            if args.commit or args.push:
+                # ---
+                # Perform git commit and push at the project root, not the instance directory
+                # ---
+                project_root = Path(__file__).parent.parent.resolve()
+                commit_msg = f"[Auto-backup] {args.backup_id} - Routine commit after backup ({backup_file.name})"
+                try:
+                    import git
+                    repo = git.Repo(project_root)
+                    repo.git.add(A=True)
+                    if repo.is_dirty():
+                        commit = repo.index.commit(commit_msg)
+                        commit_hash = commit.hexsha
+                        logger.info(f"Git commit successful at project root: {commit_hash}")
+                    else:
+                        logger.info("No changes to commit at project root.")
+                except Exception as e:
+                    logger.error(f"Git commit failed at project root: {e}")
+            if args.push:
+                import subprocess
+                try:
+                    result = subprocess.run(["git", "push"], cwd=project_root, check=True, capture_output=True, text=True)
+                    logger.info(f"Git push successful at project root: {result.stdout.strip()}")
+                except Exception as e:
+                    logger.error(f"Git push failed at project root: {e}")
             sys.exit(0)
         else:
             logger.error("Backup failed.")

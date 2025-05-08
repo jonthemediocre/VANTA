@@ -24,3 +24,28 @@ collector = FeedbackCollectorAgent()
 ## New Agent Feature
 (No code citation provided.)
 ```
+
+# Coding Agent Plan Synchronization & Protocol Compliance
+
+## Purpose
+- Ensure all code changes are reflected in project planning documents (e.g., THEPLAN.md, TODO.md)
+- Enforce that protocol compliance checks are part of the required automation for agentic projects (e.g., VANTA Kernel)
+
+## Requirements
+- On every merge or scheduled automation run, validate that:
+  - All new or modified features are documented in THEPLAN.md and/or TODO.md
+  - Protocol state is validated using a compliance checker (e.g., scripts/check_protocol_compliance.py)
+  - Triggers, roles, and protocol modules are cross-checked for completeness and correctness
+  - Any protocol compliance errors must fail CI/CD and block merges until resolved
+
+## Implementation Guidance
+- Integrate protocol compliance checks into GitHub Actions or CI/CD workflows
+- Reference compliance scripts in workflow YAML (e.g., vanta_kernel_protocol.yml)
+- Output clear, actionable error messages for any protocol drift or misalignment
+- Document protocol compliance status in PRs and release notes
+
+## Best Practices
+1. Always update THEPLAN.md and TODO.md when adding or changing features
+2. Run protocol compliance checks locally before pushing changes
+3. Treat protocol compliance failures as critical blockers
+4. Regularly review and update compliance scripts as protocol evolves

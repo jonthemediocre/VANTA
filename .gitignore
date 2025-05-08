@@ -8,6 +8,7 @@ __pycache__/
 
 # Virtual environment
 .venv/
+.venv-wsl/
 venv/
 env/
 
@@ -32,4 +33,13 @@ Thumbs.db
 # VANTA-SEED generated files
 /vanta_seed/logs/
 /vanta_seed/memory/vector_store.db # Example if using local persistent chromadb
-/vanta_seed/.venv/ # If a separate venv is created inside 
+/vanta_seed/.venv/ # If a separate venv is created inside
+
+# Archives and logs
+archive/
+logs/
+*.zip
+*.tar.gz
+
+# Python
+*.pyc

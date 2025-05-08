@@ -30,8 +30,12 @@ Your question or request here...
 
 ### Core & Architecture (000 & 100 Series)
 - [**000-base.mdc**](mdc:000-base.mdc) - Base architectural principles and patterns
+- [**005-destructive-op-safety.mdc**](mdc:.cursor/rules/005-destructive-op-safety.mdc) - Safety protocol for destructive file operations.
+- [**006-system-incoherence-protocol.mdc**](mdc:.cursor/rules/006-system-incoherence-protocol.mdc) - Protocol for detecting and resolving system layer incoherence.
+- [**007-desktop-commander-best-practices.mdc**](mdc:.cursor/rules/007-desktop-commander-best-practices.mdc) - Best practices for using mcp-desktop-commander tools.
 - [**010-mvp-phase-scoping.mdc**](mdc:.cursor/rules/010-mvp-phase-scoping.mdc) - Strategy for prioritizing MVP features in early phases
 - [**100-next-components.mdc**](mdc:100-next-components.mdc) - Next.js component standards
+- [**100-vanta-coder-overlay.mdc**](mdc:.cursor/rules/100-vanta-coder-overlay.mdc) - Defines the Vanta! Coder agent overlay and principles.
 - [**110-feature-parity.mdc**](mdc:.cursor/rules/110-feature-parity.mdc) - Strategy for maintaining core feature parity across platforms
 
 ### UI & Design (100-200 Series)
@@ -42,6 +46,7 @@ Your question or request here...
 ### Error Handling & Testing (300 Series)
 - [**300-error-handling.mdc**](mdc:300-error-handling.mdc) - Error handling guidelines
 - [**310-dependency-hygiene.mdc**](mdc:.cursor/rules/310-dependency-hygiene.mdc) - Dependency vulnerability management
+- [**311-cross-platform-deps.mdc**](mdc:.cursor/rules/311-cross-platform-deps.mdc) - Cross-platform dependency management guideline
 - [**testing.mdc**](mdc:testing.mdc) - Testing guidelines and practices
 - [**llm-test.mdc**](mdc:llm-test.mdc) - LLM testing guidelines
 
@@ -57,7 +62,10 @@ Your question or request here...
 - [**data-fetching.mdc**](mdc:data-fetching.mdc) - Data fetching with SWR
 - [**server-actions.mdc**](mdc:server-actions.mdc) - Next.js server actions
 
-### Documentation & Learning (600 Series)
+### Documentation, Learning & System Principles (600, 900 Series, Foundational)
+- [**101-vanta-agent-contract.mdc**](mdc:101-vanta-agent-contract.mdc) - Canonical VANTA agent contract and lifecycle principles.
+- [**201-vanta-logging-core-requirements.mdc**](mdc:201-vanta-logging-core-requirements.mdc) - Essential logging requirements for VANTA components.
+- [**501-vanta-memory-principles.mdc**](mdc:501-vanta-memory-principles.mdc) - Canonical principles for VANTA agent memory and RL context.
 - [**600-ai-learnings.mdc**](mdc:600-ai-learnings.mdc) - AI learning documentation
 - [**904-core-documentation.mdc**](mdc:904-core-documentation.mdc) - Documentation requirements
 - [**904-documentation-index.mdc**](mdc:904-documentation-index.mdc) - Documentation indexing
@@ -73,10 +81,18 @@ Your question or request here...
 - [**903-rl-suggestion.mdc**](mdc:903-rl-suggestion.mdc) - RL suggestion system
 - [**905-orchestrator-agent.mdc**](mdc:905-orchestrator-agent.mdc) - Task orchestration agent
 - [**906-documentation-sync.mdc**](mdc:906-documentation-sync.mdc) - Documentation synchronization
+- [**910-vanta-testing-protocol.mdc**](mdc:.cursor/rules/910-vanta-testing-protocol.mdc) - Defines testing standards and required libraries for VANTA Kernel.
 - [**910-assistant-autonomy.mdc**](mdc:910-assistant-autonomy.mdc) - Guideline for AI to prioritize self-research
 - [**911-ai-response-signature.mdc**](mdc:.cursor/rules/911-ai-response-signature.mdc) - Defines AI response signature fields
 - [**912-rule-scope-distinction.mdc**](mdc:.cursor/rules/912-rule-scope-distinction.mdc) - Clarifies scope of .cursor/rules vs project rules
+- [**913-compliance-script-output.mdc**](mdc:.cursor/rules/913-compliance-script-output.mdc) - Standardizes output and exit codes for compliance/validation scripts
+- [**914-pytest-scenario-alternative.mdc**](mdc:.cursor/rules/914-pytest-scenario-alternative.mdc) - Outlines pytest-scenario as an alternative for scenario testing.
 - [**915-agent-state-lifecycle.mdc**](mdc:.cursor/rules/915-agent-state-lifecycle.mdc) - Agent state and lifecycle management guidelines
+- [**916-ai-codebase-interaction-model.mdc**](mdc:916-ai-codebase-interaction-model.mdc) - Clarifies AI's model for interacting with the codebase.
+- [**920-agent-resource-conventions.mdc**](mdc:920-agent-resource-conventions.mdc) - Canonical conventions for VANTA agent resource loading and pathing.
+- [**921-vanta-mcp-signal-schema.mdc**](mdc:921-vanta-mcp-signal-schema.mdc) - Defines standard schema for MCP (Orchestrator) signals.
+- [**922-agentic-replay-log-schema.mdc**](mdc:.cursor/rules/922-agentic-replay-log-schema.mdc) - Defines the schema and guidelines for logging to agentic_replay.log.jsonl.
+- [**agent_cascade_definitions.mdc**](mdc:agent_cascade_definitions.mdc) - Defines agent cascade profiles, triggers, and sequences.
 
 ### Coding Agent Patterns (1000 Series)
 - [**1000-coding_agent-feedback_instrumentation.mdc**](mdc:1000-coding_agent-feedback_instrumentation.mdc) - Ensure RL-driven features log user feedback events

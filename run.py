@@ -727,3 +727,85 @@ async def handle_chat_completions(
         logger.exception(f"Unexpected error processing chat completion request: {e}")
         raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
 # ------------------------------------------------------
+
+# Assuming your project structure allows these imports
+# Adjust paths if necessary, e.g., if run.py is not at the root
+try:
+    from vanta_seed.api import catalog_api # Existing Catalog API
+    from vanta_seed.api import protocol_api # The new Protocol API
+    from vanta_seed.services.data_catalog_service import DataCatalogService
+    # Add other service imports needed for lifespan if any
+except ImportError as e:
+    logging.basicConfig(level=logging.ERROR)
+    logging.error(f"Failed to import API modules or Services. Check PYTHONPATH and structure: {e}")
+    sys.exit(1)
+
+# Configure logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
+
+# --- Lifespan Management --- 
+
+# Store service instances in a dictionary to be accessible within lifespan
+lifespan_services = {}
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup: Initialize services
+    logger.info("Application startup: Initializing services...")
+    try:
+        # Initialize DataCatalogService (assuming it has __init__ logic)
+        lifespan_services["catalog"] = DataCatalogService()
+        logger.info("DataCatalogService initialized.")
+        
+        # If Protocol API needs lifespan management (e.g., for its engine instance),
+        # you would initialize it here as well.
+        # lifespan_services["protocol_engine"] = VantaTriggerEngine() # Example
+        
+        # Add initialization for other services as needed
+        
+    except Exception as e:
+        logger.exception("Failed to initialize services during startup!", exc_info=True)
+        # Depending on severity, you might want to exit or handle differently
+        # For now, log the error and continue startup.
+
+    yield # Application runs here
+
+    # Shutdown: Cleanup resources if necessary
+    logger.info("Application shutdown: Cleaning up resources...")
+    catalog_service = lifespan_services.get("catalog")
+    if hasattr(catalog_service, 'close') and callable(catalog_service.close):
+        try:
+            await catalog_service.close() # Assuming an async close method exists
+            logger.info("DataCatalogService connection closed.")
+        except Exception as e:
+             logger.exception("Error closing DataCatalogService connection.", exc_info=True)
+    
+    # Add cleanup for other services
+    logger.info("Cleanup complete.")
+
+# --- FastAPI App Instance --- 
+
+app = FastAPI(
+    title="VANTA Core API",
+    description="API for VANTA Kernel services including Data Catalog and Protocol Engine.",
+    version="0.1.0",
+    lifespan=lifespan # Use the lifespan manager
+)
+
+# --- Include Routers --- 
+
+logger.info("Including API routers...")
+app.include_router(catalog_api.router)
+logger.info("Included Catalog API router at {}...".format(catalog_api.router.prefix))
+app.include_router(protocol_api.router)
+logger.info("Included Protocol API router at {}...".format(protocol_api.router.prefix))
+
+# Add other routers as needed
+
+# --- Main Execution --- 
+
+if __name__ == "__main__":
+    logger.info("Starting VANTA Core API server...")
+    # Use port 8002 as previously established
+    uvicorn.run("run:app", host="0.0.0.0", port=8002, reload=True, log_level="info")
