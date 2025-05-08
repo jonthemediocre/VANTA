@@ -1,0 +1,10 @@
+pytest
+pytest-asyncio
+httpx
+pytest-httpx
+pytest-bdd
+pydantic
+pytest-mock
+mypy
+black
+flake8 

@@ -1,0 +1,88 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# RULE TYPE: Best Practice
+# FILE PATTERNS: scripts/check_*.py, scripts/validate_*.py
+
+# Standardized Compliance/Validation Script Output & Exit Codes
+
+## 1. Purpose
+To ensure that all compliance, linting, and validation scripts used within the VANTA ecosystem provide clear, consistent, and machine-interpretable results, especially for CI/CD pipelines.
+
+## 2. Exit Code Conventions
+
+- **Exit Code 0 (Success):**
+  - The script completed successfully, AND no errors or critical warnings that block progression were found.
+  - Non-critical warnings MAY be present but should not prevent a "success" status if they don't indicate a broken state.
+
+- **Exit Code Non-Zero (Failure):**
+  - The script encountered errors during execution (e.g., file not found, parsing error).
+  - OR, validation checks failed with one or more ERRORS.
+  - Different non-zero codes can be used to signify different types of failures if granular error reporting is needed by CI, but a general non-zero for any failure is the minimum.
+
+## 3. Standard Output (stdout) Conventions
+
+### 3.1. Summary Line (Mandatory Last Line of Output on Success/Failure)
+All scripts MUST print a clear summary line as the *very last line* of their standard output.
+
+- **On Success (Exit Code 0):**
+  - Format: `VANTA_COMPLIANCE_CHECK_PASSED: [script_name] - All checks passed.`
+  - Example: `VANTA_COMPLIANCE_CHECK_PASSED: scripts/check_protocol_compliance.py - All checks passed.`
+  - If warnings were present but did not constitute failure:
+    `VANTA_COMPLIANCE_CHECK_PASSED_WITH_WARNINGS: [script_name] - Checks passed with [N] warning(s).`
+
+- **On Failure (Non-Zero Exit Code):**
+  - Format: `VANTA_COMPLIANCE_CHECK_FAILED: [script_name] - [M] error(s) found.`
+  - Example: `VANTA_COMPLIANCE_CHECK_FAILED: scripts/check_protocol_compliance.py - 2 error(s) found.`
+
+### 3.2. Detailed Messages (stdout or stderr)
+- **ERRORS:** Must be clearly prefixed with `[ERROR] `.
+  - Example: `[ERROR] Trigger 'some_trigger' references undefined module: non_existent_module`
+- **WARNINGS:** Must be clearly prefixed with `[WARN] `.
+  - Example: `[WARN] Role 'guest' defined but not used in any trigger.`
+- **INFO/DEBUG:** Can be used for verbose output but should not be mistaken for errors or warnings.
+
+## 4. Rationale
+- **CI/CD Integration:** Standardized exit codes and summary lines allow CI/CD pipelines to easily determine success or failure without parsing complex output.
+- **Clarity:** Consistent prefixes for errors and warnings make logs easier for developers to read and debug.
+- **Automation:** Predictable output aids in building further automation around these scripts (e.g., dashboards, automated issue creation).
+
+## 5. Example Implementation (Python)
+
+```python
+import sys
+
+def main():
+    errors = []
+    warnings = []
+    script_name = sys.argv[0]
+
+    # ... perform checks ...
+    # if an_error_condition:
+    #     errors.append("[ERROR] Specific error message here.")
+    # if a_warning_condition:
+    #     warnings.append("[WARN] Specific warning message here.")
+
+    for warning_msg in warnings:
+        print(warning_msg)
+    for error_msg in errors:
+        print(error_msg) # Or print to sys.stderr
+
+    if errors:
+        print(f"VANTA_COMPLIANCE_CHECK_FAILED: {script_name} - {len(errors)} error(s) found.")
+        sys.exit(1)
+    elif warnings:
+        print(f"VANTA_COMPLIANCE_CHECK_PASSED_WITH_WARNINGS: {script_name} - Checks passed with {len(warnings)} warning(s).")
+        sys.exit(0)
+    else:
+        print(f"VANTA_COMPLIANCE_CHECK_PASSED: {script_name} - All checks passed.")
+        sys.exit(0)
+
+if __name__ == "__main__":
+    main()
+```
+
+## 6. Adoption
+All new and existing compliance/validation scripts within the `scripts/` directory (matching `check_*.py` or `validate_*.py`) should be updated to adhere to this standard.

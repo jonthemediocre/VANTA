@@ -1,0 +1,12 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+- All Protocol, API, and Agent logic must be tested via `pytest` + `pytest-asyncio`.
+- Ritual + MCP Cascade workflows must be validated using `pytest-bdd` or `pytest-scenario`.
+- FastAPI endpoints must be tested using `httpx` + `pytest-httpx`.
+- Agent interaction and orchestration scenarios must use mocking frameworks (`pytest-mock`).
+- MCP Signals and replay logs must be verified against schema using `pydantic` and log analysis.
+- Agent contracts must be validated with `mypy` + runtime `pydantic` model checks.
+- Code formatting and linting is mandatory via `black` and `flake8`.

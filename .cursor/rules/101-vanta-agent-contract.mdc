@@ -1,0 +1,53 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# RULE TYPE: Always (Core VANTA Agent Principle)
+# FILE PATTERNS: N/A (Universal Agent Design Contract)
+
+# VANTA Agent Contract & Lifecycle Principles
+
+## 1. Core Agent Interface (Conceptual from `agent_base.py`)
+All VANTA agents MUST conceptually adhere to a base contract that includes:
+    - **`__init__(self, agent_id, core_config, plugin_manager, **kwargs)`**: Standardized initialization.
+    - **`async setup(self)`**: For one-time asynchronous setup tasks (e.g., connecting to resources).
+    - **`async process_task(self, task_data: dict) -> dict`**: The primary method for handling an incoming task. Must return a structured dictionary.
+    - **`async teardown(self)`**: For graceful shutdown and resource cleanup.
+    - **`get_status(self) -> dict`**: Method to report agent health and current status.
+    - **`load_config(self, config_data: dict)`**: Method for dynamic configuration updates.
+
+## 2. Task Handling
+    - **Input Validation:** Agents MUST validate incoming `task_data` against an expected schema (e.g., Pydantic model).
+    - **Structured Output:** `process_task` MUST return a dictionary containing at least `{"status": "success|failure|error", "output": {}, "error_message": "..."}`.
+    - **Idempotency:** Design tasks to be idempotent where feasible, or clearly document non-idempotent operations.
+    - **Error Propagation:** Errors should be caught, logged according to `201-vanta-logging-core-requirements.mdc`, and returned in the structured output. Do not let unhandled exceptions crash the agent.
+
+## 3. State Management
+    - Agents should manage their internal state carefully.
+    - Persistent state requirements should leverage mechanisms defined in `501-vanta-memory-principles.mdc`.
+    - Avoid excessive in-memory state that cannot be recovered.
+
+## 4. Configuration
+    - Agents should be configurable via the `core_config` passed during initialization and potentially via `load_config`.
+    - Resource paths, model names, and other operational parameters should be externalized (see `920-agent-resource-conventions.mdc`).
+
+## 5. Logging & Observability
+    - Adhere strictly to `201-vanta-logging-core-requirements.mdc` for all logging.
+    - Ensure logs provide sufficient context for debugging and tracing task execution.
+    - Expose status via `get_status()` for monitoring.
+
+## 6. Resource Management
+    - Acquire resources in `setup()` or on-demand.
+    - Release resources reliably in `teardown()` or when no longer needed.
+    - Follow conventions in `920-agent-resource-conventions.mdc` for locating models, data, etc.
+
+## 7. Agent Interaction & Cascades
+    - Agents may initiate cascades or signal other agents via the Orchestrator, following patterns in `agent_cascade_definitions.mdc`.
+    - Outputs intended for downstream agents in a cascade should be clearly structured and documented.
+
+## 8. Security
+    - Handle sensitive data (API keys, PII) with extreme care.
+    - Do not log sensitive data directly. Use secure stores or environment variables.
+
+*This rule codifies the foundational expectations for any component acting as a VANTA agent.*

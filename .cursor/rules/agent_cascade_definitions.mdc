@@ -1,0 +1,275 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# RULE TYPE: Agent Configuration / Orchestration Logic
+# FILE PATTERNS: N/A (Loaded by system)
+
+# Agent Cascade Definitions
+
+## Principle:
+# This document defines reusable "cascade profiles" that orchestrate sequences of agents
+# triggered by specific conditions or by other agents. It enables the
+# "Domino Agentic Execution Pattern."
+
+# --- SCHEMA FOR CASCADE PROFILES ---
+#
+# profiles:
+#   - profile_id: unique_string_identifier (e.g., "protocol_layer_change_cascade")
+#     description: "Human-readable description of what this cascade does."
+#     trigger_type: "AUTO_ON_CONDITION" | "AGENT_INITIATED" | "USER_CONFIRMED_WHISPER"
+#     trigger_conditions: [] # See detailed examples below
+#     parameters_expected: [] # For AGENT_INITIATED
+#     agent_sequence: [] # Sequence of agent_id, input_mapping, on_success, on_failure, etc.
+#     whisper_mode_details: {} # For USER_CONFIRMED_WHISPER
+#     error_handling_cascade_profile_id: "string"
+#     logging_level: "VERBOSE" | "STANDARD" | "MINIMAL"
+
+# --- EXAMPLE CASCADE PROFILES ---
+profiles:
+  # --- Profile ID: core_protocol_modification_cascade (from previous discussion) ---
+  - profile_id: "core_protocol_modification_cascade"
+    description: "Full validation, RL labeling, and testing for critical protocol/trigger engine changes."
+    trigger_type: "AGENT_INITIATED"
+    parameters_expected:
+      - name: "modified_files"
+        type: "list[string]"
+        required: true
+      - name: "change_summary"
+        type: "string"
+        required: true
+      - name: "initiating_agent_id"
+        type: "string"
+        required: true
+    agent_sequence:
+      - agent_id: "protocol_validator_agent"
+        input_mapping:
+          files_to_validate: "{{trigger.parameters.modified_files}}"
+          validation_ruleset: "strict_protocol_rules"
+        on_failure: "LOG_AND_HALT"
+      - agent_id: "rl_label_agent"
+        input_mapping:
+          files_for_labeling: "{{trigger.parameters.modified_files}}"
+          change_description: "{{trigger.parameters.change_summary}}"
+          source_agent: "{{trigger.parameters.initiating_agent_id}}"
+        on_failure: "LOG_AND_PROCEED"
+      - agent_id: "testing_agent"
+        input_mapping:
+          test_scope: "integration"
+          specific_files_to_target: "{{trigger.parameters.modified_files}}"
+        on_failure: "LOG_AND_TRIGGER_CASCADE_PROFILE"
+        on_failure_cascade_profile_id: "test_failure_investigation_cascade"
+    logging_level: "VERBOSE"
+
+  # --- Profile ID: agent_contract_change_validation_cascade (NEW) ---
+  - profile_id: "agent_contract_change_validation_cascade"
+    description: "Validates and documents changes related to core VANTA agent contracts (e.g., if agent_base.py or 101-vanta-agent-contract.mdc is modified)."
+    trigger_type: "AUTO_ON_CONDITION"
+    trigger_conditions:
+      - condition_type: "FILE_MODIFICATION"
+        details:
+          file_patterns: [".cursor/rules/101-vanta-agent-contract.mdc"]
+      - condition_type: "USER_INTENT_MATCH"
+        details:
+          intents: ["modify_agent_base", "update_agent_lifecycle", "refactor_core_agent_interface"]
+    agent_sequence:
+      - agent_id: "impact_analyzer_agent"
+        input_mapping:
+          changed_contract_rule_file: ".cursor/rules/101-vanta-agent-contract.mdc"
+          original_prompt_for_change: "{{trigger.user_prompt || 'System detected change to agent contract rule.'}}"
+        on_failure: "LOG_AND_HALT"
+      - agent_id: "dev_documentation_agent"
+        input_mapping:
+          files_to_document_changes_for: [".cursor/rules/101-vanta-agent-contract.mdc", "conceptual_link_to_agent_base.py_docs"]
+          change_summary: "{{impact_analyzer_agent.output.summary_of_impact}}"
+          related_rules_to_cross_reference: ["501-vanta-memory-principles.mdc", "920-agent-resource-conventions.mdc", "201-vanta-logging-core-requirements.mdc"]
+        on_failure: "LOG_AND_PROCEED"
+      - agent_id: "rl_label_agent"
+        input_mapping:
+          architectural_event_description: "Agent contract modification (see {{impact_analyzer_agent.output.summary_of_impact}})"
+          related_files: [".cursor/rules/101-vanta-agent-contract.mdc"]
+          significance_level: "HIGH"
+    logging_level: "VERBOSE"
+
+  # --- Profile ID: general_code_commit_whisper_cascade (from previous discussion) ---
+  - profile_id: "general_code_commit_whisper_cascade"
+    description: "Suggests basic validation and RL labeling for general code changes."
+    trigger_type: "USER_CONFIRMED_WHISPER"
+    trigger_conditions:
+      - condition_type: "FILE_MODIFICATION"
+        details:
+          file_patterns: ["**/*.py", "**/*.ts"]
+    parameters_expected:
+      - name: "modified_files_count"
+        type: "integer"
+        required: true
+      - name: "primary_changed_module"
+        type: "string"
+        required: false
+      - name: "modified_files_list"
+        type: "list[string]"
+        required: true # Added required for whisper to pass on
+    agent_sequence:
+      - agent_id: "rl_label_agent"
+        input_mapping:
+          files_for_labeling: "{{trigger.parameters.modified_files_list}}"
+      - agent_id: "linting_and_static_analysis_agent"
+        input_mapping:
+          files_to_scan: "{{trigger.parameters.modified_files_list}}"
+    whisper_mode_details:
+      suggestion_prompt_template: "Detected {{trigger.parameters.modified_files_count}} code file(s) changed (e.g., in '{{trigger.parameters.primary_changed_module}}'). Would you like to run the 'general_code_commit_whisper_cascade' for quick labeling and static analysis?"
+      default_action: "REJECT"
+    logging_level: "STANDARD"
+
+  # --- Profile ID: test_failure_investigation_cascade (from previous discussion) ---
+  - profile_id: "test_failure_investigation_cascade"
+    description: "Gathers context and attempts to diagnose test failures."
+    trigger_type: "AGENT_INITIATED"
+    parameters_expected:
+      - name: "failed_test_reports"
+        type: "object"
+        required: true
+      - name: "related_code_files"
+        type: "list[string]"
+        required: true
+    agent_sequence:
+      - agent_id: "log_analysis_agent"
+        input_mapping:
+          test_failure_context: "{{trigger.parameters.failed_test_reports}}"
+      - agent_id: "code_context_gatherer_agent"
+        input_mapping:
+          files_of_interest: "{{trigger.parameters.related_code_files}}"
+          failed_test_details: "{{trigger.parameters.failed_test_reports}}"
+      - agent_id: "expert_coder"
+        input_mapping:
+          task_description: "Analyze test failures (see context) and suggest fixes or root cause."
+          target_files: "{{trigger.parameters.related_code_files}}"
+          error_context_from_logs: "{{log_analysis_agent.output.summary}}"
+          code_context: "{{code_context_gatherer_agent.output.full_context}}"
+    logging_level: "VERBOSE"
+
+# --- VANTA! CODER SPECIFIC PROFILES --- #
+  - profile_id: vanta_coder_major_edit
+    description: "Cascade triggered after Vanta! Coder completes a major edit, feature, or architectural change."
+    trigger_event_schema: # Defines expected keys in the trigger payload
+      type: object
+      properties:
+        modified_files:
+          type: array
+          items: { type: string }
+        change_summary:
+          type: string
+        agent_id_completed: # Agent that finished
+          type: string 
+      required: [modified_files, change_summary, agent_id_completed]
+    
+    agent_sequence:
+      - agent_id: "validation_agent" # Conceptual
+        input_mapping:
+          files_to_validate: "{{ trigger.parameters.modified_files }}"
+          validation_context: "post_vanta_coder_edit"
+        on_failure: "LOG_AND_PROCEED" # Don't halt cascade if validation fails, just log
+        
+      - agent_id: "rl_label_agent" # Conceptual
+        input_mapping:
+          completed_action_log_ref: "{{ steps[0].output.validation_log_ref || trigger.parameters.change_summary }}" # Use validation log or summary
+          agent_involved: "{{ trigger.parameters.agent_id_completed }}"
+          code_context: "{{ steps[0].output.validated_code_snippets || 'N/A' }}"
+          task_intent: "vanta_coder_major_edit_completion"
+        on_failure: "LOG_AND_PROCEED"
+        
+      - agent_id: "protocol_consistency_agent" # Conceptual
+        input_mapping:
+          files_to_check: "{{ trigger.parameters.modified_files }}"
+          relevant_protocols: ["api_standards", "logging_core"]
+        on_failure: "LOG_AND_PROCEED"
+        
+      - agent_id: "testing_agent" # Conceptual
+        input_mapping:
+          test_scope: "integration"
+          focus_areas: "{{ trigger.parameters.modified_files }}"
+          triggering_change: "{{ trigger.parameters.change_summary }}"
+        on_failure: "LOG_AND_PROCEED"
+        
+    # Add other steps as needed
+    
+    # Note: Assumes agents like validation_agent, rl_label_agent, etc., exist.
+    #       The input_mapping uses Jinja2/asteval style placeholders.
+
+# --- RITUAL INVOCATION CASCADE --- #
+  - profile_id: ritual_invocation_submitted_cascade
+    description: "Handles post-submission tasks after a ritual is invoked via the API."
+    trigger_event_schema: # Matches payload sent by API
+      type: object
+      properties:
+        ritual_id:
+          type: string
+        invocation_id:
+          type: string
+        parameters:
+          type: object
+        status:
+          type: string # e.g., "SUCCESS", "FAILURE"
+        result:
+          type: object # Ritual execution result or error info
+        timestamp:
+          type: string
+          format: date-time
+      required: [ritual_id, invocation_id, parameters, status, result, timestamp]
+    agent_sequence:
+      - agent_id: "detailed_event_logger_agent" # This agent was conceptualized and created
+        input_mapping:
+          event_type: "RITUAL_INVOCATION_COMPLETED"
+          event_data: "{{ trigger.parameters }}" # The whole payload
+          severity: "{{ 'INFO' if trigger.parameters.status == 'SUCCESS' else 'ERROR' }}"
+        on_failure: "LOG_ONLY" # Critical that this logging step itself doesn't halt everything
+      # Potentially add more agents here, e.g., a notification agent or an RL agent for ritual success/failure
+    logging_level: "STANDARD"
+
+# --- SYSTEM LAYER INCOHERENCE CASCADE --- #
+  - profile_id: "system_incoherence_detected_cascade"
+    description: "Orchestrates actions when System Layer Incoherence (SLI) is detected by the IncoherenceDetectionAgent."
+    trigger_type: "AGENT_INITIATED" # Triggered by IncoherenceDetectionAgent via MCP signal
+    trigger_event_schema:
+      type: "object"
+      properties:
+        findings:
+          type: "array"
+          items:
+            type: "object"
+            properties:
+              type: { type: "string" } # e.g., "repeated_edit_failure", "checksum_mismatch"
+              file: { type: "string" }
+              description: { type: "string" }
+              log_evidence: { type: "array", items: { type: "string" } }
+            required: ["type", "file", "description"]
+        resolution_protocol_version:
+          type: "string" # e.g., "006_v1" referring to the MDC rule version
+      required: ["findings", "resolution_protocol_version"]
+    agent_sequence:
+      - agent_id: "detailed_event_logger_agent"
+        input_mapping:
+          event_type: "SYSTEM_INCOHERENCE_DETECTED"
+          event_data: "{{ trigger.parameters.findings }}"
+          severity: "WARNING"
+          metadata:
+            protocol_version: "{{ trigger.parameters.resolution_protocol_version }}"
+        on_failure: "LOG_ONLY"
+      - agent_id: "user_notification_agent" # Conceptual agent
+        input_mapping:
+          message_type: "SLI_WARNING"
+          title: "System Layer Incoherence Detected"
+          details: "{{ trigger.parameters.findings }}"
+          suggested_actions: [
+            "Review findings and logs.",
+            "Consider manual file inspection using 'mcp_desktop-commander_read_file'.",
+            "If a known good version exists, consider 'mcp_desktop-commander_write_file' after backup."
+          ]
+        on_failure: "LOG_AND_PROCEED"
+      # Add more agents for advanced resolution if developed, e.g.:
+      # - agent_id: "system_integrity_repair_agent"
+      #   input_mapping: { findings: "{{ trigger.parameters.findings }}" }
+      #   on_failure: "ESCALATE_TO_COE_REVIEW"
+    error_handling_cascade_profile_id: "sli_cascade_failure_handler" # Conceptual
+    logging_level: "VERBOSE"

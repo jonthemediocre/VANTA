@@ -1,0 +1,73 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# RULE TYPE: Always
+# FILE PATTERNS: N/A (Applies to core system logging behavior)
+
+# 922: Agentic Replay Log Schema & Guidelines
+
+## 1. Purpose
+
+This rule establishes the standardized schema and operational guidelines for logging agent and system actions to the `logs/agentic_replay.log.jsonl` file. This log is crucial for:
+
+*   Debugging and tracing agent behavior.
+*   Providing data for the `IncoherenceDetectionAgent` to identify patterns of failure.
+*   Auditing system operations.
+*   Future reinforcement learning and behavioral analytics.
+
+## 2. Log Entry Schema
+
+All entries written to `logs/agentic_replay.log.jsonl` **MUST** conform to the JSON schema defined in:
+`./.cursor/schemas/agentic_replay_log_entry.schema.json`
+
+This schema mandates fields such as `log_id`, `timestamp`, `agent_id`, `action_type`, `status`, `parameters`, and `result`.
+
+## 3. Logging Responsibility
+
+*   **`VantaMasterCore`**: Is primarily responsible for orchestrating the logging of significant events, especially:
+    *   Tool call attempts and their results (success, failure, no_changes).
+    *   MCP Signal emissions.
+    *   Agent task execution start and end.
+    *   Cascade invocations and step executions.
+*   **Individual Agents**: May log specific internal milestones or verbose debugging information if necessary, but primary action logging (like tool calls they initiate through the core) should be handled by `VantaMasterCore` to ensure consistency.
+*   **Tooling Layer**: The wrappers around tools (e.g., `default_api` or `mcp_desktop-commander` handlers) should provide sufficient structured information back to `VantaMasterCore` to enable comprehensive logging.
+
+## 4. When to Log
+
+At a minimum, log entries should be created for:
+
+*   **Tool Call Attempts (`TOOL_CALL_ATTEMPT`)**: Before a tool is executed. Log the `agent_id`, `tool_name`, and `parameters`.
+*   **Tool Call Results (`TOOL_CALL_RESULT`)**: After a tool execution completes or fails. Log the `status` and `result` (including errors or output).
+    *   Crucially, for file editing tools, the `status` should differentiate between `SUCCESS` (change applied), `FAILURE` (error during attempt), and `NO_CHANGES_REPORTED` (tool ran successfully but reported no diff/change).
+*   **MCP Signal Emission (`MCP_SIGNAL_EMIT`)**: When `VantaMasterCore` emits an MCP signal. Log the `signal_name` and `payload` within the `parameters` or `result` field.
+*   **Agent Task Execution (`AGENT_TASK_EXECUTION_START`/`END`)**: When an agent begins and ends processing a task. Useful for performance monitoring and tracing long-running tasks.
+*   **Cascade Invocation & Steps (`CASCADE_INVOCATION`/`CASCADE_STEP_EXECUTION`)**: To trace the flow of automated sequences.
+*   **Critical System Messages (`SYSTEM_MESSAGE`)**: For important system-level events or errors not directly tied to a specific agent action (e.g., startup issues, configuration load failures).
+*   **User Input (`USER_INPUT`)**: Optionally, to capture user prompts or commands that initiate a chain of actions, providing full context for a trace.
+
+## 5. Log Content Guidelines
+
+*   **`log_id`**: MUST be a unique identifier (e.g., UUID v4) for each distinct log entry.
+*   **`timestamp`**: MUST be in UTC ISO 8601 format.
+*   **`agent_id`**: Use a consistent identifier for each agent. For `VantaMasterCore` itself, use a distinct ID like `vmc_orchestrator`.
+*   **`parameters`**: For tool calls, ensure all significant input parameters are captured, especially `target_file(s)`, `code_edit`, `instructions`, `command`.
+*   **`result.message`**: Provide a concise human-readable summary of the outcome.
+*   **`result.details`**: Include any structured data from the tool's response or error objects.
+*   **`correlation_id`**: Use this to link related log entries. For example, all log entries related to a single cascade instance should share the same `correlation_id`.
+
+## 6. Implementation Notes for Logging Mechanism
+
+*   The logging mechanism should append entries as single lines of JSON (JSONL format) to `logs/agentic_replay.log.jsonl`.
+*   Ensure file locking or other appropriate mechanisms are used if multiple processes/threads could write to the log concurrently (though typically `VantaMasterCore` might serialize this).
+*   Handle potential I/O errors during logging gracefully (e.g., log to stderr if the file write fails).
+
+## 7. Importance for `IncoherenceDetectionAgent`
+
+Strict adherence to this logging schema and its guidelines is paramount for the `IncoherenceDetectionAgent` to function correctly. This agent will parse this log to identify patterns such as:
+
+*   Repeated `TOOL_CALL_RESULT` entries for the same `target_file` with `status: "NO_CHANGES_REPORTED"` or `status: "FAILURE"`.
+*   Discrepancies between `TOOL_CALL_ATTEMPT` parameters and `TOOL_CALL_RESULT` outcomes.
+
+Failure to log accurately will impair the system's ability to self-diagnose and maintain coherence.

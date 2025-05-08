@@ -1,0 +1,55 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# RULE TYPE: Always (Core VANTA Resource Convention)
+# FILE PATTERNS: N/A (Universal Agent Resource Management)
+
+# VANTA Agent Resource Loading & Pathing Conventions
+
+## 1. Centralized Resource Registry (Conceptual)
+    - The VANTA framework SHOULD provide a centralized mechanism or utility (e.g., `ResourceManager`) for agents to request and resolve paths to shared resources (models, datasets, templates, schemas).
+    - This avoids hardcoded paths within agent logic.
+
+## 2. Standardized Directory Structure (Recommended)
+    - **`models/`**: For ML models, organized by type or agent.
+        - `models/<agent_name>/<model_version>/`
+    - **`data/`**: For datasets, seeds, or other static data.
+        - `data/raw/`, `data/processed/`, `data/schemas/`
+    - **`config/`**: For agent-specific or shared configurations not part of the core blueprint.
+        - `config/agents/<agent_name>.yaml`
+        - `config/shared/common_settings.yaml`
+    - **`templates/`**: For prompt templates, response templates, UI templates.
+    - **`schemas/`**: For Pydantic models, JSON schemas used across agents or for API contracts (distinct from `data/schemas/` which might be for data file structures).
+    - These paths should be relative to a well-defined `VANTA_RESOURCE_ROOT` or resolved by the `ResourceManager`.
+
+## 3. Resource Identification & Versioning
+    - Resources should be identifiable by a unique name or ID.
+    - Model and dataset versioning is CRITICAL. Agents should explicitly request or be configured with specific resource versions.
+    - The `ResourceManager` should handle resolving requests to the correct versioned path.
+
+## 4. Dynamic Loading
+    - Agents should load resources (especially large models) dynamically at startup (`setup()`) or on-demand, not at module import time.
+    - Implement caching for frequently accessed resources where appropriate.
+
+## 5. Configuration-Driven Paths
+    - Specific paths or resource names used by an agent MUST be configurable (e.g., via its section in `blueprint.yaml` or a dedicated agent config file) rather than hardcoded.
+    - Example: `expert_coder_agent.llm_model_name: "vanta-deepseek-coder-v2"` which the `ResourceManager` then resolves to a physical path.
+
+## 6. Fallback & Default Resources
+    - The system may define default or fallback resources if a specific version or resource is not found, but this should be logged clearly.
+
+## 7. Environment Variables for Roots
+    - Core root paths (e.g., `VANTA_MODELS_DIR`, `VANTA_DATA_DIR`) can be defined via environment variables, with sensible defaults provided by the framework.
+
+## 8. Security for Remote Resources
+    - If loading resources from remote locations (e.g., cloud storage, model hubs):
+        - Use secure protocols (HTTPS).
+        - Implement authentication and authorization.
+        - Verify checksums/hashes of downloaded resources to ensure integrity.
+
+## 9. Agent Access Permissions (Conceptual)
+    - Future: A system could define which agents have access to which resource categories or specific resources.
+
+*This rule ensures that agents can reliably and consistently locate and load the resources they need to operate, facilitating maintainability and deployment across different environments.*

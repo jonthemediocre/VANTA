@@ -1,0 +1,78 @@
+flowchart TD
+    subgraph External Interaction
+        User[User / External System]
+    end
+
+    subgraph API Layer [vanta_seed/api]
+        API[FastAPI App - run.py]
+        ProtocolAPI[protocol_api.py]
+    end
+
+    subgraph Core Orchestration [vanta_seed/core]
+        VMC[VantaMasterCore]
+        RE[RitualExecutor]
+        PluginMgr[PluginManager]
+        MemStore[MemoryStore]
+        MsgBus[AgentMessageBus]
+    end
+
+    subgraph Agent Layer [vanta_seed/agents]
+        direction LR
+        BaseAgent[BaseAgent]
+        LoggerAgent[logging/DetailedEventLoggerAgent]
+        OtherAgents[...]
+    end
+
+    subgraph Configuration & Data
+        Blueprint[blueprint.yaml]
+        CascadeDef[.cursor/rules/agent_cascade_definitions.mdc]
+        Rules[.cursor/rules/*.mdc]
+        ReplayLog[logs/agentic_replay.log.jsonl]
+        StructuredLog[logs/structured_events/detailed_events.log.jsonl]
+    end
+
+    %% Initialization Flow (Same as before)
+    User -- Start App --> API
+    API -- Initialize --> PluginMgr
+    API -- Initialize --> VMC
+    Blueprint --> VMC
+    VMC -- Initialize --> RE
+    VMC -- Initialize --> MemStore
+    VMC -- Initialize --> MsgBus
+    VMC -- Use --> PluginMgr
+    PluginMgr -- Load Agents --> VMC
+    VMC -- Create --> BaseAgent
+    BaseAgent -- Inherit --> LoggerAgent
+    BaseAgent -- Inherit --> OtherAgents
+
+    %% Ritual Invocation & Agentic Decision Workflow
+    User -- POST /rituals/invoke --> ProtocolAPI
+    ProtocolAPI -- Analyze Request --> Decision{{Agentic Decision}}
+
+    Decision -- Route to Existing Agent --> VMC -- submit_task --> OtherAgents
+    Decision -- Simple Rule --> VMC -- Log & Suggest --> User / ReplayLog
+    Decision -- Cascade Needed --> ProtocolAPI -- Prepare MCP Signal --> SignalData([INITIATE_CASCADE Signal]) --> VMC
+    Decision -- New Agent Needed --> VMC -- Log Proposal --> User / ReplayLog
+    Decision -- Direct Ritual OK --> ProtocolAPI -- Call execute_ritual --> RE
+
+    %% Post-Decision Execution Paths
+
+    %% Path via RE (Direct Ritual)
+    RE -- Executes Ritual (Placeholder) --> RE
+    %% RE Path currently doesn't explicitly trigger signal/cascade, but could be added
+
+    %% Path via VMC (Signal/Cascade/Agent Task)
+    VMC -- process_mcp_signal / submit_task --> VMC
+    VMC -- Log Action Start --> ReplayLog
+    CascadeDef -- Read Definitions --> VMC
+    VMC -- Lookup Cascade / Route Task --> VMC
+    VMC -- execute_cascade / submit_task --> SpecificAgent[LoggerAgent / OtherAgents]
+    SpecificAgent -- process_task --> SpecificAgent
+    SpecificAgent -- Write Log / Interact --> StructuredLog / MemStore / MsgBus
+    VMC -- Log Action End --> ReplayLog
+
+    %% General Configuration Influence (Same as before)
+    Rules -- Govern --> VMC
+    Rules -- Govern --> BaseAgent
+
+</rewritten_file> 

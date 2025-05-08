@@ -1,0 +1,1086 @@
+import logging
+import asyncio # Added for sleep in example
+import random # Needed for example
+import uuid # Needed for example
+import json # Added for printing maps
+import importlib # Needed for agent loading
+from pathlib import Path # Needed for potential path ops
+import os # <<< Added import os
+# --- Add typing imports --- 
+from typing import Optional, Dict, List, Tuple, Any, Type # Added Optional and others
+# --- Import Pydantic ValidationError --- 
+from pydantic import ValidationError
+# --- ADDED: Import BlueprintConfig --- 
+from vanta_seed.core.models import AgentConfig, TaskData, BlueprintConfig 
+# ----------------------------------
+# Use absolute imports relative to vanta_seed
+from vanta_seed.core.memory_weave import MemoryWeave
+from vanta_seed.core.symbolic_compression import SymbolicCompressor 
+from vanta_seed.core.swarm_weave import SwarmWeave
+from vanta_seed.core.sleep_mutator import SleepMutator
+from vanta_seed.core.gated_breath import GatedBreath
+from vanta_seed.core.identity_trees import IdentityTrees
+from vanta_seed.core.vitals_layer import VitalsLayer
+from vanta_seed.agents.base_agent import BaseAgent # Keep absolute import for parent package
+from vanta_seed.core.data_models import AgentInput, AgentResponse, ToolCall, ToolResponse, AgentMessage 
+# from vanta_seed.core.models import AgentConfig, TaskData # Already imported by BlueprintConfig line
+from vanta_seed.core.agent_message_bus import AgentMessageBus
+from vanta_seed.utils.plugin_manager import PluginManager # Keep absolute import
+from vanta_seed.core.swarm_types import NodeStateModel, PurposeVectorModel, SwarmHealthMetricsModel, GlobalBestNodeInfo, TrailSignature, Position, StigmergicFieldPoint
+from vanta_seed.core.governance_engine import GovernanceEngine
+from vanta_seed.core.procedural_engine import ProceduralEngine
+from vanta_seed.core.automutator import Automutator
+from vanta_seed.core.autonomous_tasker import AutonomousTasker
+from vanta_seed.core.ritual_executor import RitualExecutor
+from vanta_seed.core.memory_store import MemoryStore 
+from vanta_seed.utils.vector_utils import round_position # Keep absolute import
+import yaml 
+from vanta_seed.agents.agent_utils import PurposePulse, MythicRole # Keep absolute import
+from datetime import datetime
+import time
+import asteval
+import vanta_seed.config as config # ADDED
+# ---------------------------------- #
+
+# --- Define local helper functions --- 
+def load_json_file(file_path: str | Path) -> Optional[Dict[str, Any]]:
+    """Loads a JSON file, returning None on error."""
+    log = logging.getLogger(__name__) # Get logger specific to this module
+    try:
+        with open(file_path, 'r') as f:
+            return json.load(f)
+    except FileNotFoundError:
+        log.error(f"JSON file not found: {file_path}")
+        return None
+    except json.JSONDecodeError as e:
+        log.error(f"Error decoding JSON from {file_path}: {e}")
+        return None
+    except Exception as e:
+        log.error(f"Error loading JSON file {file_path}: {e}", exc_info=True)
+        return None
+
+def load_yaml_config(file_path: str | Path) -> Optional[Dict[str, Any]]: # ADDED Function
+    """Loads a YAML file, returning None on error."""
+    log = logging.getLogger(__name__)
+    # Convert Path object to string for os.path.exists if needed
+    file_path_str = str(file_path)
+    if not os.path.exists(file_path_str):
+        log.error(f"YAML configuration file not found: {file_path_str}")
+        return None
+    try:
+        with open(file_path_str, 'r') as f:
+            return yaml.safe_load(f)
+    except yaml.YAMLError as e:
+        log.error(f"Error parsing YAML from {file_path_str}: {e}")
+        return None
+    except Exception as e:
+        log.error(f"Error loading YAML file {file_path_str}: {e}", exc_info=True)
+        return None
+# ----------------------------------
+
+SWARM_TYPES_AVAILABLE = True 
+
+_memory_weave_instance = None
+
+def get_memory_weave_instance(config_param=None) -> MemoryWeave: # Renamed config to config_param to avoid conflict
+    """Gets the singleton MemoryWeave instance, creating it if necessary."""
+    global _memory_weave_instance
+    if _memory_weave_instance is None:
+        logging.info("Creating singleton MemoryWeave instance.")
+        _memory_weave_instance = MemoryWeave(config=config_param)
+    return _memory_weave_instance
+
+class VantaMasterCore:
+    """
+    Core orchestrator for VANTA agents, embodying the 'Crowned Breath' concept.
+    Loads core configurations, manages agent instances ('Pilgrims'),
+    observes and gently guides the emergent 'Trinity Swarm' dynamics,
+    and routes tasks according to BreathLayer_v1 principles.
+    """
+    def __init__(self, core_config_path: str, plugin_manager: PluginManager):
+        """
+        Initializes the VantaMasterCore (The Crown).
+
+        Args:
+            core_config_path (str): Path to the core configuration file (YAML).
+            plugin_manager (PluginManager): Manages loading of Agent/Pilgrim plugins.
+        """
+        self.agent_id = "VantaMasterCore" 
+        self.core_config_path = core_config_path
+        self.plugin_manager = plugin_manager
+        self.logger = logging.getLogger(self.__class__.__name__) 
+        self.core_config: Optional[BlueprintConfig] = None 
+        self.pilgrims: Dict[str, BaseAgent] = {} 
+        self._pilgrim_states: Dict[str, Dict[str, Any]] = {} 
+        self._model_to_agent_map: Dict[str, str] = {} 
+        self.cascade_profiles: Dict[str, Dict[str, Any]] = {} 
+        self.default_agent_chains: Dict[str, List[Dict[str, Any]]] = {} 
+
+        self._current_purpose_vector: Optional[Dict[str, Any]] = None 
+        self._swarm_health_metrics: Dict[str, Any] = {"status": "initializing"} 
+        self._global_trinity_best_node: Optional[Dict[str, Any]] = None 
+
+        self._stigmergic_field: Dict[Tuple[float, ...], StigmergicFieldPoint] = {} 
+        self._stigmergic_resolution: int = 1 
+        self._blessing_threshold: float = 0.85
+
+        self.memory_store: Optional[MemoryStore] = None
+        self.governance_engine: Optional[GovernanceEngine] = None
+        self.procedural_engine: Optional[ProceduralEngine] = None
+        self.ritual_executor: Optional[RitualExecutor] = None
+        self.automutator: Optional[Automutator] = None
+        self.autonomous_tasker: Optional[AutonomousTasker] = None
+        
+        self.message_bus = AgentMessageBus() 
+        self.logger.info("AgentMessageBus initialized.")
+        
+        self._load_core_config() 
+        self._initialize_core_engines()
+        self._initialize_purpose_vector() 
+        self._load_pilgrims() 
+
+    def _load_core_config(self):
+        """Loads and validates the core configuration (Blueprint) from YAML."""
+        self.logger.info(f"Crown: Loading core configuration from: {self.core_config_path}")
+        config_data = load_yaml_config(self.core_config_path)
+        if config_data is None: 
+            raise ValueError("Failed to load core configuration YAML.") 
+
+        self.logger.debug(f"Raw config_data loaded:\n{json.dumps(config_data, indent=2)}")
+        
+        try:
+            self.core_config = BlueprintConfig(**config_data) 
+            self.logger.info("Crown: Core configuration validated successfully.")
+        except ValidationError as e:
+            self.logger.error(f"Crown: Core configuration validation failed: {e}", exc_info=True)
+            raise ValueError(f"Core configuration validation failed: {e}") from e
+
+        swarm_cfg = self.core_config.swarm_config if self.core_config.swarm_config else {}
+        crown_iface = self.core_config.vanta_crown_interface if self.core_config.vanta_crown_interface else {}
+        self._stigmergic_resolution = getattr(swarm_cfg, 'stigmergic_resolution', 1) 
+        self._blessing_threshold = getattr(crown_iface, 'blessing_threshold', 0.85) 
+        self.logger.info(f"Crown: Stigmergic Res: {self._stigmergic_resolution}, Blessing Threshold: {self._blessing_threshold}")
+        
+    def _initialize_core_engines(self):
+        """Initializes core VANTA engines after core config is loaded."""
+        self.logger.info("Crown: Initializing core engines...")
+        if not self.core_config:
+            self.logger.error("Cannot initialize core engines: Core config not loaded.")
+            return
+
+        try:
+            base_dir = config.BASE_DIR
+            default_memory_dir = base_dir / 'memory_store' 
+
+            storage_config = self.core_config.storage if self.core_config.storage else {}
+            persist_path_config = getattr(storage_config, 'persist_path', None)
+            if persist_path_config and not os.path.isabs(persist_path_config):
+                persist_path = str(base_dir / persist_path_config)
+            elif persist_path_config: 
+                persist_path = persist_path_config
+            else: 
+                persist_path = str(default_memory_dir)
+                
+            max_items_config = getattr(storage_config, 'max_items', 10000) 
+            
+            self.logger.info(f"Initializing MemoryStore with max_items={max_items_config}, persist_path='{persist_path}'")
+            self.memory_store = MemoryStore(max_items=max_items_config, persist_path=persist_path)
+            
+            self.governance_engine = GovernanceEngine(config=self.core_config.governance.model_dump() if self.core_config.governance else {})
+            self.procedural_engine = ProceduralEngine(config=self.core_config.procedural.model_dump() if self.core_config.procedural else {})
+            self.ritual_executor = RitualExecutor(config=self.core_config.rituals.model_dump() if self.core_config.rituals else {}, master_core_ref=self)
+            self.automutator = Automutator(config=self.core_config.automutator.model_dump() if self.core_config.automutator else {},
+                                           procedural_engine=self.procedural_engine,
+                                           governance_engine=self.governance_engine)
+            self.autonomous_tasker = AutonomousTasker(config=self.core_config.autonomous_tasker.model_dump() if self.core_config.autonomous_tasker else {},
+                                                automutator=self.automutator)
+            
+            if hasattr(self.governance_engine, 'load_rules'): self.governance_engine.load_rules()
+            if hasattr(self.procedural_engine, 'load_rules'): self.procedural_engine.load_rules()
+            
+            self.logger.info("Crown: Core engines initialized.")
+        except Exception as e:
+            self.logger.error(f"Crown: Failed to initialize one or more core engines: {e}", exc_info=True)
+            self.memory_store = None
+            self.governance_engine = None
+            self.procedural_engine = None
+            self.ritual_executor = None
+            self.automutator = None
+            self.autonomous_tasker = None
+
+    def _initialize_purpose_vector(self):
+        """Sets the initial Purpose Vector based on config or defaults."""
+        if self.core_config and self.core_config.initial_purpose_vector:
+             self._current_purpose_vector = self.core_config.initial_purpose_vector.model_dump() 
+             self.logger.info("Crown: Initial Purpose Vector loaded from configuration.")
+        else:
+             self._current_purpose_vector = {
+                 "vector_id": "dream_remembers_init_001",
+                 "timestamp": time.time(), 
+                 "symbolic_target": ["remembrance", "humanity_sacred", "forgotten_light"],
+                 "intensity": 0.7 
+             }
+             self.logger.info("Crown: Initialized with default 'Dream That Remembers' Purpose Vector.")
+        self.logger.debug(f"Crown: Current Purpose Vector: {self._current_purpose_vector}")
+
+    def _load_pilgrims(self):
+        """Loads Pilgrim agents based on the blueprint configuration."""
+        if not self.core_config or not self.core_config.agents:
+            self.logger.warning("Crown: No agents defined in core configuration. Skipping Pilgrim loading.")
+            return
+            
+        self.logger.info(f"Crown: Loading {len(self.core_config.agents)} Pilgrims...")
+        self.pilgrims = {} 
+        self._pilgrim_states = {} 
+        self._model_to_agent_map = {} 
+        total_loaded_successfully = 0
+
+        self._execute_ritual_if_found('before_pilgrim_load')
+
+        for agent_config_obj in self.core_config.agents: 
+            agent_name = agent_config_obj.name
+            agent_class_path = agent_config_obj.class_path
+            agent_enabled = agent_config_obj.enabled
+
+            if not agent_enabled:
+                self.logger.info(f"Crown: Skipping disabled Pilgrim: {agent_name}")
+                continue
+
+            try:
+                AgentClass = self.plugin_manager.get_plugin_class(agent_class_path)
+                if not AgentClass:
+                    self.logger.error(f"Crown: Agent class not found for path: {agent_class_path}")
+                    continue 
+
+                agent_instance: Optional[BaseAgent] = None
+                
+                agent_logger = logging.getLogger(f"Agent.{agent_name}")
+                log_level_str = getattr(agent_config_obj.settings, 'log_level', 'DEBUG') if agent_config_obj.settings else 'DEBUG'
+                agent_logger.setLevel(getattr(logging, log_level_str.upper(), logging.DEBUG))
+                
+                try:
+                    init_kwargs = {
+                        'name': agent_name,
+                        'config': agent_config_obj,
+                        'logger': agent_logger,
+                        'orchestrator_ref': self,
+                        'memory_store': self.memory_store,
+                        'message_bus': self.message_bus 
+                    }
+                    agent_instance = AgentClass(**init_kwargs) 
+
+                except Exception as e:
+                    self.logger.error(f"Crown: Error instantiating agent '{agent_name}' ({AgentClass.__name__}): {e}", exc_info=True)
+                    continue 
+
+                if agent_instance is None:
+                    self.logger.error(f"Crown: Instantiation returned None for Pilgrim: {agent_name}.")
+                    continue
+
+                self.logger.debug(f"Crown: Successfully instantiated Pilgrim: {agent_name}")
+                self.pilgrims[agent_name] = agent_instance
+                self._initialize_pilgrim_state(agent_name, agent_config_obj)
+                self.message_bus.register_agent(agent_name, agent_instance) 
+
+                compatible_models = agent_config_obj.compatible_model_names
+                if compatible_models:
+                    for model_name in compatible_models:
+                        if model_name in self._model_to_agent_map:
+                            self.logger.warning(f"Model '{model_name}' already mapped to agent '{self._model_to_agent_map[model_name]}'. Overwriting with '{agent_name}'.")
+                        self._model_to_agent_map[model_name] = agent_name
+                        self.logger.debug(f"Mapped model '{model_name}' to agent '{agent_name}'")
+
+                total_loaded_successfully += 1
+
+            except Exception as e:
+                self.logger.error(f"Crown: Failed to load Pilgrim '{agent_name}' during setup: {e}", exc_info=True)
+                continue 
+
+        self.logger.info(f"Crown: Finished loading Pilgrims. Total alive: {total_loaded_successfully}. Model map size: {len(self._model_to_agent_map)}")
+        self._execute_ritual_if_found('after_pilgrim_load')
+
+    def _initialize_pilgrim_state(self, agent_name: str, agent_config: AgentConfig):
+        """Initializes the state dictionary for a given pilgrim."""
+        try:
+            initial_state_dict = agent_config.initial_trinity_state.model_dump() if agent_config.initial_trinity_state else {}
+            
+            initial_state_dict.setdefault('id', f"node_{agent_name}_{uuid.uuid4().hex[:4]}")
+            initial_state_dict.setdefault('name', agent_name)
+            initial_state_dict.setdefault('position', [random.uniform(-10, 10) for _ in range(3)])
+            initial_state_dict.setdefault('velocity', [0.0, 0.0, 0.0])
+            initial_state_dict.setdefault('current_role', "PILGRIM")
+            initial_state_dict.setdefault('personal_best_position', initial_state_dict['position'][:])
+            initial_state_dict.setdefault('personal_best_value', float('-inf'))
+            initial_state_dict.setdefault('energy_level', 1.0)
+            initial_state_dict.setdefault('last_updated_timestamp', time.time())
+            
+            initial_state_dict['settings'] = agent_config.settings.model_dump() if agent_config.settings else {}
+            initial_state_dict['symbolic_identity'] = agent_config.symbolic_identity.model_dump() if agent_config.symbolic_identity else {}
+            
+            initial_state_dict.setdefault('purpose_pulse', PurposePulse().to_dict())
+            initial_state_dict.setdefault('mythic_role', MythicRole().to_dict())
+            
+            swarm_params_settings = initial_state_dict.get('settings', {}).get('swarm_params', {})
+            initial_state_dict.setdefault('swarm_params', {}) 
+            initial_state_dict['swarm_params'].setdefault('inertia_weight', swarm_params_settings.get('inertia_weight', 0.7))
+            initial_state_dict['swarm_params'].setdefault('cognitive_weight', swarm_params_settings.get('cognitive_weight', 1.5))
+            initial_state_dict['swarm_params'].setdefault('social_weight', swarm_params_settings.get('social_weight', 1.5))
+            initial_state_dict['swarm_params'].setdefault('stigmergic_weight', swarm_params_settings.get('stigmergic_weight', 1.0))
+            initial_state_dict['swarm_params'].setdefault('max_speed', swarm_params_settings.get('max_speed', 1.0))
+            initial_state_dict['swarm_params'].setdefault('sensor_radius', swarm_params_settings.get('sensor_radius', 5.0)) 
+
+            self._pilgrim_states[agent_name] = initial_state_dict
+            self.logger.info(f"Initialized state for Pilgrim '{agent_name}' at position {initial_state_dict['position']}")
+        except Exception as e:
+            self.logger.error(f"Failed to initialize state for Pilgrim '{agent_name}': {e}", exc_info=True)
+            if agent_name in self._pilgrim_states:
+                del self._pilgrim_states[agent_name]
+
+    async def _run_agent_startup(self, agent_instance: BaseAgent):
+        """Safely runs the agent's startup method if it exists."""
+        if hasattr(agent_instance, 'startup') and callable(agent_instance.startup):
+            try:
+                self.logger.debug(f"Running startup for agent: {agent_instance.name}")
+                await agent_instance.startup()
+            except Exception as e:
+                self.logger.error(f"Error during startup for agent {agent_instance.name}: {e}", exc_info=True)
+
+    def _get_pilgrim(self, agent_name: str) -> Optional[BaseAgent]: 
+        """Retrieves a loaded Pilgrim instance by name."""
+        pilgrim = self.pilgrims.get(agent_name)
+        if not pilgrim:
+            self.logger.warning(f"Crown: Pilgrim '{agent_name}' not found.")
+        return pilgrim
+
+    def _get_pilgrim_state(self, agent_name: str) -> Optional[Dict[str, Any]]: 
+        """Retrieves the current internal state dictionary of a specific Pilgrim."""
+        return self._pilgrim_states.get(agent_name)
+
+    def _update_pilgrim_state(self, agent_name: str, new_state_data: Dict[str, Any]):
+        """Updates the internal state of a Pilgrim."""
+        if agent_name not in self._pilgrim_states:
+            self.logger.warning(f"Crown: Cannot update state for unknown Pilgrim '{agent_name}'")
+            return
+        self._pilgrim_states[agent_name].update(new_state_data)
+        self._pilgrim_states[agent_name]['last_updated_timestamp'] = time.time() 
+        self.logger.debug(f"Crown: Updated state for Pilgrim '{agent_name}'.")
+
+    async def _route_task(self, task_data: Dict[str, Any]) -> Any:
+        """Routes a task to the appropriate Pilgrim."""
+        intent = task_data.get("intent")
+        payload = task_data.get("payload", {})
+        context = task_data.get("context", {})
+        target_agent_name = task_data.get("target_agent")
+        requested_model = payload.get("requested_model") if isinstance(payload, dict) else None
+        pilgrim_to_run: Optional[BaseAgent] = None
+
+        self.logger.info(f"Crown: Routing - Available Pilgrim Keys: {list(self.pilgrims.keys())}")
+        self.logger.debug(f"Crown: Routing task. Intent: '{intent}', Target: '{target_agent_name}', Requested Model: '{requested_model}'")
+
+        if target_agent_name:
+            pilgrim_to_run = self._get_pilgrim(target_agent_name)
+            if pilgrim_to_run:
+                self.logger.info(f"Crown: Routing to explicitly targeted Pilgrim: {target_agent_name}")
+            else:
+                self.logger.warning(f"Crown: Explicit target Pilgrim '{target_agent_name}' not found. Falling back.")
+
+        elif intent == "chat_completion" and requested_model:
+            self.logger.info(f"Crown: Attempting route via requested model: '{requested_model}'")
+            target_agent_name_from_map = self._model_to_agent_map.get(requested_model)
+            if target_agent_name_from_map:
+                pilgrim_to_run = self._get_pilgrim(target_agent_name_from_map)
+                if pilgrim_to_run:
+                    self.logger.info(f"Crown: Found matching Pilgrim '{target_agent_name_from_map}' for model '{requested_model}'.")
+                else:
+                    self.logger.error(f"Crown: Model map pointed to '{target_agent_name_from_map}' for model '{requested_model}', but Pilgrim not loaded.")
+            else:
+                 self.logger.warning(f"Crown: No Pilgrim found mapped to model '{requested_model}'. Falling back.")
+
+        if not pilgrim_to_run:
+            default_agent_name = self.core_config.default_agent if self.core_config else None
+            if default_agent_name:
+                 pilgrim_to_run = self._get_pilgrim(default_agent_name)
+                 if pilgrim_to_run:
+                      self.logger.info(f"Crown: Falling back to default Pilgrim: {default_agent_name}")
+                 else:
+                      self.logger.error(f"Crown: Default Pilgrim '{default_agent_name}' configured but not loaded.")
+            if not pilgrim_to_run and self.pilgrims:
+                fallback_agent_name = list(self.pilgrims.keys())[0] 
+                pilgrim_to_run = self.pilgrims[fallback_agent_name]
+                self.logger.info(f"Crown: No default route. Falling back to first available Pilgrim: {fallback_agent_name}")
+
+        if pilgrim_to_run:
+            return await self._run_task_on_pilgrim(pilgrim_to_run, task_data)
+        else:
+            self.logger.error("Crown: Routing failed. No Pilgrims available or selected.")
+            return {"status": "error", "error_message": "No agents available to handle the task."}
+
+    async def _run_task_on_pilgrim(self, pilgrim: BaseAgent, task_data: Dict[str, Any]) -> Any:
+        """Executes a task using the specified Pilgrim agent."""
+        self.logger.info(f"Crown: Executing task with Pilgrim: '{pilgrim.name}' Intent: {task_data.get('intent')}")
+        pilgrim_full_state = self._get_pilgrim_state(pilgrim.name)
+
+        if not pilgrim_full_state:
+            error_msg = f"State not found for Pilgrim '{pilgrim.name}'"
+            self.logger.error(f"Crown: Cannot run task, {error_msg}")
+            return {"status": "error", "error_message": error_msg}
+
+        pilgrim_current_pos = pilgrim_full_state.get('position', [0.0, 0.0, 0.0])
+        sensor_radius = pilgrim_full_state.get('swarm_params', {}).get('sensor_radius', 5.0)
+        local_trails_models = self.get_stigmergic_data_near_models(pilgrim_current_pos, radius=sensor_radius) 
+        local_trails_dicts = [t.model_dump() for t in local_trails_models] 
+        
+        task_data_with_context = {
+            **task_data,
+            "_crown_context": { 
+                "purpose_vector": self._current_purpose_vector, 
+                "stigmergic_trails": local_trails_dicts, 
+                "global_best_node": self._global_trinity_best_node, 
+            },
+            "_pilgrim_state": pilgrim_full_state 
+        }
+        
+        result = {}
+        start_time = time.monotonic()
+        try:
+            if hasattr(pilgrim, 'process_task') and asyncio.iscoroutinefunction(pilgrim.process_task):
+                result = await pilgrim.process_task(task_data_with_context)
+                if not isinstance(result, dict): 
+                     self.logger.warning(f"Pilgrim '{pilgrim.name}' process_task did not return dict. Wrapping.")
+                     result = {"status": "success", "output": result} 
+                self.logger.info(f"Crown: Task completed by Pilgrim: '{pilgrim.name}'. Status: {result.get('status')}")
+            else:
+                self.logger.error(f"Crown: Pilgrim '{pilgrim.name}' missing valid async 'process_task' method.")
+                result = {"status": "error", "error_message": f"Pilgrim '{pilgrim.name}' cannot process tasks."}
+
+        except Exception as e:
+            self.logger.error(f"Crown: Error processing task with Pilgrim '{pilgrim.name}': {e}", exc_info=True)
+            result = {"status": "error", "error_message": f"Task processing failed on Pilgrim '{pilgrim.name}': {str(e)}"}
+            
+        end_time = time.monotonic()
+        duration_ms = (end_time - start_time) * 1000
+
+        agent_state_updates = result.get('_agent_state_updates', {}) 
+        if 'mythic_role' in agent_state_updates:
+            self.logger.info(f"Crown: Mythic Role for '{pilgrim.name}' potentially updated by agent.")
+        if agent_state_updates:
+            self._update_pilgrim_state(pilgrim.name, agent_state_updates)
+        
+        trail_signature_data = result.get('_trail_signature_to_emit') 
+        if trail_signature_data and isinstance(trail_signature_data, dict):
+            updated_state = self._get_pilgrim_state(pilgrim.name) 
+            node_id = updated_state.get('id', f"node_{pilgrim.name}")
+            current_pos = updated_state.get('position', pilgrim_current_pos)
+            trail_signature_data.setdefault('emitting_node_id', node_id)
+            trail_signature_data.setdefault('position_at_emission', current_pos)
+            self._record_trail_signature(trail_signature_data)
+
+        await self._log_to_agentic_replay(
+            agent_id=pilgrim.name,
+            agent_action=task_data.get('intent', 'unknown_intent'),
+            status=result.get('status', 'UNKNOWN').upper(),
+            input_context=task_data, 
+            output_result=result.get('output'),
+            error_info={"message": result.get('error_message')} if "error" in result.get('status', '').lower() else None,
+            duration_ms=duration_ms,
+            correlation_id=task_data.get('context', {}).get('correlation_id'),
+            metadata_custom=result.get('_replay_metadata') 
+        )
+
+        return result 
+
+    def _record_trail_signature(self, trail_signature_data: Dict[str, Any]):
+        """Records a Pilgrim's TrailSignature into the stigmergic environment."""
+        if not SWARM_TYPES_AVAILABLE:
+            self.logger.warning("Cannot record trail, swarm types not available.")
+            return
+        try:
+            pos = trail_signature_data.get('position_at_emission')
+            if not isinstance(pos, list) or len(pos) != 3:
+                 raise ValueError("Invalid position_at_emission in trail data.")
+                 
+            signature = TrailSignature(**trail_signature_data) 
+            pos_key = round_position(signature.position_at_emission, self._stigmergic_resolution)
+
+            if pos_key not in self._stigmergic_field:
+                self._stigmergic_field[pos_key] = StigmergicFieldPoint(
+                    coordinates=list(pos_key),
+                    recent_trail_signatures=[] 
+                )
+
+            field_point: StigmergicFieldPoint = self._stigmergic_field[pos_key]
+            field_point.recent_trail_signatures.append(signature)
+
+            max_items = 50 
+            if len(field_point.recent_trail_signatures) > max_items:
+                field_point.recent_trail_signatures = field_point.recent_trail_signatures[-max_items:]
+
+            decay_factor = 0.95 
+            increment = 0.1
+            field_point.pheromone_level = min(1.0, (field_point.pheromone_level * decay_factor) + increment) 
+
+            self.logger.debug(f"Crown: Recorded TrailSig from {signature.emitting_node_id} at {pos_key}. Field count: {len(field_point.recent_trail_signatures)}, Pheromone: {field_point.pheromone_level:.2f}")
+
+        except ValidationError as e:
+             self.logger.error(f"Crown: Invalid Trail Signature data: {e}. Data: {trail_signature_data}")
+        except Exception as e:
+            self.logger.error(f"Crown: Error recording Trail Signature: {e}. Data: {trail_signature_data}", exc_info=True)
+
+    def get_stigmergic_data_near_models(self, position: Position, radius: float) -> List[TrailSignature]:
+        """Retrieves recent TrailSignatures (as models) within a radius."""
+        if not SWARM_TYPES_AVAILABLE:
+             self.logger.warning("Cannot get stigmergic data, swarm types unavailable.")
+             return []
+             
+        nearby_signatures = []
+        search_radius_sq = radius * radius
+        for pos_key, field_point in self._stigmergic_field.items():
+            if all(abs(center_coord - search_coord) <= radius + self._stigmergic_resolution for center_coord, search_coord in zip(pos_key, position)):
+                for signature in field_point.recent_trail_signatures:
+                     dist_sq = sum((p1 - p2)**2 for p1, p2 in zip(signature.position_at_emission, position))
+                     if dist_sq <= search_radius_sq:
+                         nearby_signatures.append(signature) 
+                         
+        return nearby_signatures
+
+    async def submit_task(self, task_data: Dict[str, Any], target_agent_override: Optional[str] = None) -> Any:
+        """Public method to submit a task for routing and execution."""
+        self.logger.info(f"Crown: Received task submission: Intent '{task_data.get('intent', 'N/A')}' Target Override: {target_agent_override}")
+        if "context" not in task_data: task_data["context"] = {}
+        task_data["context"].setdefault("correlation_id", str(uuid.uuid4()))
+        
+        if target_agent_override:
+            task_data["target_agent"] = target_agent_override
+            
+        await self._log_to_agentic_replay(
+            agent_id=self.agent_id, 
+            agent_action="TASK_SUBMITTED",
+            status="IN_PROGRESS", 
+            input_context=task_data,
+            correlation_id=task_data["context"]["correlation_id"]
+        )
+        
+        return await self._route_task(task_data)
+
+    async def receive_signal(self, signal_data: Dict[str, Any]):
+        """Public entry point for agents to send MCP signals to the orchestrator."""
+        signal_data.setdefault("signal_id", str(uuid.uuid4()))
+        signal_data.setdefault("timestamp_iso", datetime.utcnow().isoformat() + "Z")
+        if not signal_data.get("source_agent_id") or not signal_data.get("signal_type") or not signal_data.get("target_entity"):
+            self.logger.error(f"Received malformed signal (missing required base fields): {signal_data}")
+            return {"status": "error", "error_message": "Malformed signal"}
+            
+        return await self.process_mcp_signal(signal_data)
+
+    async def startup(self):
+        """Perform startup tasks for the Crown, Core Engines, and Pilgrims."""
+        self.logger.info("VantaMasterCore Crown awakening...")
+        await self._load_cascade_orchestration_config() 
+
+        core_engine_start_tasks = []
+        for engine in [self.ritual_executor, self.autonomous_tasker]: 
+            if engine and hasattr(engine, 'start') and callable(engine.start):
+                 start_op = engine.start()
+                 if asyncio.iscoroutine(start_op): core_engine_start_tasks.append(start_op)
+        if core_engine_start_tasks: await asyncio.gather(*core_engine_start_tasks, return_exceptions=True)
+
+        pilgrim_startup_tasks = [
+            pilgrim.startup() for pilgrim in self.pilgrims.values() 
+            if hasattr(pilgrim, 'startup') and asyncio.iscoroutinefunction(pilgrim.startup)
+        ]
+        if pilgrim_startup_tasks:
+            results = await asyncio.gather(*pilgrim_startup_tasks, return_exceptions=True)
+            agent_names = list(self.pilgrims.keys()) 
+            for i, result in enumerate(results):
+                 if i < len(agent_names) and isinstance(result, Exception):
+                      self.logger.error(f"Error during startup of Pilgrim '{agent_names[i]}': {result}")
+
+        self.logger.info("VantaMasterCore Crown awake and operational.")
+
+    async def shutdown(self):
+        """Perform shutdown tasks for the Crown, Core Engines, and Pilgrims."""
+        self.logger.info("VantaMasterCore Crown entering rest...")
+        
+        core_engine_shutdown_tasks = []
+        for engine in [self.autonomous_tasker, self.ritual_executor]: 
+            if engine and hasattr(engine, 'shutdown') and callable(engine.shutdown):
+                 shutdown_op = engine.shutdown()
+                 if asyncio.iscoroutine(shutdown_op): core_engine_shutdown_tasks.append(shutdown_op)
+        if core_engine_shutdown_tasks: await asyncio.gather(*core_engine_shutdown_tasks, return_exceptions=True)
+        self.logger.info("Core engines shutdown complete.")
+
+        pilgrim_shutdown_tasks = [
+            pilgrim.shutdown() for pilgrim in self.pilgrims.values() 
+            if hasattr(pilgrim, 'shutdown') and asyncio.iscoroutinefunction(pilgrim.shutdown)
+        ]
+        if pilgrim_shutdown_tasks:
+             results = await asyncio.gather(*pilgrim_shutdown_tasks, return_exceptions=True)
+             agent_names = list(self.pilgrims.keys())
+             for i, result in enumerate(results):
+                  if i < len(agent_names) and isinstance(result, Exception):
+                       self.logger.error(f"Error during shutdown of Pilgrim '{agent_names[i]}': {result}")
+
+        self.pilgrims.clear() 
+        self._pilgrim_states.clear()
+        self.logger.info("VantaMasterCore Crown resting. Kingdom quiet.")
+
+    def get_message_bus(self) -> Optional[AgentMessageBus]:
+        """Returns the instance of the AgentMessageBus."""
+        return self.message_bus
+    
+    def _execute_ritual_if_found(self, trigger: str):
+        """Placeholder method to simulate checking and executing rituals."""
+        self.logger.debug(f"Checking for rituals triggered by: {trigger} (Placeholder)")
+        pass 
+
+    async def process_mcp_signal(self, signal_data: Dict[str, Any]):
+        """Processes incoming MCP signals for inter-agent communication and cascade control."""
+        self.logger.info(f"Processing MCP Signal: {signal_data.get('signal_type')} from {signal_data.get('source_agent_id')}")
+
+        is_valid, validation_errors = self._validate_mcp_signal(signal_data)
+        if not is_valid:
+            self.logger.error(f"Invalid MCP Signal received: {validation_errors}. Signal: {signal_data}")
+            return {"status": "error", "error_message": "Invalid MCP Signal", "details": validation_errors}
+
+        signal_type = signal_data["signal_type"]
+        target_entity = signal_data["target_entity"]
+        payload = signal_data.get("payload", {})
+        source_agent_id = signal_data["source_agent_id"]
+        signal_id = signal_data["signal_id"]
+        correlation_id = signal_data.get("metadata", {}).get("correlation_id")
+
+        await self._log_to_agentic_replay(
+            agent_id=self.agent_id, 
+            agent_action="MCP_SIGNAL_RECEIVED", 
+            input_context=signal_data, 
+            status="SUCCESS", 
+            metadata_custom={"source_agent_id": source_agent_id},
+            correlation_id=correlation_id
+        )
+
+        result = {"status": "success", "message": f"Signal {signal_type} processed."}
+        try:
+            if signal_type == "INITIATE_CASCADE":
+                if target_entity["type"] == "CASCADE_PROFILE_ID":
+                    profile_id = target_entity["id"]
+                    await self.execute_cascade_profile(profile_id, trigger_event_data=payload, initiating_agent_id=source_agent_id, originating_signal_id=signal_id, correlation_id=correlation_id)
+                else:
+                    self.logger.error(f"INITIATE_CASCADE signal has invalid target_entity type: {target_entity['type']}")
+                    result = {"status": "error", "error_message": "Invalid target type for INITIATE_CASCADE"}
+
+            elif signal_type == "SUGGEST_WHISPER_CASCADE":
+                if target_entity["type"] == "CASCADE_PROFILE_ID":
+                    profile_id = target_entity["id"]
+                    await self._handle_whisper_suggestion(profile_id, payload, source_agent_id, originating_signal_id=signal_id, correlation_id=correlation_id)
+                else:
+                     self.logger.error(f"SUGGEST_WHISPER_CASCADE signal has invalid target_entity type: {target_entity['type']}")
+                     result = {"status": "error", "error_message": "Invalid target type for SUGGEST_WHISPER_CASCADE"}
+
+            elif signal_type == "REQUEST_AGENT_HANDOFF":
+                target_agent_spec = target_entity["id"]
+                await self._handle_agent_handoff(target_agent_spec, payload, source_agent_id, originating_signal_id=signal_id, correlation_id=correlation_id)
+
+            else:
+                self.logger.warning(f"Unknown MCP Signal type: {signal_type}. Signal: {signal_data}")
+                result = {"status": "warning", "message": f"Unknown signal type {signal_type}"}
+
+        except Exception as e:
+            self.logger.error(f"Error processing MCP signal {signal_id} (type {signal_type}): {e}", exc_info=True)
+            result = {"status": "error", "error_message": f"Error processing signal: {str(e)}"}
+            await self._log_to_agentic_replay(
+                agent_id=self.agent_id,
+                agent_action=f"MCP_SIGNAL_PROCESSING_ERROR",
+                input_context=signal_data,
+                status="ERROR_UNHANDLED",
+                error_info={"message": str(e), "type": type(e).__name__},
+                metadata_custom={"signal_type": signal_type},
+                correlation_id=correlation_id
+            )
+        
+        return result
+
+    def _validate_mcp_signal(self, signal_data: Dict[str, Any]) -> tuple[bool, Any]:
+        """Validates the structure of an incoming MCP signal (basic implementation)."""
+        required_fields = ["signal_id", "timestamp_iso", "source_agent_id", "signal_type", "target_entity"]
+        missing = [f for f in required_fields if f not in signal_data]
+        if missing: return False, f"Missing fields: {missing}"
+        if not isinstance(signal_data["target_entity"], dict) or "type" not in signal_data["target_entity"] or "id" not in signal_data["target_entity"]:
+            return False, "target_entity malformed."
+        if not isinstance(signal_data["signal_id"], str) or not isinstance(signal_data["source_agent_id"], str):
+             return False, "ID fields wrong type."
+        valid_types = ["INITIATE_CASCADE", "SUGGEST_WHISPER_CASCADE", "REQUEST_AGENT_HANDOFF", "BROADCAST_EVENT", "TASK_DELEGATION_REQUEST", "STATUS_UPDATE_FOR_ORCHESTRATOR"]
+        if signal_data["signal_type"] not in valid_types:
+             return False, f"Invalid signal_type: {signal_data['signal_type']}"
+        return True, None
+
+    async def _log_to_agentic_replay(self, agent_id: str, agent_action: str, status: str, **kwargs):
+        """Constructs and logs an entry to the agentic replay log."""
+        replay_log_path = config.BASE_DIR / "logs" / "agentic_replay.log.jsonl" 
+        try:
+            replay_log_path.parent.mkdir(parents=True, exist_ok=True)
+            log_entry = {
+                k: v for k, v in {
+                    "event_id": str(uuid.uuid4()),
+                    "timestamp_iso": datetime.utcnow().isoformat() + "Z",
+                    "agent_id": agent_id, 
+                    "agent_action": agent_action,
+                    "status": status, 
+                    "session_id": kwargs.get("session_id"),
+                    "correlation_id": kwargs.get("correlation_id"),
+                    "initiating_trigger": kwargs.get("initiating_trigger"),
+                    "cascade_instance_id": kwargs.get("cascade_instance_id"),
+                    "cascade_profile_id_executed": kwargs.get("cascade_profile_id_executed"),
+                    "cascade_step_index": kwargs.get("cascade_step_index"),
+                    "input_context": kwargs.get("input_context"),
+                    "output_result": kwargs.get("output_result"),
+                    "duration_ms": kwargs.get("duration_ms"),
+                    "error_info": kwargs.get("error_info"),
+                    "confidence_score": kwargs.get("confidence_score"),
+                    "rl_signals_observed": kwargs.get("rl_signals_observed"),
+                    "tags": kwargs.get("tags"),
+                    "metadata_custom": kwargs.get("metadata_custom")
+                }.items() if v is not None 
+            }
+            with open(replay_log_path, "a", encoding="utf-8") as f:
+                f.write(json.dumps(log_entry) + "\n")
+            self.logger.debug(f"AGENTIC_REPLAY_LOGGED: {log_entry.get('event_id')}") 
+        except Exception as e:
+            self.logger.error(f"Failed to write agentic replay entry to {replay_log_path}: {e}", exc_info=True)
+
+    async def _handle_whisper_suggestion(self, profile_id: str, trigger_payload: Dict[str, Any], source_agent_id: str, originating_signal_id: str, correlation_id: Optional[str] = None):
+        """Handles suggesting a whisper cascade."""
+        self.logger.info(f"Placeholder: Whisper cascade '{profile_id}' suggestion. Signal: {originating_signal_id}. Corr: {correlation_id}. Payload: {trigger_payload}")
+
+    async def _handle_agent_handoff(self, target_agent_spec: str, handoff_payload: Dict[str, Any], source_agent_id: str, originating_signal_id: str, correlation_id: Optional[str] = None):
+        """Handles handing off a task to another agent."""
+        self.logger.info(f"Placeholder: Agent handoff to '{target_agent_spec}'. Signal: {originating_signal_id}. Corr: {correlation_id}")
+        target_agent_id = None
+        try:
+            if not target_agent_id: 
+                 raise ValueError(f"Could not resolve agent spec '{target_agent_spec}'")
+
+            task_data = handoff_payload.get('current_task_data', {})
+            task_context = task_data.setdefault('context', {})
+            task_context['handoff_reason'] = handoff_payload.get('reason_for_handoff')
+            task_context['handoff_source_agent'] = source_agent_id
+            task_context['originating_signal_id'] = originating_signal_id
+            task_context['correlation_id'] = correlation_id or task_context.get('correlation_id') 
+
+            await self.submit_task(task_data, target_agent_override=target_agent_id)
+            
+            await self._log_to_agentic_replay(
+                agent_id=self.agent_id, agent_action="AGENT_HANDOFF_EXECUTED", status="SUCCESS",
+                input_context=handoff_payload, output_result={"target_agent_id": target_agent_id},
+                correlation_id=correlation_id, metadata_custom={"source_agent_id": source_agent_id, "target_agent_spec": target_agent_spec}
+            )
+        except Exception as e:
+             self.logger.error(f"Agent handoff failed: {e}", exc_info=True)
+             await self._log_to_agentic_replay(
+                 agent_id=self.agent_id, agent_action="AGENT_HANDOFF_FAILED", status="FAILURE",
+                 input_context=handoff_payload, error_info={"message": str(e)},
+                 correlation_id=correlation_id, metadata_custom={"source_agent_id": source_agent_id, "target_agent_spec": target_agent_spec}
+             )
+
+    async def _load_cascade_orchestration_config(self):
+        """Loads cascade definitions and default chains at startup."""
+        await self._load_agent_cascade_definitions()
+        await self._load_default_agent_chains()
+
+    async def _load_agent_cascade_definitions(self):
+        """Loads agent cascade definitions from the MDC rule file."""
+        self.cascade_profiles: Dict[str, Dict[str, Any]] = {}
+        base_path = config.BASE_DIR
+        default_path = base_path / ".cursor/rules/agent_cascade_definitions.mdc"
+        cascade_file_path_str = getattr(self.core_config, "agent_cascade_definitions_path", str(default_path)) if self.core_config else str(default_path)
+        cascade_file_path = Path(cascade_file_path_str)
+
+        if cascade_file_path.exists():
+            self.logger.info(f"Loading agent cascade definitions from: {cascade_file_path}")
+            try:
+                with open(cascade_file_path, 'r', encoding='utf-8') as f: content = f.read()
+                first_marker = content.find("---")
+                yaml_body_start_index = 0
+                if first_marker != -1:
+                    second_marker = content.find("---", first_marker + 3)
+                    if second_marker != -1: yaml_body_start_index = second_marker + 3
+                actual_yaml = content[yaml_body_start_index:]
+                yaml_content_starts_at = actual_yaml.find("profiles:")
+                if yaml_content_starts_at != -1: final_yaml_to_parse = actual_yaml[yaml_content_starts_at:]
+                else:
+                    self.logger.warning(f"'profiles:' key not found directly in YAML body of {cascade_file_path}. Parsing as is.")
+                    final_yaml_to_parse = actual_yaml 
+                if not final_yaml_to_parse.strip():
+                    self.logger.warning(f"No parsable YAML content found in {cascade_file_path}.")
+                    return
+                definitions = yaml.safe_load(final_yaml_to_parse)
+                if definitions and "profiles" in definitions and isinstance(definitions["profiles"], list): 
+                    for profile in definitions["profiles"]:
+                        if isinstance(profile, dict) and "profile_id" in profile: self.cascade_profiles[profile["profile_id"]] = profile
+                        else: self.logger.warning(f"Skipping invalid profile entry in {cascade_file_path}: {profile}")
+                    self.logger.info(f"Loaded {len(self.cascade_profiles)} agent cascade profiles.")
+                else: self.logger.warning(f"Could not find 'profiles' list in parsed YAML of {cascade_file_path}.")
+            except Exception as e: self.logger.error(f"Failed to load/parse agent cascade definitions from {cascade_file_path}: {e}", exc_info=True)
+        else: self.logger.warning(f"Agent cascade definitions file not found: {cascade_file_path}")
+
+    async def _load_default_agent_chains(self):
+        """Loads default agent chains from YAML (placeholder)."""
+        self.default_agent_chains = {}
+        self.logger.info(f"Loaded {len(self.default_agent_chains)} default agent chains (placeholder).")
+
+    async def execute_cascade_profile(self, profile_id: str, trigger_event_data: Dict[str, Any], initiating_agent_id: str = "UNKNOWN", originating_signal_id: str = None, correlation_id: Optional[str] = None):
+        """Executes an agent sequence defined by a cascade profile."""
+        
+        if not self.cascade_profiles: await self._load_cascade_orchestration_config()
+
+        if profile_id not in self.cascade_profiles:
+            self.logger.error(f"Attempted to execute unknown cascade profile ID: {profile_id}")
+            await self._log_to_agentic_replay(
+                agent_id=self.agent_id, agent_action="CASCADE_EXECUTION_ERROR", status="FAILURE",
+                error_info={"message": f"Cascade profile '{profile_id}' not found."}, metadata_custom={"profile_id": profile_id}, correlation_id=correlation_id
+            )
+            return {"status": "error", "error_message": "Cascade profile not found"} 
+            
+        profile = self.cascade_profiles[profile_id]
+        agent_sequence = profile.get("agent_sequence", [])
+        cascade_instance_id = str(uuid.uuid4()) 
+        
+        self.logger.info(f"Starting cascade '{profile_id}' (Inst: {cascade_instance_id}, Corr: {correlation_id}) triggered by {initiating_agent_id}. Signal: {originating_signal_id}")
+        
+        await self._log_to_agentic_replay(
+            agent_id=self.agent_id, agent_action="CASCADE_START", status="IN_PROGRESS",
+            cascade_instance_id=cascade_instance_id, cascade_profile_id_executed=profile_id,
+            input_context=trigger_event_data, 
+            metadata_custom={"initiating_agent_id": initiating_agent_id, "originating_signal_id": originating_signal_id},
+            correlation_id=correlation_id
+        )
+
+        step_outputs = {} 
+        current_context = {
+            "trigger": {"parameters": trigger_event_data},
+            "cascade": {"instance_id": cascade_instance_id, "profile_id": profile_id, "correlation_id": correlation_id},
+            "steps": step_outputs 
+        }
+        
+        overall_cascade_status = "SUCCESS"
+        final_cascade_output = None
+
+        for step_index, step_definition in enumerate(agent_sequence):
+            agent_id_to_run = step_definition.get("agent_id")
+            input_mapping = step_definition.get("input_mapping", {})
+            on_success_action = step_definition.get("on_success", "PROCEED")
+            on_failure_action = step_definition.get("on_failure", "LOG_AND_HALT")
+            timeout_seconds = step_definition.get("timeout_seconds") 
+
+            if not agent_id_to_run:
+                self.logger.warning(f"Cascade '{profile_id}' step {step_index}: Missing agent_id. Skipping.")
+                await self._log_to_agentic_replay(
+                    agent_id=self.agent_id, agent_action="CASCADE_STEP_SKIPPED", status="SKIPPED_CONDITION_NOT_MET",
+                    cascade_instance_id=cascade_instance_id, cascade_profile_id_executed=profile_id, cascade_step_index=step_index,
+                    error_info={"message": "Missing agent_id in step definition"}, correlation_id=correlation_id
+                )
+                continue 
+
+            self.logger.info(f"Cascade '{profile_id}' [Inst: {cascade_instance_id}, Corr: {correlation_id}] Step {step_index}: Running agent '{agent_id_to_run}'")
+            
+            task_input_payload = {}
+            try:
+                task_input_payload = self._map_cascade_input(input_mapping, current_context)
+            except Exception as mapping_error:
+                self.logger.error(f"Cascade '{profile_id}' Step {step_index}: Input mapping failed for '{agent_id_to_run}': {mapping_error}", exc_info=True)
+                overall_cascade_status = "FAILURE"
+                final_cascade_output = {"error": "Input mapping failed", "details": str(mapping_error)}
+                await self._log_to_agentic_replay(
+                    agent_id=self.agent_id, agent_action="CASCADE_STEP_ERROR", status="ERROR_UNHANDLED", 
+                    cascade_instance_id=cascade_instance_id, cascade_profile_id_executed=profile_id, cascade_step_index=step_index,
+                    error_info={"message": f"Input mapping failed: {mapping_error}", "type": type(mapping_error).__name__}, correlation_id=correlation_id
+                )
+                break 
+            
+            task_data_for_agent = {
+                "intent": step_definition.get("intent_override", f"cascade_step:{profile_id}:{step_index}"), 
+                "payload": task_input_payload, 
+                "context": {
+                     "cascade_instance_id": cascade_instance_id,
+                     "cascade_profile_id": profile_id,
+                     "cascade_step_index": step_index,
+                     "source": f"cascade:{profile_id}",
+                     "correlation_id": correlation_id 
+                 }
+            }
+
+            step_start_time = time.monotonic()
+            agent_result = None
+            step_status = "FAILURE" 
+            try:
+                if not self.plugin_manager.is_agent_available(agent_id_to_run):
+                    raise ValueError(f"Target agent '{agent_id_to_run}' not found in PluginManager.")
+                agent_result = await self.submit_task(task_data_for_agent, target_agent_override=agent_id_to_run)
+                step_status = agent_result.get("status", "FAILURE") 
+            
+            except Exception as exec_error:
+                 self.logger.error(f"Cascade '{profile_id}' Step {step_index}: Execution error for '{agent_id_to_run}': {exec_error}", exc_info=True)
+                 agent_result = {"status": "error", "error_message": str(exec_error)} 
+                 step_status = "ERROR_UNHANDLED"
+            
+            step_duration_ms = (time.monotonic() - step_start_time) * 1000
+
+            step_outputs[step_index] = agent_result 
+            current_context["steps"] = step_outputs 
+
+            await self._log_to_agentic_replay(
+                agent_id=agent_id_to_run,
+                agent_action=task_data_for_agent["intent"], 
+                status=step_status.upper(), 
+                cascade_instance_id=cascade_instance_id,
+                cascade_profile_id_executed=profile_id,
+                cascade_step_index=step_index,
+                input_context=task_input_payload,
+                output_result=agent_result.get("output"),
+                error_info={"message": agent_result.get("error_message")} if "error" in step_status.lower() else None,
+                duration_ms=step_duration_ms,
+                correlation_id=correlation_id
+            )
+
+            if "error" in step_status.lower() or step_status.lower() == "failure":
+                self.logger.warning(f"Cascade '{profile_id}' Step {step_index}: Agent '{agent_id_to_run}' failed. Policy: {on_failure_action}")
+                if on_failure_action == "LOG_AND_HALT":
+                    overall_cascade_status = "FAILURE"
+                    final_cascade_output = agent_result 
+                    break 
+                elif on_failure_action == "LOG_AND_PROCEED":
+                    if overall_cascade_status == "SUCCESS": overall_cascade_status = "COMPLETED_WITH_ERRORS"
+                elif on_failure_action == "LOG_AND_TRIGGER_CASCADE_PROFILE":
+                     error_cascade_profile_id = step_definition.get("on_failure_cascade_profile_id")
+                     if error_cascade_profile_id:
+                         self.logger.info(f"Failure triggers error cascade '{error_cascade_profile_id}'. Halting current cascade.")
+                         asyncio.create_task(self.execute_cascade_profile( 
+                             error_cascade_profile_id, 
+                             trigger_event_data={ "failed_step_result": agent_result, "original_cascade_context": current_context },
+                             initiating_agent_id=self.agent_id,
+                             correlation_id=correlation_id 
+                         ))
+                     else:
+                         self.logger.error(f"on_failure policy requires 'on_failure_cascade_profile_id'.")
+                     overall_cascade_status = "FAILURE" 
+                     final_cascade_output = agent_result
+                     break
+                else: 
+                    overall_cascade_status = "FAILURE"
+                    final_cascade_output = agent_result
+                    break
+
+        if overall_cascade_status == "SUCCESS":
+            last_step_index = len(agent_sequence) - 1
+            if last_step_index >= 0:
+                final_cascade_output = step_outputs.get(last_step_index) 
+            else: 
+                 final_cascade_output = {"message": "Cascade completed with no steps executed."}
+
+        self.logger.info(f"Cascade '{profile_id}' [Instance: {cascade_instance_id}] finished with status: {overall_cascade_status}")
+        
+        await self._log_to_agentic_replay(
+            agent_id=self.agent_id,
+            agent_action="CASCADE_END",
+            status=overall_cascade_status,
+            cascade_instance_id=cascade_instance_id,
+            cascade_profile_id_executed=profile_id,
+            output_result=final_cascade_output.get("output") if isinstance(final_cascade_output, dict) else final_cascade_output, 
+            error_info=final_cascade_output if overall_cascade_status != "SUCCESS" else None,
+            correlation_id=correlation_id
+        )
+        
+        return {"status": overall_cascade_status, "output": final_cascade_output}
+
+    def _map_cascade_input(self, mapping_rules: Dict[str, str], context: Dict[str, Any]) -> Dict[str, Any]:
+        """Resolves input mapping rules using asteval for safe evaluation."""
+        mapped_input = {}
+        evaluator = asteval.Interpreter(symtable=context, use_numpy=False) 
+        
+        for target_key, expression_template in mapping_rules.items():
+            try:
+                if isinstance(expression_template, str) and expression_template.startswith("{{") and expression_template.endswith("}}"):
+                    expression = expression_template[2:-2].strip() 
+                    mapped_value = evaluator(expression) 
+                    mapped_input[target_key] = mapped_value
+                else:
+                    mapped_input[target_key] = expression_template 
+            except Exception as e:
+                error_details = f"Error: {e}"
+                if hasattr(evaluator, 'error_msg') and evaluator.error_msg: error_details += f" | Evaluator msg: {evaluator.error_msg}"
+                self.logger.error(f"Input mapping eval failed for key '{target_key}' expr '{expression_template}': {error_details}", exc_info=False) 
+                raise ValueError(f"Mapping failed for key '{target_key}': {error_details}") from e
+                
+        return mapped_input
+
+async def main():
+    log_format = '%(asctime)s - [%(levelname)s] - %(name)s - %(message)s'
+    logging.basicConfig(level=logging.INFO, format=log_format)
+    logging.getLogger('VantaMasterCore').setLevel(logging.DEBUG) 
+
+    print("Starting VantaMasterCore Kingdom example...")
+    
+    vanta_root = config.BASE_DIR
+    plugin_dir = vanta_root / 'vanta_seed' / 'agents'
+    config_path = vanta_root / 'blueprint.yaml' 
+    
+    print(f"Plugin Dir: {plugin_dir}")
+    print(f"Config Path: {config_path}")
+
+    plugin_manager = PluginManager(plugin_directory=str(plugin_dir))
+    plugin_manager.load_plugins()
+    print(f"Plugins (Pilgrim Blueprints) loaded: {plugin_manager.list_plugins()}")
+
+    if not config_path.exists():
+         print(f"Error: Config file not found at {config_path}")
+         return
+
+    try:
+        master_core = VantaMasterCore(core_config_path=str(config_path), plugin_manager=plugin_manager)
+        print("VantaMasterCore Crown initialized.")
+    except Exception as e:
+        print(f"Error initializing Crown: {e}")
+        logging.exception("Initialization Error")
+        return
+
+    print("Available Pilgrims:", list(master_core.pilgrims.keys())) 
+
+    print("\nRouting simple task...")
+    task_echo = {"intent": "simple_echo", "payload": {"message": "Hello Living Kingdom!"}}
+    result_echo = await master_core.submit_task(task_echo)
+    print("Task Result:", result_echo)
+    
+    print("\nSimulating Signal to trigger cascade (core_protocol_modification_cascade)...")
+    cascade_signal = {
+         "signal_id": str(uuid.uuid4()),
+         "timestamp_iso": datetime.utcnow().isoformat() + "Z",
+         "source_agent_id": "ManualTesterAgent", 
+         "signal_type": "INITIATE_CASCADE",
+         "target_entity": {"type": "CASCADE_PROFILE_ID", "id": "core_protocol_modification_cascade"},
+         "payload": { 
+           "modified_files": ["vanta_seed/core/some_protocol_file.py"],
+           "change_summary": "Manually triggered test cascade.",
+           "initiating_agent_id": "ManualTesterAgent" 
+         },
+         "metadata": {"correlation_id": str(uuid.uuid4())}
+    }
+    cascade_trigger_result = await master_core.receive_signal(cascade_signal) 
+    print("Cascade Trigger Signal Result:", cascade_trigger_result)
+    await asyncio.sleep(1) 
+
+    print("\nCrown awakening sequence...")
+    await master_core.startup()
+    print("Crown startup operations complete.")
+
+    await asyncio.sleep(1) 
+
+    print("\nCrown resting sequence...")
+    await master_core.shutdown()
+    print("Crown shutdown operations complete.")
+
+
+if __name__ == "__main__":
+    print("Running Vanta Kingdom main function...")
+    if not logging.getLogger().hasHandlers():
+        logging.basicConfig(level=logging.INFO, format='%(asctime)s - [%(levelname)s] - %(name)s - %(message)s')
+    asyncio.run(main())
+    print("Vanta Kingdom main function finished.")

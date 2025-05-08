@@ -1,0 +1,60 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# RULE TYPE: Always
+# FILE PATTERNS: Not applicable for Always rules
+
+# Backup and Commit Protocol
+
+## Purpose
+Establish a robust, auditable, and agentic protocol for regular project backups and git commits, ensuring safety, traceability, and compliance with VANTA's agentic development philosophy.
+
+## Triggers & Frequency
+- **Manual:**
+  - On-demand by any contributor or agent before/after major changes.
+- **Scheduled:**
+  - At least daily (recommended: nightly at 2am local time).
+  - Optionally, hourly during periods of rapid development.
+- **Agentic/Automated:**
+  - Before/after major refactors, migrations, or mass file operations.
+  - After successful completion of major agentic workflows (e.g., rituals, cascades, agentic replay events).
+  - Before deployments or releases.
+  - After new agent, rule, or protocol is added to `.cursor/rules/`.
+
+## How to Execute
+- Use `scripts/backup_script.py` with appropriate flags:
+  - `--commit` to commit all changes after backup
+  - `--push` to push to remote after commit
+  - `--backup-id` to specify context (e.g., `pre-refactor`, `scheduled`, `post-ritual`)
+- Example:
+  ```bash
+  python scripts/backup_script.py instance_a /path/to/instance_a --commit --push --backup-id "pre-major-refactor"
+  ```
+- Agents and rituals should invoke this script as a subprocess at the above triggers.
+
+## Logging & Audit
+- All backup, commit, and push actions must be logged (stdout, file, or agentic replay log).
+- Each event should include timestamp, triggering agent/human, context (backup-id), and result.
+- Failures must be reported and retried or escalated.
+
+## Exclusions
+- Do not back up or commit `.git/`, `.venv/`, cache, or other non-essential files (script and MutationManager already handle this).
+- Use `.gitignore` to manage exclusions for memory/log files as appropriate.
+
+## Documentation
+- Reference this protocol in `THEPLAN.md` and/or `README.md`.
+- Document any deviations or exceptions in project docs.
+
+## Best Practices
+1. Test backup/restore regularly.
+2. Store some backups offsite/cloud for disaster recovery.
+3. Use structured commit messages for agentic/automated commits.
+4. Review logs periodically for compliance.
+
+## Integration
+- This protocol is compatible with all other safety, logging, and agentic rules in `.cursor/rules/`.
+- Agents must not bypass this protocol for any high-impact or destructive operation.
+
+---

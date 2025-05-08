@@ -1,0 +1,50 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# RULE TYPE: Always (Core VANTA Memory Principle)
+# FILE PATTERNS: N/A (Universal Agent Memory & RL Context Design)
+
+# VANTA Agent Memory & RL Context Principles
+
+## 1. Memory Abstraction Layer
+    - Agents SHOULD interact with memory through a defined Memory Abstraction Layer (MAL) rather than direct database/file access for common memory operations.
+    - The MAL should provide methods for `store_memory`, `retrieve_memory`, `update_memory`, `delete_memory`, and `search_memory`.
+
+## 2. Memory Types & Scopes
+    - **Episodic Memory:** Log of agent actions, decisions, inputs, outputs, and user feedback (see `agentic_replay_schema.json`). Primarily for RL and auditing. This is the default for `agentic_replay.log`.
+    - **Working Memory (Short-Term):** Context relevant to the current task or interaction. May be persisted per session or task ID. Should be explicitly cleared or archived.
+    - **Semantic Memory (Long-Term Knowledge Base):** Stores learned facts, patterns, successful solutions, validated schemas, etc. Often vector-indexed for similarity search (e.g., Qdrant).
+    - **Procedural Memory:** Learned sequences of actions or successful cascade patterns. The RL system tunes this.
+    - **User-Specific Memory:** Preferences, past interactions, and context specific to a user.
+
+## 3. Structure & Schemas
+    - All persisted memory (especially episodic and semantic) MUST adhere to a defined schema (e.g., `agentic_replay_schema.json` for episodic logs, Pydantic models for other structured data).
+    - Schemas enable reliable parsing, querying, and RL processing.
+    - Schema versioning should be considered for long-term memory stores.
+
+## 4. Contextual Relevance & Retrieval
+    - Memory retrieval should be context-aware (e.g., based on current task, user, keywords, vector similarity).
+    - Provide mechanisms for retrieving relevant past interactions, solutions, or knowledge snippets.
+    - For RL, the state representation (`902-rl-agent.mdc`) should leverage relevant retrieved memories.
+
+## 5. Reinforcement Learning Integration
+    - Episodic memory (`agentic_replay.log`) is the primary source for RL training data.
+    - Memory systems must facilitate the calculation of rewards based on outcomes stored in episodic memory.
+    - Successful task resolutions, user approvals, or positively reinforced cascade outcomes should be flagged or prioritized in memory.
+
+## 6. Security & Privacy
+    - PII or sensitive data stored in memory MUST be encrypted or appropriately anonymized.
+    - Adhere to data retention policies.
+    - Access controls should be implemented for sensitive memory scopes.
+
+## 7. Traceability & Auditability
+    - All memory operations (create, read, update, delete) on persistent stores should be logged with timestamps, agent IDs, and task context for auditability.
+    - This is distinct from episodic memory but supports its integrity.
+
+## 8. Memory Maintenance
+    - Implement strategies for memory pruning, archiving, or summarization to manage storage and maintain performance.
+    - The `ritual_upkeep_agent` might be involved in suggesting or performing memory hygiene tasks.
+
+*This rule ensures that agent memory is structured, accessible, secure, and effectively supports learning and continuous operation.*

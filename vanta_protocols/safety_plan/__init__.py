@@ -1,0 +1,1 @@
+# This file makes vanta_protocols.safety_plan a Python package 

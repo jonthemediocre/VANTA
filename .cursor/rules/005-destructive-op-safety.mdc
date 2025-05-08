@@ -1,0 +1,52 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# RULE TYPE: Always (Core AI Operational Safety Principle)
+# FILE PATTERNS: N/A (Universal Safety Guideline)
+
+# AI Destructive Operation Safety Protocol
+
+## 1. Principle: Prioritize Data Integrity and User Control
+
+AI assistants MUST prioritize the preservation of user data and provide users with clear control over operations that could lead to data loss or irreversible changes.
+
+## 2. Mandatory Checks Before Destructive Operations
+
+Before proposing or executing any of the following operations, the AI assistant MUST perform the relevant safety checks:
+
+    - **File Overwrite (e.g., `edit_file` with full replacement, `mcp_desktop-commander_write_file`):
+        - **Suggestion:** "This operation will completely overwrite the file `[target_file]`."
+        - **Action:** Suggest creating a backup (e.g., `[target_file].bak`) first.
+        - **Confirmation:** Explicitly ask the user for confirmation to proceed with the overwrite AFTER the backup suggestion.
+        - **Example Tool Usage (Backup):** Suggest `mcp_desktop-commander_move_file` to rename `target_file` to `target_file.bak`.
+
+    - **File Deletion (e.g., `delete_file`, `mcp_desktop-commander_delete_file`):
+        - **Suggestion:** "This operation will permanently delete the file `[target_file]`."
+        - **Action:** If the file is significant (e.g., not a temporary or log file), suggest creating a backup or moving it to a temporary archive location.
+        - **Confirmation:** Explicitly ask the user for confirmation to proceed with the deletion.
+
+    - **Large-Scale Block Edits (Potentially Risky `mcp_desktop-commander_edit_block`):
+        - **Suggestion:** "This operation will make significant changes to `[target_file]`. Review the proposed `old_string` and `new_string` carefully."
+        - **Action:** If the change is extensive or complex, suggest a backup.
+        - **Confirmation:** Ask for user confirmation if the AI assesses the risk as high.
+
+## 3. User Confirmation
+
+    - Confirmation requests MUST be clear and unambiguous.
+    - The AI should wait for an explicit affirmative response (e.g., "Yes, proceed", "Confirm") before executing the destructive part of the operation.
+    - If the user rejects or does not confirm, the AI MUST NOT proceed with the destructive action.
+
+## 4. Logging
+
+    - All destructive operations, whether executed or aborted due to lack of confirmation, SHOULD be logged with appropriate context (e.g., in an agentic replay log or audit trail).
+
+## 5. Scope
+
+    - This rule applies to all AI-initiated file system modifications that are potentially irreversible or carry a risk of unintended data loss.
+    - It is especially critical when the AI is operating with higher levels of autonomy.
+
+## Rationale
+
+This rule ensures that AI assistants operate safely, respect user data, and prevent accidental data loss, fostering trust and reliability in AI-assisted development workflows.

@@ -1,0 +1,52 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# RULE TYPE: Always (Core VANTA Logging Requirement)
+# FILE PATTERNS: N/A (Universal Logging Standard)
+
+# VANTA Core Logging Requirements
+
+## 1. Standard Log Format
+    - All log entries MUST strive for a structured format (e.g., JSON or key-value pairs) when possible, especially for automated processing, but human-readable messages are also key.
+    - Minimum standard fields for every log entry:
+        - `timestamp_iso`: ISO 8601 format (e.g., `YYYY-MM-DDTHH:MM:SS.sssZ`).
+        - `level`: Log level (e.g., `DEBUG`, `INFO`, `WARNING`, `ERROR`, `CRITICAL`).
+        - `agent_id` or `module_name`: Identifier of the logging source.
+        - `message`: The human-readable log message.
+    - Strongly Recommended Additional Fields:
+        - `task_id`: If the log pertains to a specific task.
+        - `session_id`: If part of a user session or broader operation.
+        - `correlation_id`: For tracing requests across multiple agents/services.
+        - `file_path` & `line_number`: (e.g., `[my_agent.py:123]`) Automatically added by most logging frameworks.
+        - `payload` or `context_data`: Key contextual data (BE CAREFUL NOT TO LOG SENSITIVE INFO).
+
+## 2. Log Levels & Usage
+    - **`DEBUG`**: Granular information useful for developers during debugging (e.g., variable states, function entry/exit, detailed steps).
+    - **`INFO`**: General operational information (e.g., task received, agent started, major processing stage completed, configuration loaded).
+    - **`WARNING`**: Potentially harmful situations or unexpected non-critical errors that do not prevent current operation but might indicate future problems (e.g., deprecated feature usage, resource nearing limit, fallback logic activated).
+    - **`ERROR`**: Errors that prevented successful completion of the current operation/task but the application/agent can continue running (e.g., failed API call after retries, validation error for a specific request).
+    - **`CRITICAL`**: Severe errors that might lead to application termination or instability (e.g., unrecoverable database connection loss, critical configuration missing at startup).
+
+## 3. Traceability
+    - Logs MUST provide enough information to trace the execution flow of a task or request through an agent and, ideally, across agents in a cascade.
+    - Use `task_id` and `correlation_id` consistently.
+
+## 4. Contextual Information
+    - Include relevant contextual data in logs, but **NEVER log raw PII, API keys, passwords, or other unencrypted sensitive credentials.**
+    - For errors, include stack traces and relevant input parameters (sanitized if necessary).
+
+## 5. Performance
+    - Logging should not significantly degrade application performance. Avoid excessive logging in tight loops or performance-critical paths at `INFO` level or above.
+    - Use `DEBUG` for verbose logging, and ensure it can be disabled in production.
+
+## 6. Log Output
+    - Default to `stdout` for containerized environments.
+    - Support configurable log outputs (e.g., file, centralized logging service) via framework configuration.
+
+## 7. Integration with `agentic_replay.log`
+    - While standard application logs are for debugging/operations, `agentic_replay.log` (see `agentic_replay_schema.json`) is specifically for structured recording of agent actions, decisions, and outcomes for RL and detailed behavior auditing.
+    - An agent action resulting in an `ERROR` log should also result in a corresponding `FAILURE` status entry in `agentic_replay.log` with error details.
+
+*Adherence to these logging requirements is crucial for maintaining a debuggable, traceable, and analyzable VANTA system.*

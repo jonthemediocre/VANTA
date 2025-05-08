@@ -1,0 +1,106 @@
+ritual_id: "vanta_coder_invoke_incoherence_check"
+name: "Invoke System Incoherence Check"
+description: |
+  A ritual to trigger the IncoherenceDetectionAgent to perform a system-wide
+  or targeted check for potential inconsistencies in logs and file states.
+  This is often part of a Vanta! Coder diagnostic or pre/post major operation workflow.
+
+version: "0.1.0"
+author: "Vanta! Coder System"
+tags: ["system_health", "diagnostics", "incoherence_detection", "vanta_coder_ritual"]
+
+# Parameters expected by this ritual when invoked
+parameters_schema:
+  type: object
+  properties:
+    target_file:
+      type: ["string", "null"]
+      description: "Optional. Specific file path to focus the incoherence check on. If null, a system-wide check is implied based on agent's monitored files."
+      default: null
+    correlation_id:
+      type: ["string", "null"]
+      description: "Optional. A correlation ID to link this invocation to other operations or logs."
+      default: null # Could be auto-generated if not provided
+    trigger_reason:
+      type: string
+      description: "Brief reason why this incoherence check is being invoked."
+      default: "Routine system coherence check."
+  required: []
+
+# Steps involved in executing this ritual
+# This ritual primarily translates its parameters into an MCP signal or direct agent task
+# for the IncoherenceDetectionAgent.
+execution_plan:
+  - step_id: "prepare_agent_command"
+    description: "Prepare the command payload for the IncoherenceDetectionAgent."
+    action_type: "SCRIPT" # Placeholder for internal logic; in practice, this prepares an MCP signal
+    script_content: |
+      # Python-like pseudocode for how VantaMasterCore might handle this
+      # This isn't directly executed as a script from YAML but represents the logic
+      mcp_payload = {
+          "agent_id": "incoherence_detector", # Target agent
+          "task_data": {
+              "command": "check_system_incoherence",
+              "target_file": ritual_parameters.get("target_file"),
+              "trigger_reason": ritual_parameters.get("trigger_reason")
+          },
+          "context": {
+              "ritual_id": self.ritual_id, # from ritual context
+              "invocation_id": generate_uuid(), # or from ritual_parameters.correlation_id
+              "invoked_by": "ritual:vanta_coder_invoke_incoherence_check"
+          }
+      }
+      # VantaMasterCore would then self.submit_agent_task(mcp_payload) or emit an MCP signal
+      # self.emit_mcp_signal("SUBMIT_AGENT_TASK", mcp_payload)
+    output_variable: "incoherence_agent_command"
+
+  - step_id: "dispatch_to_incoherence_agent"
+    description: "Dispatch the command to the IncoherenceDetectionAgent via VantaMasterCore."
+    action_type: "MCP_SIGNAL" # Or "AGENT_TASK" if direct submission is preferred
+    signal_name: "SUBMIT_AGENT_TASK" # Assuming VMC handles routing based on agent_id in payload
+    # Alternatively, could be a direct call if ritual executor has that capability:
+    # action_type: "INVOKE_AGENT_METHOD"
+    # agent_id: "incoherence_detector"
+    # method_name: "process_input"
+    payload_from_variable: "incoherence_agent_command"
+    awaits_response: true # Whether this ritual step should wait for agent completion
+    timeout_seconds: 600 # 10 minutes for potentially long log analysis
+
+  - step_id: "log_ritual_completion"
+    description: "Log the outcome of the incoherence check ritual."
+    action_type: "LOG_EVENT"
+    log_level: "INFO"
+    message_template: "Incoherence check ritual '{{ ritual.id }}' completed. Agent response status: {{ steps.dispatch_to_incoherence_agent.output.status }}"
+    event_data:
+      ritual_id: "{{ ritual.id }}"
+      invocation_id: "{{ steps.prepare_agent_command.output.mcp_payload.context.invocation_id }}"
+      agent_response: "{{ steps.dispatch_to_incoherence_agent.output }}" # Full agent response
+
+# Expected outcomes or post-conditions
+# This is more descriptive for now; actual assertions would be in tests
+expected_outcomes:
+  - description: "IncoherenceDetectionAgent completes its analysis."
+  - description: "If incoherence is found, an 'system_incoherence_detected' MCP signal is emitted by the agent."
+  - description: "Ritual completes and logs the agent's summary response."
+
+# Error Handling Strategy
+error_handling:
+  on_step_failure:
+    - step_id: "dispatch_to_incoherence_agent"
+      action: "LOG_ERROR_AND_TERMINATE_RITUAL" # Or trigger a specific error handling cascade
+      details:
+        message_template: "Failed to dispatch or get response from IncoherenceDetectionAgent. Error: {{ error.message }}"
+  on_ritual_timeout:
+    action: "LOG_ERROR_AND_TERMINATE_RITUAL"
+    details:
+      message: "Incoherence check ritual timed out."
+
+# Defines how this ritual's invocation and results are logged in agentic_replay.log.jsonl
+# (Assuming VantaMasterCore handles logging based on its actions)
+logging_profile:
+  - event: RITUAL_START
+    message_template: "Ritual '{{ ritual.id }}' started. Parameters: {{ ritual.parameters }}"
+  - event: RITUAL_STEP_RESULT # For each step
+    message_template: "Step '{{ step.id }}' completed. Status: {{ step.status }}"
+  - event: RITUAL_END
+    message_template: "Ritual '{{ ritual.id }}' finished. Final Status: {{ ritual.status }}. Agent Response: {{ steps.dispatch_to_incoherence_agent.output.status }}" 

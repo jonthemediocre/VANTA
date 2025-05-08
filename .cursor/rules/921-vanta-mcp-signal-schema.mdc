@@ -1,0 +1,145 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# RULE TYPE: Always (Core VANTA Inter-Agent Communication Standard)
+# FILE PATTERNS: N/A (Universal MCP Signal Schema)
+
+# VANTA MCP Signal Schema & Conventions
+
+## 1. Purpose
+This document defines the standardized JSON schema for signals that VANTA agents prepare for the `VantaMasterCore` orchestrator or for direct inter-agent communication mediated by the orchestrator. These signals are used for:
+    - Initiating agent cascades (defined in `agent_cascade_definitions.mdc`).
+    - Suggesting user-confirmed (whisper) cascades.
+    - Requesting handoff to another specialist agent.
+    - Broadcasting events or findings to potentially interested agents.
+    - Standardizing control flow and data exchange in multi-agent workflows.
+
+## 2. Core Signal Structure
+All MCP signals MUST adhere to the following base JSON schema:
+
+```json
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "VantaMCPSignal",
+  "description": "Base schema for VANTA Master Control Program signals.",
+  "type": "object",
+  "properties": {
+    "signal_id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique identifier for this signal instance."
+    },
+    "timestamp_iso": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when the signal was prepared."
+    },
+    "source_agent_id": {
+      "type": "string",
+      "description": "The ID of the agent emitting this signal."
+    },
+    "signal_type": {
+      "type": "string",
+      "enum": [
+        "INITIATE_CASCADE",
+        "SUGGEST_WHISPER_CASCADE",
+        "REQUEST_AGENT_HANDOFF",
+        "BROADCAST_EVENT",
+        "TASK_DELEGATION_REQUEST",
+        "STATUS_UPDATE_FOR_ORCHESTRATOR"
+      ],
+      "description": "The specific type of MCP signal."
+    },
+    "target_entity": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["CASCADE_PROFILE_ID", "AGENT_ID", "AGENT_TYPE", "BROADCAST_CHANNEL"],
+          "description": "Type of the target entity."
+        },
+        "id": {
+          "type": "string",
+          "description": "Identifier of the target (e.g., a cascade_profile_id, a specific agent_id, an agent_type like 'testing_agent', or a broadcast channel name)."
+        }
+      },
+      "required": ["type", "id"],
+      "description": "Specifies the target for this signal."
+    },
+    "payload": {
+      "type": "object",
+      "description": "Signal-specific data. The schema for this payload depends on the signal_type and target_entity.type."
+    },
+    "priority": {
+      "type": "integer",
+      "minimum": 1, "maximum": 5, "default": 3,
+      "description": "Signal priority (1=Highest, 5=Lowest). Used by orchestrator for queuing/scheduling."
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Optional additional metadata, like correlation_id, original_task_id, etc."
+    }
+  },
+  "required": [
+    "signal_id",
+    "timestamp_iso",
+    "source_agent_id",
+    "signal_type",
+    "target_entity"
+  ]
+}
+```
+
+## 3. Specific Signal `payload` Schemas (Examples)
+
+### 3.1. `INITIATE_CASCADE`
+   - `target_entity.type`: `"CASCADE_PROFILE_ID"`
+   - `target_entity.id`: The `profile_id` from `agent_cascade_definitions.mdc`.
+   - `payload`: An object matching the `parameters_expected` by that cascade profile.
+     ```json
+     // Example payload for INITIATE_CASCADE (core_protocol_modification_cascade)
+     {
+       "modified_files": ["/path/to/protocol_api.py"],
+       "change_summary": "Added new /v2/trigger endpoint.",
+       "initiating_agent_id": "expert_coder"
+     }
+     ```
+
+### 3.2. `SUGGEST_WHISPER_CASCADE`
+   - `target_entity.type`: `"CASCADE_PROFILE_ID"` (for the whisper cascade)
+   - `target_entity.id`: The `profile_id` of the whisper cascade.
+   - `payload`: An object matching the `parameters_expected` by that whisper cascade profile, used to formulate the suggestion prompt.
+     ```json
+     // Example payload for SUGGEST_WHISPER_CASCADE (general_code_commit_whisper_cascade)
+     {
+       "modified_files_count": 3,
+       "primary_changed_module": "vanta_seed.utils.helpers",
+       "modified_files_list": ["file1.py", "file2.py", "file3.py"]
+     }
+     ```
+
+### 3.3. `REQUEST_AGENT_HANDOFF`
+   - `target_entity.type`: `"AGENT_TYPE"` or `"AGENT_ID"` (if specific instance is known)
+   - `target_entity.id`: The type or ID of the agent to hand off to.
+   - `payload`:
+     ```json
+     {
+       "reason_for_handoff": "Requires specialized knowledge in XXX.",
+       "current_task_data": { ... }, // Original task_data or relevant parts
+       "context_summary": "Current understanding and progress...",
+       "specific_question_for_next_agent": "Could you analyze Y based on Z?"
+     }
+     ```
+
+## 4. Agent Responsibility (`mcp_signal_preparation` tool/capability)
+    - Agents that need to send signals (e.g., `ExpertCoder`, `RitualUpkeepAgent`) should have a capability or use a shared utility (`mcp_signal_preparation`) that helps them construct valid signals according to this schema.
+    - This utility would automatically populate `signal_id`, `timestamp_iso`, and `source_agent_id`.
+    - It would validate the `payload` against the requirements of the `signal_type` and `target_entity.id` (e.g., checking `parameters_expected` for a cascade).
+
+## 5. Orchestrator Responsibility (`VantaMasterCore`)
+    - `VantaMasterCore` MUST be able to receive, parse, validate (against this schema), and appropriately route/process these MCP signals.
+    - It will use `signal_type` and `target_entity` to determine the action (e.g., look up cascade profile, find agent for handoff).
+
+*Adherence to this MCP Signal Schema is vital for robust, predictable, and extensible inter-agent communication and workflow orchestration within the VANTA framework.*

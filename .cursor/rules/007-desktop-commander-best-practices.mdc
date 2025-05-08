@@ -1,0 +1,52 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# RULE TYPE: Always
+# FILE PATTERNS: N/A (Applies to AI agent behavior when using mcp-desktop-commander)
+
+# 007: Desktop Commander - Pathing Best Practices
+
+## 1. Purpose
+
+This rule provides essential guidelines for interacting with the `mcp-desktop-commander` toolset, particularly when specifying file or directory paths. Adhering to these practices will minimize errors like `ENOENT` (Error NO ENTry / No such file or directory) and ensure reliable tool operation.
+
+## 2. Core Guideline: Prioritize Absolute Paths
+
+**Always prefer absolute paths when calling `mcp-desktop-commander` tools that operate on files or directories.**
+
+*   **Source of Truth**: Absolute paths should be constructed based on the known workspace root provided by the AI's contextual information (e.g., `user_info.workspace_path` if available, or a path confirmed by the user for the project).
+
+## 3. Rationale
+
+*   **Ambiguity of Relative Paths**: `mcp-desktop-commander` tools, when executed, may not have the same "current working directory" (CWD) as the AI's conceptual workspace or the user's active terminal. Using relative paths can lead to the tool looking for files in incorrect locations (e.g., the Cursor application's installation directory instead of the project directory).
+*   **Path Format Sensitivity**: The underlying operating system (e.g., Windows) has specific path format requirements.
+    *   Avoid URI-encoded paths (e.g., with `%3A` for colons) as these may not be correctly resolved by the tool or OS, leading to invalid path errors.
+    *   On Windows, use standard drive letter notation (e.g., `C:/path/to/file` or `C:\\path\\to\\file`). Forward slashes are generally well-tolerated by Windows APIs.
+*   **Error Reduction**: Using absolute paths dramatically reduces the chances of `ENOENT` errors due to path resolution issues.
+
+## 4. Example: Constructing an Absolute Path (Windows Context)
+
+Given a workspace root (e.g., `C:/Users/CurrentUser/projects/MyProject`) and a target file within the project (e.g., `src/components/my_component.py`):
+
+**Correct (Absolute Path):**
+`C:/Users/CurrentUser/projects/MyProject/src/components/my_component.py`
+
+**Incorrect (Potentially Ambiguous Relative Path):**
+`src/components/my_component.py` (Depends on the CWD of the `desktop-commander` execution environment)
+
+**Incorrect (Potentially Malformed URI-style):**
+`/c%3A/Users/CurrentUser/projects/MyProject/src/components/my_component.py`
+
+## 5. When to Use (with Caution) Relative Paths
+
+If a `mcp-desktop-commander` tool explicitly documents that it operates relative to a *specific, well-defined base directory* that it establishes (and this is confirmed), then relative paths *to that base* might be acceptable. However, for general file operations (move, read, write, list), absolute paths are safer.
+
+## 6. Verification
+
+Before executing a command with a path, if unsure, it can be beneficial to:
+1.  Log the fully constructed absolute path the AI intends to use.
+2.  If possible and non-destructive, use a read-only command like `mcp_desktop-commander_get_file_info` with the absolute path to verify its correctness and accessibility before attempting write or move operations.
+
+By consistently using well-formed absolute paths, interaction with `mcp-desktop-commander` will be more robust and predictable.

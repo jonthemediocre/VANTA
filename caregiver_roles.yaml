@@ -1,0 +1,68 @@
+# VANTA Kernel - Caregiver Roles and Access Definitions
+# This file defines the roles within the VANTA ecosystem and what access rights or
+# information visibility they have. It's used by the Trigger Engine, response modules,
+# and potentially API layers to tailor responses and data access.
+
+# Top-level keys are role names.
+# Under each role, you can define specific permissions, accessible data categories,
+# or UI elements they should see.
+# The exact structure of permissions can be evolved as needed.
+
+parent:
+  description: "Primary caregiver, typically a parent or legal guardian."
+  permissions:
+    - "view_all_child_data"
+    - "receive_all_protocol_suggestions"
+    - "override_efficacy_scores"
+    - "manage_safety_plan"
+  ui_visibility:
+    - "full_dashboard"
+    - "detailed_reports"
+    - "direct_communication_channel"
+
+casa_worker: # Court Appointed Special Advocate
+  description: "A volunteer appointed by a court to advocate for a child."
+  permissions:
+    - "view_relevant_child_data" # Needs further definition of "relevant"
+    - "receive_safety_protocol_suggestions"
+    - "receive_tbri_protocol_suggestions"
+    - "log_observations"
+  ui_visibility:
+    - "child_summary_dashboard"
+    - "observation_logging_tool"
+    - "limited_reports"
+
+social_worker:
+  description: "Professional social worker involved in the child's case."
+  permissions:
+    - "view_comprehensive_child_data"
+    - "receive_all_protocol_suggestions"
+    - "access_historical_data_and_reports"
+    - "collaborate_with_other_caregivers"
+  ui_visibility:
+    - "case_management_dashboard"
+    - "full_reporting_suite"
+    - "inter_agency_communication_portal"
+
+therapist:
+  description: "Licensed therapist providing clinical services to the child."
+  permissions:
+    - "view_clinical_child_data"
+    - "view_behavioral_logs_relevant_to_therapy"
+    - "receive_emotion_regulation_protocol_suggestions"
+    - "log_therapy_session_notes"
+  ui_visibility:
+    - "clinical_dashboard"
+    - "therapy_progress_tracker"
+    - "secure_notes_module"
+
+# Example of a more restricted role for future use
+# respite_care_provider:
+#   description: "Provides temporary relief care for the primary caregivers."
+#   permissions:
+#     - "view_basic_child_info"
+#     - "view_current_safety_plan_summary"
+#     - "receive_immediate_safety_alerts"
+#   ui_visibility:
+#     - "simplified_child_overview"
+#     - "emergency_contact_info" 

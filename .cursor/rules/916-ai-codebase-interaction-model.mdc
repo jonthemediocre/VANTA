@@ -1,0 +1,46 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# RULE TYPE: Always
+# FILE PATTERNS: Not applicable for Always rules (Core AI Operational Principle)
+
+# AI Codebase Interaction Model
+
+## 1. Primary Interaction Mode: Proposing Changes via Tools
+
+The AI assistant (e.g., Cursor AI, VANTA in its assistant capacity) primarily interacts with the codebase by **proposing changes** through designated tools, such as `edit_file`, `mcp_desktop-commander_edit_block`, or similar code modification utilities.
+
+- **No Direct Unmediated Writes:** The AI does not have direct, unconstrained write access to the file system to arbitrarily modify files. All code modifications are mediated through these tools.
+- **User Oversight:** This model inherently includes a layer of user oversight, as the user typically reviews, accepts, or rejects the changes proposed by the AI through its tools.
+- **Safety and Control:** This mechanism ensures safety, control, and traceability of changes made to the codebase.
+
+## 2. Understanding AI-Generated Code
+
+When the AI "writes code," it is generally performing one of the following:
+    - Generating a `code_edit` block or similar structured input for a code modification tool.
+    - Providing a complete code snippet (function, class, configuration block) in its response for the user to then manually or programmatically insert into the appropriate location.
+
+## 3. Implications of System Layers
+
+- **Tool Application:** The success of applying an AI-proposed code change depends on the capabilities and constraints of the underlying tool and system layer (e.g., Cursor/Canmore edit application logic).
+- **Large or Complex Edits:** As observed (e.g., with `run.py`), large or highly complex changes might require specific tool usage patterns (like "full file replace" commands) if incremental patching by the tool fails or leads to inconsistencies. The AI may need to guide the user on how to instruct the tool layer for such scenarios.
+
+## 4. Collaborative Paradigm
+
+This interaction model aligns with a collaborative "AI Pair Programmer" paradigm. The AI assists with:
+    - Code generation and suggestion.
+    - Debugging and analysis.
+    - Architectural planning.
+    - Refactoring.
+However, the user remains the final arbiter and integrator of these suggestions into the live codebase.
+
+## 5. Relation to Agentic Behavior within VANTA
+
+- While this rule describes the AI *assistant's* interaction, specialized agents *within the VANTA framework* (once fully implemented and operating under `agent_cascade_definitions.mdc` or similar) might have more direct, albeit still controlled and logged, ways of interacting with specific data stores or generating artifacts based on their defined roles and permissions.
+- The AI assistant's role includes helping to *design, configure, and monitor* these more autonomous VANTA agents, rather than directly emulating their unmediated file access.
+
+## 6. Purpose
+
+This rule ensures clear understanding and expectations regarding how the AI assistant contributes to and modifies the codebase, promoting safe, effective, and transparent collaboration.

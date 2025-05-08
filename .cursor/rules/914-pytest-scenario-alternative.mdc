@@ -1,0 +1,54 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# RULE TYPE: Manual / Informational
+# FILE PATTERNS: N/A (Referenced during testing strategy discussions)
+
+# 914: Pytest-Scenario as an Alternative for Cascade/Ritual Testing
+
+## 1. Purpose
+
+This rule documents `pytest-scenario` as a potential alternative to `pytest-bdd` for behavior-driven and scenario-based testing of VANTA's more complex interaction flows, such as:
+
+*   Multi-step MCP (Master Core Protocol) signal processing.
+*   Agent Cascade Profile executions.
+*   End-to-end Ritual invocations and their subsequent agent interactions.
+
+While `.cursor/rules/910-vanta-testing-protocol.mdc` recommends `pytest-bdd` or `pytest-scenario`, this rule provides more specific context for `pytest-scenario`.
+
+## 2. Potential Benefits of `pytest-scenario`
+
+For teams highly comfortable with Python, `pytest-scenario` might offer advantages:
+
+*   **Python-Native Scenario Definition**: Scenarios are defined directly in Python, potentially reducing the need for separate `.feature` Gherkin files. This can feel more integrated for developers who prefer to stay within Python code.
+*   **Less Boilerplate (Potentially)**: Depending on the complexity and style, some find Python-based scenario definitions more concise than Gherkin, especially if step definitions in Gherkin become very numerous.
+*   **Easier Debugging**: Debugging scenarios written directly in Python might be more straightforward using standard Python debugging tools.
+*   **Flexibility**: Defining scenarios in Python can offer greater flexibility in how steps are structured and how state is passed between them.
+
+## 3. Considerations for VANTA
+
+When evaluating `pytest-scenario` vs. `pytest-bdd` for VANTA:
+
+*   **Readability for Non-Developers**: Gherkin (used by `pytest-bdd`) is designed to be readable by non-technical stakeholders. If this is a requirement for VANTA's test scenarios, `pytest-bdd` might be preferred.
+*   **Team Familiarity**: If the team is already proficient with Gherkin or `pytest-bdd`, the learning curve for `pytest-scenario` might be a factor.
+*   **Complexity of Scenarios**: For highly complex, stateful scenarios involving many agent interactions and MCP signals, the explicitness of Gherkin steps might offer better clarity, or conversely, the programmatic power of Python in `pytest-scenario` might be more effective.
+*   **Ecosystem and Community Support**: `pytest-bdd` has a well-established ecosystem. The maturity and community support for `pytest-scenario` should be considered.
+
+## 4. When to Consider `pytest-scenario`
+
+*   If the team finds Gherkin syntax too verbose or restrictive for defining VANTA's agentic flows.
+*   If a higher degree of programmatic control is needed within the scenario definitions themselves.
+*   If the primary audience for test scenarios is the development team itself.
+
+## 5. Tooling Note
+
+If `pytest-scenario` were to be adopted as a primary tool for scenario testing:
+
+*   It would need to be added to the `requirements.testing.txt` file.
+*   Existing test strategies and examples might need to be adapted.
+
+## 6. Recommendation
+
+Evaluate both `pytest-bdd` and `pytest-scenario` on a small set of representative VANTA cascade/ritual test cases before committing to one for the entire project. The choice may also depend on the specific testing layer (e.g., `pytest-scenario` for highly technical orchestration tests, `pytest-bdd` for more business-facing ritual outcomes).

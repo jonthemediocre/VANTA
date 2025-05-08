@@ -1,0 +1,122 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "VantaAgenticReplayLogEntry",
+  "description": "Schema for entries in the agentic_replay.log, used for Reinforcement Learning and auditing agent/cascade behavior within the VANTA framework.",
+  "type": "object",
+  "properties": {
+    "event_id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique ID for this log entry."
+    },
+    "timestamp_iso": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp of the event."
+    },
+    "session_id": {
+      "type": ["string", "null"],
+      "description": "Identifier for the user session or overarching task context. Helps group related events."
+    },
+    "correlation_id": {
+      "type": ["string", "null"],
+      "description": "Identifier used to trace a single logical operation across multiple agents or services."
+    },
+    "initiating_trigger": {
+        "type": "object",
+        "properties": {
+            "type": {
+                "type": "string",
+                "enum": ["USER_PROMPT", "FILE_MODIFICATION", "MCP_SIGNAL", "SCHEDULED_TASK", "AGENT_INTERNAL_LOGIC"],
+                "description": "The nature of the event that initiated this action or cascade."
+            },
+            "source_details": {
+                "type": ["string", "object"],
+                "description": "Details of the source, e.g., user prompt text, modified file path, originating signal_id or agent_id."
+            }
+        },
+        "required": ["type"]
+    },
+    "cascade_instance_id": {
+      "type": ["string", "null"],
+      "description": "Unique identifier for the specific instance of an executed cascade. All events within the same cascade run share this ID."
+    },
+    "cascade_profile_id_executed": {
+      "type": ["string", "null"],
+      "description": "The profile_id from agent_cascade_definitions.mdc that was executed."
+    },
+    "cascade_step_index": {
+        "type": ["integer", "null"],
+        "minimum": 0,
+        "description": "0-based index of the step within a cascade, if applicable."
+    },
+    "agent_id": {
+      "type": "string",
+      "description": "ID of the agent performing or primarily involved in the action."
+    },
+    "agent_action": {
+      "type": "string",
+      "description": "A descriptive name for the specific action or sub-task the agent performed (e.g., 'parse_api_schema', 'generate_python_code', 'validate_protocol_compliance')."
+    },
+    "input_context": {
+      "type": ["object", "null"],
+      "description": "Key input data or contextual parameters provided to the agent for this action. (Sanitize sensitive info)."
+    },
+    "output_result": {
+      "type": ["object", "null"],
+      "description": "Key output data or results produced by the agent for this action. (Sanitize sensitive info)."
+    },
+    "status": {
+      "type": "string",
+      "enum": ["SUCCESS", "FAILURE", "ERROR_UNHANDLED", "IN_PROGRESS", "PENDING_USER_INPUT", "SKIPPED_CONDITION_NOT_MET", "WARNING_FALLBACK_USED"],
+      "description": "Outcome status of the action."
+    },
+    "duration_ms": {
+      "type": ["number", "null"],
+      "description": "Duration of the action in milliseconds."
+    },
+    "error_info": {
+      "type": ["object", "null"],
+      "properties": {
+        "error_code": {"type": "string"},
+        "message": {"type": "string"},
+        "type": {"type": "string", "description": "e.g., Python exception type"},
+        "is_recoverable": {"type": "boolean"}
+      },
+      "description": "Details of any error encountered. Stack traces should be logged separately in operational logs if needed, not usually here."
+    },
+    "confidence_score": {
+      "type": ["number", "null"],
+      "minimum": 0,
+      "maximum": 1,
+      "description": "Agent's confidence in its action or output, if applicable."
+    },
+    "rl_signals_observed": {
+      "type": "object",
+      "properties": {
+        "user_feedback_positive": {"type": ["boolean", "null"], "description": "Explicit positive feedback from user, e.g., accepted suggestion."},
+        "user_feedback_negative": {"type": ["boolean", "null"], "description": "Explicit negative feedback, e.g., rejected suggestion, correction provided."},
+        "user_correction_details": {"type": ["string", "object", "null"], "description": "Details of user correction, if any."},
+        "implicit_reward_metric": {"type": ["number", "null"], "description": "System-calculated reward based on outcome (e.g., test pass rate, task completion)."},
+        "goal_achieved": {"type": ["boolean", "null"], "description": "Was the intended goal of this action/cascade achieved?"}
+      },
+      "description": "Feedback signals relevant for reinforcement learning."
+    },
+    "tags": {
+        "type": ["array", "null"],
+        "items": {"type": "string"},
+        "description": "Descriptive tags for querying and categorization (e.g., 'api_generation', 'critical_error', 'user_test_phase')."
+    },
+    "metadata_custom": {
+      "type": ["object", "null"],
+      "description": "Any other agent-specific or action-specific relevant metadata not covered above."
+    }
+  },
+  "required": [
+    "event_id",
+    "timestamp_iso",
+    "agent_id",
+    "agent_action",
+    "status"
+  ]
+} 
